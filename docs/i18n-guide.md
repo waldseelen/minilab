@@ -86,7 +86,7 @@ import { useI18n } from '../i18n';
 
 const MyComponent: React.FC = () => {
   const { t } = useI18n();
-  
+
   return (
     <div>
       <h2>{t('new.section.title')}</h2>
@@ -310,10 +310,10 @@ const t = (key: TranslationKey) => {
 const checkMissingTranslations = () => {
   const trKeys = Object.keys(tr);
   const enKeys = Object.keys(en);
-  
+
   const missingInEn = trKeys.filter(k => !enKeys.includes(k));
   const missingInTr = enKeys.filter(k => !trKeys.includes(k));
-  
+
   console.log('Missing in EN:', missingInEn);
   console.log('Missing in TR:', missingInTr);
 };

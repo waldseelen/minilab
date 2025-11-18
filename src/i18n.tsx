@@ -71,7 +71,27 @@ const tr: Dictionary = {
   'settings.screenTime': 'Günlük ekran süresi limiti:',
   'settings.filter': 'İçeriği kategoriye göre filtrele:',
   'minibot.title': 'MiniBot ile Sohbet 🤖',
-  'minibot.placeholder': 'Bilimle ilgili bir soru sor!'
+  'minibot.placeholder': 'Bilimle ilgili bir soru sor!',
+  // Welcome modal
+  'welcome.step1.title': 'MiniLab\'a Hoş Geldin! 🎉',
+  'welcome.step1.desc': 'Bilimi öğrenmek için en eğlenceli yerdesin! Birlikte keşfedelim.',
+  'welcome.step2.title': 'Kaç Yaşındasın? 🎂',
+  'welcome.step2.desc': 'Yaş grubunu seçerek sana özel içerikler göreceksin!',
+  'welcome.step3.title': 'Kategori Seç 📚',
+  'welcome.step3.desc': 'Fizik, Kimya, Astronomi... Hangisini öğrenmek istersin?',
+  'welcome.step4.title': 'MiniBot ile Tanış 🤖',
+  'welcome.step4.desc': 'Aklına takılan her şeyi bana sorabilirsin! Ben senin bilim arkadaşınım.',
+  // Help messages
+  'help.age': 'Yaş grubunu seç! Sana uygun içerikler göstereceğim! 🎈',
+  'help.category': 'İlgini çeken konuyu seç! Her kategoride harika şeyler var! ✨',
+  'help.view': 'Bilgi kartları mı okumak istersin, yoksa deney mi yapmak? Seç bakalım! 🎯',
+  'help.minibot': 'Bana istediğin soruyu sorabilirsin! Sana basit ve eğlenceli cevaplar vereceğim! 💬',
+  // Instructions
+  'instruction.home.title': 'Nasıl Kullanılır? 🎮',
+  'instruction.home.step1': 'Önce yaşını seç ki sana uygun içerikler görelim!',
+  'instruction.home.step2': 'Sonra ilgini çeken bir kategori seç (Fizik, Kimya, vb.)',
+  'instruction.home.step3': 'Bilgi kartlarını oku veya deneylere bak!',
+  'instruction.home.step4': 'Her şeyi tamamladıkça rozetler kazanacaksın! 🏆'
 };
 
 const en: Dictionary = {
@@ -141,7 +161,27 @@ const en: Dictionary = {
   'settings.screenTime': 'Daily screen time limit:',
   'settings.filter': 'Filter content by category:',
   'minibot.title': 'Chat with MiniBot 🤖',
-  'minibot.placeholder': 'Ask a science question!'
+  'minibot.placeholder': 'Ask a science question!',
+  // Welcome modal
+  'welcome.step1.title': 'Welcome to MiniLab! 🎉',
+  'welcome.step1.desc': 'You\'re in the most fun place to learn science! Let\'s explore together.',
+  'welcome.step2.title': 'How Old Are You? 🎂',
+  'welcome.step2.desc': 'Select your age group to see content just for you!',
+  'welcome.step3.title': 'Choose a Category 📚',
+  'welcome.step3.desc': 'Physics, Chemistry, Astronomy... Which one do you want to learn?',
+  'welcome.step4.title': 'Meet MiniBot 🤖',
+  'welcome.step4.desc': 'You can ask me anything! I\'m your science buddy.',
+  // Help messages
+  'help.age': 'Choose your age! I\'ll show you the right content for you! 🎈',
+  'help.category': 'Pick a topic you like! Every category has amazing things! ✨',
+  'help.view': 'Do you want to read learning cards or do experiments? Choose! 🎯',
+  'help.minibot': 'Ask me any question! I\'ll give you simple and fun answers! 💬',
+  // Instructions
+  'instruction.home.title': 'How to Use? 🎮',
+  'instruction.home.step1': 'First, select your age so we can show you the right content!',
+  'instruction.home.step2': 'Then pick a category you\'re interested in (Physics, Chemistry, etc.)',
+  'instruction.home.step3': 'Read learning cards or check out experiments!',
+  'instruction.home.step4': 'You\'ll earn badges as you complete everything! 🏆'
 };
 
 const DICTS: Record<Lang, Dictionary> = { tr, en };

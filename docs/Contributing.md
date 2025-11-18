@@ -110,9 +110,9 @@ interface MyComponentProps {
 
 const MyComponent: React.FC<MyComponentProps> = ({ title, onAction }) => {
   const [count, setCount] = useState(0);
-  
+
   const doubleCount = useMemo(() => count * 2, [count]);
-  
+
   return (
     <div>
       <h2>{title}</h2>
@@ -148,7 +148,7 @@ const { t } = useI18n();
 #### Erişilebilirlik (A11y)
 ```tsx
 // ✅ ARIA etiketleri kullanın
-<button 
+<button
   aria-label="Kategoriyi seç"
   aria-pressed={isSelected}
 >
@@ -156,14 +156,14 @@ const { t } = useI18n();
 </button>
 
 // ✅ Anlamlı alt metinler
-<img 
-  src="/icon.svg" 
+<img
+  src="/icon.svg"
   alt="Fizik kategorisi ikonu"
   loading="lazy"
 />
 
 // ✅ Klavye navigasyonu
-<div 
+<div
   tabIndex={0}
   onKeyPress={(e) => e.key === 'Enter' && handleAction()}
 >

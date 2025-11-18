@@ -31,10 +31,32 @@ const ExperimentCard: React.FC<ExperimentCardProps> = ({ experiment }) => {
   };
 
   return (
-    <div className="experiment-card clickable">
+    <div className="experiment-card clickable" style={{ 
+      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+      transform: 'scale(1)',
+    }}
+    onMouseEnter={(e) => {
+      e.currentTarget.style.transform = 'scale(1.03) translateY(-4px)';
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.transform = 'scale(1) translateY(0)';
+    }}>
       {experiment.imageUrl && (
-        <div className="experiment-image">
-          <img src={experiment.imageUrl} alt={experiment.title} />
+        <div className="experiment-image" style={{ overflow: 'hidden', borderRadius: '12px 12px 0 0' }}>
+          <img 
+            src={experiment.imageUrl} 
+            alt={experiment.title}
+            loading="lazy"
+            style={{ 
+              transition: 'transform 0.3s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'scale(1.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'scale(1)';
+            }}
+          />
         </div>
       )}
       <div className="experiment-content">

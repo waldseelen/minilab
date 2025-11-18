@@ -1,7 +1,10 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import ExperimentCard from '../components/ExperimentCard';
 import LearningCard from '../components/LearningCard';
+import HelpBubble from '../components/HelpBubble';
+import InstructionCard from '../components/InstructionCard';
+import WelcomeModal from '../components/WelcomeModal';
 import { getExperiments } from '../data/experiments';
 import { getCardsByAge, getCardsByCategoryAndAge } from '../data/learningCards';
 
@@ -36,6 +39,15 @@ const HomePage: React.FC = () => {
     const [selectedCategory, setSelectedCategory] = useState('Physics');
     const [selectedAgeGroup, setSelectedAgeGroup] = useState<'All' | '4-6' | '6-8' | '8-10'>('6-8');
     const [currentView, setCurrentView] = useState<'learning' | 'experiments'>('learning');
+    const [showWelcome, setShowWelcome] = useState(false);
+
+    useEffect(() => {
+        const hasVisited = localStorage.getItem('minilab:visited');
+        if (!hasVisited) {
+            setShowWelcome(true);
+            localStorage.setItem('minilab:visited', 'true');
+        }
+    }, []);
 
     // Öğrenme kartlarını memoize et
     const learningCards = useMemo(() => {
@@ -100,10 +112,31 @@ const HomePage: React.FC = () => {
                 <p className="hero-subtitle">
                     {t('home.hero.subtitle')}
                 </p>
+            </div>
 
+            {/* Talimatlar */}
+            <InstructionCard
+                title={t('instruction.home.title')}
+                emoji="🎮"
+                steps={[
+                    t('instruction.home.step1'),
+                    t('instruction.home.step2'),
+                    t('instruction.home.step3'),
+                    t('instruction.home.step4'),
+                ]}
+            />
+
+            <div className="kids-homepage">
                 {/* Yaş Grubu Seçimi */}
-                <div className="age-filter-section">
-                    <h3 className="age-filter-title">{t('home.age.title')}</h3>
+                <div className="age-filter-section" style={{ marginTop: '20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                        <h3 className="age-filter-title">{t('home.age.title')}</h3>
+                        <HelpBubble 
+                            message={t('help.age')}
+                            icon="🎈"
+                            position="right"
+                        />
+                    </div>
                     <div className="age-filter-buttons">
                         <button
                             onClick={() => handleAgeGroupSelect('All')}
@@ -140,6 +173,13 @@ const HomePage: React.FC = () => {
 
             {/* İçerik Türü Seçimi */}
             <div className="content-type-section">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'center', marginBottom: '16px' }}>
+                    <HelpBubble 
+                        message={t('help.view')}
+                        icon="🎯"
+                        position="bottom"
+                    />
+                </div>
                 <div className="content-type-buttons" role="tablist" aria-label="İçerik türü seçimi">
                     <button
                         onClick={() => handleViewChange('learning')}
@@ -164,9 +204,16 @@ const HomePage: React.FC = () => {
 
             {/* Kategori Seçimi */}
             <div className="category-section">
-                <h2 className="section-title">
-                    {currentView === 'learning' ? t('home.category.learning') : t('home.category.experiments')}
-                </h2>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'center', marginBottom: '20px' }}>
+                    <h2 className="section-title" style={{ margin: 0 }}>
+                        {currentView === 'learning' ? t('home.category.learning') : t('home.category.experiments')}
+                    </h2>
+                    <HelpBubble 
+                        message={t('help.category')}
+                        icon="✨"
+                        position="right"
+                    />
+                </div>
                 <div className="category-grid">
                     {categories.slice(1).map(category => (
                         <button
@@ -248,6 +295,10 @@ const HomePage: React.FC = () => {
                     </div>
                 </div>
             )}
+
+            {/* Welcome Modal */}
+            {showWelcome && <WelcomeModal onClose={() => setShowWelcome(false)} />}
+        </div>
         </div>
     );
 };

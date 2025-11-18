@@ -266,5 +266,5 @@ npm run build
 
 ---
 
-**Son Güncelleme:** 18 Kasım 2025  
+**Son Güncelleme:** 18 Kasım 2025
 **Versiyon:** 1.0.0
