@@ -33,20 +33,28 @@ const Header: React.FC = () => {
                     </div>
                 </Link>
                 <nav id="navigation" className="nav-container" role="navigation" aria-label="Ana navigasyon">
-                    <Link to="/" className="nav-btn home-btn clickable">
-                        <img src="/icons/navigation/home.svg" alt="Home" className="nav-icon" />
+                    <Link to="/" className="nav-btn home-btn clickable" aria-label={t('nav.home')}>
+                        <img src="/icons/navigation/home.svg" alt="" className="nav-icon" aria-hidden="true" />
                         <span className="nav-text">{t('nav.home')}</span>
                     </Link>
-                    <Link to="/minibot" className="nav-btn chat-btn clickable">
-                        <img src="/icons/navigation/robot.svg" alt="MiniBot" className="nav-icon" />
+                    <Link to="/minibot" className="nav-btn chat-btn clickable" aria-label={t('nav.minibot')}>
+                        <img src="/icons/navigation/robot.svg" alt="" className="nav-icon" aria-hidden="true" />
                         <span className="nav-text">{t('nav.minibot')}</span>
                     </Link>
-                    <button onClick={toggleLang} className="nav-btn lang-btn clickable">
-                        <img src="/icons/navigation/language.svg" alt="Language" className="nav-icon" />
+                    <button
+                        onClick={toggleLang}
+                        className="nav-btn lang-btn clickable"
+                        aria-label={t('toggle.lang')}
+                    >
+                        <img src="/icons/navigation/language.svg" alt="" className="nav-icon" aria-hidden="true" />
                         <span className="nav-text">{t('toggle.lang')}</span>
                     </button>
-                    <button onClick={toggleDark} className="nav-btn dark-btn clickable">
-                        <img src="/icons/navigation/dark-mode.svg" alt="Dark Mode" className="nav-icon" />
+                    <button
+                        onClick={toggleDark}
+                        className="nav-btn dark-btn clickable"
+                        aria-label={t('toggle.dark')}
+                    >
+                        <img src="/icons/navigation/dark-mode.svg" alt="" className="nav-icon" aria-hidden="true" />
                         <span className="nav-text">{t('toggle.dark')}</span>
                     </button>
                 </nav>
