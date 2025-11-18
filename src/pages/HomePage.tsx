@@ -131,7 +131,7 @@ const HomePage: React.FC = () => {
                 <div className="age-filter-section" style={{ marginTop: '20px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
                         <h3 className="age-filter-title">{t('home.age.title')}</h3>
-                        <HelpBubble 
+                        <HelpBubble
                             message={t('help.age')}
                             icon="🎈"
                             position="right"
@@ -174,7 +174,7 @@ const HomePage: React.FC = () => {
             {/* İçerik Türü Seçimi */}
             <div className="content-type-section">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'center', marginBottom: '16px' }}>
-                    <HelpBubble 
+                    <HelpBubble
                         message={t('help.view')}
                         icon="🎯"
                         position="bottom"
@@ -208,7 +208,7 @@ const HomePage: React.FC = () => {
                     <h2 className="section-title" style={{ margin: 0 }}>
                         {currentView === 'learning' ? t('home.category.learning') : t('home.category.experiments')}
                     </h2>
-                    <HelpBubble 
+                    <HelpBubble
                         message={t('help.category')}
                         icon="✨"
                         position="right"
@@ -299,7 +299,7 @@ const HomePage: React.FC = () => {
             {/* Welcome Modal */}
             {showWelcome && <WelcomeModal onClose={() => setShowWelcome(false)} />}
         </div>
-        </div>
+        </div >
     );
 };
 
