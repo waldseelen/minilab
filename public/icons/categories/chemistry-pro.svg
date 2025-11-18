@@ -1,0 +1,72 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="chemGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10B981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#047857;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="liquidGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#06B6D4;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#0891B2;stop-opacity:0.9" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background Circle -->
+  <circle cx="32" cy="32" r="30" fill="url(#chemGradient)" stroke="#065F46" stroke-width="2"/>
+  
+  <!-- Test Tube Flask -->
+  <path d="M28 8 L36 8 L36 18 L44 35 L44 50 C44 54.42 40.42 58 36 58 L28 58 C23.58 58 20 54.42 20 50 L20 35 L28 18 Z" 
+        fill="#F3F4F6" 
+        stroke="#1F2937" 
+        stroke-width="1.5"/>
+  
+  <!-- Flask Neck -->
+  <rect x="30" y="5" width="4" height="6" rx="1" fill="#F3F4F6" stroke="#1F2937" stroke-width="1"/>
+  
+  <!-- Liquid -->
+  <path d="M22 38 L42 38 L42 50 C42 53.31 39.31 56 36 56 L28 56 C24.69 56 22 53.31 22 50 Z" 
+        fill="url(#liquidGradient)"/>
+  
+  <!-- Bubbles -->
+  <g fill="#FFFFFF" opacity="0.7">
+    <circle cx="28" cy="45" r="1.5">
+      <animate attributeName="cy" values="45;30;45" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="36" cy="42" r="1.2">
+      <animate attributeName="cy" values="42;25;42" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="32" cy="48" r="1">
+      <animate attributeName="cy" values="48;32;48" dur="1.8s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Molecular Structure -->
+  <g transform="translate(8, 8)">
+    <!-- Atoms -->
+    <circle cx="8" cy="8" r="3" fill="#EF4444"/>
+    <circle cx="16" cy="12" r="3" fill="#3B82F6"/>
+    <circle cx="12" cy="4" r="2.5" fill="#F59E0B"/>
+    
+    <!-- Bonds -->
+    <line x1="8" y1="8" x2="16" y2="12" stroke="#374151" stroke-width="1.5"/>
+    <line x1="8" y1="8" x2="12" y2="4" stroke="#374151" stroke-width="1.5"/>
+  </g>
+  
+  <!-- Formula -->
+  <g transform="translate(45, 15)">
+    <circle cx="4" cy="4" r="2" fill="#8B5CF6"/>
+    <circle cx="12" cy="8" r="2" fill="#EC4899"/>
+    <circle cx="8" cy="12" r="2" fill="#F97316"/>
+    <line x1="4" y1="4" x2="12" y2="8" stroke="#374151" stroke-width="1"/>
+    <line x1="12" y1="8" x2="8" y2="12" stroke="#374151" stroke-width="1"/>
+  </g>
+  
+  <!-- Steam -->
+  <g fill="#E0E7FF" opacity="0.6">
+    <path d="M30 8 Q28 5 32 3 Q36 5 34 8">
+      <animate attributeName="opacity" values="0.6;0.2;0.6" dur="2s" repeatCount="indefinite"/>
+    </path>
+    <path d="M32 6 Q30 3 34 1 Q38 3 36 6">
+      <animate attributeName="opacity" values="0.2;0.6;0.2" dur="2.2s" repeatCount="indefinite"/>
+    </path>
+  </g>
+</svg>

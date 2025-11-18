@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 140" width="220" height="140">
+  <rect width="220" height="140" fill="#A7C7E7"/>
+  <rect y="100" width="220" height="40" fill="#4aa3d8"/>
+  <circle cx="40" cy="40" r="20" fill="#fff"/>
+  <path d="M60 60 C 90 40, 120 40, 140 60" stroke="#fff" stroke-width="6" fill="none"/>
+  <polygon points="110,65 115,55 105,55" fill="#fff"/>
+  <text x="10" y="20" fill="#0b1220" font-size="12">Water Cycle</text>
+</svg>

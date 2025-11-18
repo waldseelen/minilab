@@ -1,0 +1,52 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="robotGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8B5CF6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7C3AED;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="screenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#06B6D4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0891B2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Robot Body -->
+  <rect x="8" y="12" width="16" height="16" rx="3" fill="url(#robotGradient)" stroke="#5B21B6" stroke-width="1"/>
+  
+  <!-- Robot Head -->
+  <rect x="10" y="4" width="12" height="10" rx="2" fill="url(#robotGradient)" stroke="#5B21B6" stroke-width="1"/>
+  
+  <!-- Screen -->
+  <rect x="12" y="6" width="8" height="6" rx="1" fill="url(#screenGradient)" stroke="#0E7490" stroke-width="0.5"/>
+  
+  <!-- Eyes -->
+  <circle cx="14.5" cy="8.5" r="1.2" fill="#FDE047"/>
+  <circle cx="17.5" cy="8.5" r="1.2" fill="#FDE047"/>
+  <circle cx="14.5" cy="8.5" r="0.6" fill="#1F2937"/>
+  <circle cx="17.5" cy="8.5" r="0.6" fill="#1F2937"/>
+  
+  <!-- Mouth -->
+  <rect x="14" y="10.5" width="4" height="0.8" rx="0.4" fill="#1F2937"/>
+  
+  <!-- Antenna -->
+  <line x1="16" y1="4" x2="16" y2="1" stroke="#5B21B6" stroke-width="1.5" stroke-linecap="round"/>
+  <circle cx="16" cy="1" r="1" fill="#EF4444"/>
+  
+  <!-- Arms -->
+  <rect x="5" y="16" width="3" height="6" rx="1.5" fill="url(#robotGradient)" stroke="#5B21B6" stroke-width="1"/>
+  <rect x="24" y="16" width="3" height="6" rx="1.5" fill="url(#robotGradient)" stroke="#5B21B6" stroke-width="1"/>
+  
+  <!-- Hands -->
+  <circle cx="6.5" cy="23" r="1.2" fill="#FDE047"/>
+  <circle cx="25.5" cy="23" r="1.2" fill="#FDE047"/>
+  
+  <!-- Chest Panel -->
+  <rect x="12" y="16" width="8" height="4" rx="1" fill="#312E81" opacity="0.3"/>
+  <circle cx="14" cy="18" r="0.8" fill="#10B981"/>
+  <circle cx="16" cy="18" r="0.8" fill="#F59E0B"/>
+  <circle cx="18" cy="18" r="0.8" fill="#EF4444"/>
+  
+  <!-- Legs -->
+  <rect x="11" y="28" width="3" height="3" rx="1" fill="url(#robotGradient)" stroke="#5B21B6" stroke-width="1"/>
+  <rect x="18" y="28" width="3" height="3" rx="1" fill="url(#robotGradient)" stroke="#5B21B6" stroke-width="1"/>
+</svg>

@@ -1,0 +1,43 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#7C3AED;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#EC4899;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="sparkleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FDE047;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F97316;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Main Flask Shape -->
+  <path d="M45 20 L75 20 L75 35 L85 60 L85 85 C85 92.18 79.18 98 72 98 L48 98 C40.82 98 35 92.18 35 85 L35 60 L45 35 Z" 
+        fill="url(#logoGradient)" 
+        stroke="#1E293B" 
+        stroke-width="2"/>
+  
+  <!-- Flask Neck -->
+  <rect x="50" y="15" width="20" height="10" rx="2" fill="url(#logoGradient)" stroke="#1E293B" stroke-width="1"/>
+  
+  <!-- Liquid Inside -->
+  <path d="M40 65 L80 65 L80 85 C80 89.42 76.42 93 72 93 L48 93 C43.58 93 40 89.42 40 85 Z" 
+        fill="#06B6D4" 
+        opacity="0.8"/>
+  
+  <!-- Bubbles -->
+  <circle cx="52" cy="75" r="3" fill="#FFFFFF" opacity="0.6"/>
+  <circle cx="68" cy="70" r="2" fill="#FFFFFF" opacity="0.7"/>
+  <circle cx="58" cy="82" r="2.5" fill="#FFFFFF" opacity="0.5"/>
+  
+  <!-- Sparkles -->
+  <g fill="url(#sparkleGradient)">
+    <path d="M25 30 L27 35 L32 33 L27 37 L25 42 L23 37 L18 35 L23 33 Z"/>
+    <path d="M90 25 L92 30 L97 28 L92 32 L90 37 L88 32 L83 30 L88 28 Z"/>
+    <path d="M95 70 L97 75 L102 73 L97 77 L95 82 L93 77 L88 75 L93 73 Z"/>
+    <path d="M15 75 L17 80 L22 78 L17 82 L15 87 L13 82 L8 80 L13 78 Z"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="60" y="112" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#1E293B">MiniLab</text>
+</svg>

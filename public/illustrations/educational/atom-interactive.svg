@@ -1,0 +1,114 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="nucleusGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#FDE047;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F59E0B;stop-opacity:1" />
+    </radialGradient>
+    <linearGradient id="electronGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1D4ED8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <circle cx="100" cy="100" r="95" fill="#0F172A" stroke="#1E293B" stroke-width="2"/>
+  
+  <!-- Electron Orbits -->
+  <g fill="none" stroke="#475569" stroke-width="1.5" opacity="0.6">
+    <ellipse cx="100" cy="100" rx="70" ry="25"/>
+    <ellipse cx="100" cy="100" rx="70" ry="25" transform="rotate(60 100 100)"/>
+    <ellipse cx="100" cy="100" rx="70" ry="25" transform="rotate(120 100 100)"/>
+  </g>
+  
+  <!-- Nucleus (Protons and Neutrons) -->
+  <g transform="translate(100, 100)">
+    <!-- Protons (Red) -->
+    <circle cx="-3" cy="-3" r="4" fill="#EF4444" stroke="#DC2626" stroke-width="1"/>
+    <circle cx="3" cy="-3" r="4" fill="#EF4444" stroke="#DC2626" stroke-width="1"/>
+    <circle cx="-3" cy="3" r="4" fill="#EF4444" stroke="#DC2626" stroke-width="1"/>
+    <circle cx="3" cy="3" r="4" fill="#EF4444" stroke="#DC2626" stroke-width="1"/>
+    
+    <!-- Neutrons (Blue) -->
+    <circle cx="0" cy="-6" r="4" fill="#3B82F6" stroke="#1D4ED8" stroke-width="1"/>
+    <circle cx="-6" cy="0" r="4" fill="#3B82F6" stroke="#1D4ED8" stroke-width="1"/>
+    <circle cx="6" cy="0" r="4" fill="#3B82F6" stroke="#1D4ED8" stroke-width="1"/>
+    <circle cx="0" cy="6" r="4" fill="#3B82F6" stroke="#1D4ED8" stroke-width="1"/>
+    
+    <!-- Central glow -->
+    <circle cx="0" cy="0" r="15" fill="url(#nucleusGradient)" opacity="0.3"/>
+  </g>
+  
+  <!-- Animated Electrons -->
+  <g fill="#10B981">
+    <!-- First orbit electron -->
+    <circle cx="170" cy="100" r="3">
+      <animateMotion dur="2s" repeatCount="indefinite" rotate="auto">
+        <mpath href="#orbit1"/>
+      </animateMotion>
+    </circle>
+    
+    <!-- Second orbit electron -->
+    <circle cx="130" cy="75" r="3">
+      <animateMotion dur="1.8s" repeatCount="indefinite" rotate="auto">
+        <mpath href="#orbit2"/>
+      </animateMotion>
+    </circle>
+    
+    <!-- Third orbit electron -->
+    <circle cx="70" cy="125" r="3">
+      <animateMotion dur="2.2s" repeatCount="indefinite" rotate="auto">
+        <mpath href="#orbit3"/>
+      </animateMotion>
+    </circle>
+  </g>
+  
+  <!-- Invisible paths for electron motion -->
+  <defs>
+    <ellipse id="orbit1" cx="100" cy="100" rx="70" ry="25" fill="none"/>
+    <ellipse id="orbit2" cx="100" cy="100" rx="70" ry="25" transform="rotate(60 100 100)" fill="none"/>
+    <ellipse id="orbit3" cx="100" cy="100" rx="70" ry="25" transform="rotate(120 100 100)" fill="none"/>
+  </defs>
+  
+  <!-- Labels -->
+  <g font-family="Arial, sans-serif" font-size="12" font-weight="bold">
+    <!-- Proton label -->
+    <g transform="translate(130, 80)">
+      <rect x="0" y="0" width="50" height="20" rx="10" fill="#EF4444" opacity="0.9"/>
+      <text x="25" y="14" text-anchor="middle" fill="#FFFFFF">Proton</text>
+      <line x1="0" y1="10" x2="-25" y2="-5" stroke="#EF4444" stroke-width="1" marker-end="url(#arrowhead)"/>
+    </g>
+    
+    <!-- Neutron label -->
+    <g transform="translate(20, 80)">
+      <rect x="0" y="0" width="50" height="20" rx="10" fill="#3B82F6" opacity="0.9"/>
+      <text x="25" y="14" text-anchor="middle" fill="#FFFFFF">Nötron</text>
+      <line x1="50" y1="10" x2="75" y2="-5" stroke="#3B82F6" stroke-width="1" marker-end="url(#arrowhead)"/>
+    </g>
+    
+    <!-- Electron label -->
+    <g transform="translate(130, 130)">
+      <rect x="0" y="0" width="55" height="20" rx="10" fill="#10B981" opacity="0.9"/>
+      <text x="27.5" y="14" text-anchor="middle" fill="#FFFFFF">Elektron</text>
+    </g>
+  </g>
+  
+  <!-- Arrow marker -->
+  <defs>
+    <marker id="arrowhead" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+      <polygon points="0 0, 6 2, 0 4" fill="#374151"/>
+    </marker>
+  </defs>
+  
+  <!-- Energy rings (subtle) -->
+  <g fill="none" stroke="#10B981" stroke-width="0.5" opacity="0.3">
+    <circle cx="100" cy="100" r="30">
+      <animate attributeName="r" values="30;35;30" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="100" cy="100" r="50">
+      <animate attributeName="r" values="50;55;50" dur="3.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="100" cy="100" r="75">
+      <animate attributeName="r" values="75;80;75" dur="4s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

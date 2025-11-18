@@ -1,0 +1,164 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="robotGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E1F5FE;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#81D4FA;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0277BD;stop-opacity:1" />
+    </radialGradient>
+    <radialGradient id="brainGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#E91E63;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#AD1457;stop-opacity:1" />
+    </radialGradient>
+    <linearGradient id="circuitGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4CAF50;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2E7D32;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Robot head -->
+  <g transform="translate(50,45)">
+    <!-- Main head -->
+    <rect x="-18" y="-18" width="36" height="30" rx="8" fill="url(#robotGradient)" stroke="#0277BD" stroke-width="2"/>
+    
+    <!-- Eyes -->
+    <circle cx="-8" cy="-8" r="4" fill="#1976D2" stroke="#0D47A1" stroke-width="1"/>
+    <circle cx="8" cy="-8" r="4" fill="#1976D2" stroke="#0D47A1" stroke-width="1"/>
+    
+    <!-- Eye pupils with AI glow -->
+    <circle cx="-8" cy="-8" r="2" fill="#00E676" opacity="0.9"/>
+    <circle cx="8" cy="-8" r="2" fill="#00E676" opacity="0.9"/>
+    <circle cx="-8" cy="-8" r="1" fill="#FFFFFF"/>
+    <circle cx="8" cy="-8" r="1" fill="#FFFFFF"/>
+    
+    <!-- Mouth/speaker grille -->
+    <rect x="-8" y="2" width="16" height="6" rx="3" fill="#37474F" stroke="#263238" stroke-width="1"/>
+    <g fill="#546E7A">
+      <rect x="-6" y="3" width="2" height="1"/>
+      <rect x="-3" y="3" width="2" height="1"/>
+      <rect x="0" y="3" width="2" height="1"/>
+      <rect x="3" y="3" width="2" height="1"/>
+      <rect x="-6" y="5" width="2" height="1"/>
+      <rect x="-3" y="5" width="2" height="1"/>
+      <rect x="0" y="5" width="2" height="1"/>
+      <rect x="3" y="5" width="2" height="1"/>
+    </g>
+    
+    <!-- Antennae -->
+    <g stroke="#0277BD" stroke-width="2" fill="none">
+      <line x1="-12" y1="-18" x2="-12" y2="-25"/>
+      <line x1="12" y1="-18" x2="12" y2="-25"/>
+    </g>
+    <circle cx="-12" cy="-25" r="2" fill="#FF4081"/>
+    <circle cx="12" cy="-25" r="2" fill="#FF4081"/>
+    
+    <!-- AI indicator lights -->
+    <g opacity="0.9">
+      <circle cx="-15" cy="0" r="1.5" fill="#00E676"/>
+      <circle cx="15" cy="0" r="1.5" fill="#FF4081"/>
+      <circle cx="0" cy="-15" r="1" fill="#FFC107"/>
+    </g>
+  </g>
+  
+  <!-- Brain/Neural network -->
+  <g transform="translate(25,25)">
+    <!-- Brain outline -->
+    <path d="M0 0 Q-8 -8, -5 -15 Q0 -18, 5 -15 Q8 -8, 0 0 Q-3 8, 0 0" 
+          fill="url(#brainGradient)" stroke="#AD1457" stroke-width="1.5" opacity="0.8"/>
+    
+    <!-- Neural connections -->
+    <g stroke="#FF4081" stroke-width="1" fill="none" opacity="0.7">
+      <path d="M-3 -8 Q0 -10, 3 -8"/>
+      <path d="M-2 -3 Q0 -5, 2 -3"/>
+      <path d="M-4 2 Q0 0, 4 2"/>
+    </g>
+    
+    <!-- Neural nodes -->
+    <g fill="#FFFFFF" opacity="0.9">
+      <circle cx="-3" cy="-8" r="1"/>
+      <circle cx="3" cy="-8" r="1"/>
+      <circle cx="-2" cy="-3" r="0.8"/>
+      <circle cx="2" cy="-3" r="0.8"/>
+      <circle cx="-4" cy="2" r="0.8"/>
+      <circle cx="4" cy="2" r="0.8"/>
+      <circle cx="0" cy="-5" r="0.6"/>
+      <circle cx="0" cy="0" r="0.6"/>
+    </g>
+  </g>
+  
+  <!-- Circuit board pattern -->
+  <g transform="translate(75,25)">
+    <rect x="-8" y="-8" width="16" height="16" rx="2" fill="url(#circuitGradient)" stroke="#2E7D32" stroke-width="1" opacity="0.8"/>
+    
+    <!-- Circuit traces -->
+    <g stroke="#81C784" stroke-width="1.5" fill="none" opacity="0.9">
+      <path d="M-6 -4 L6 -4"/>
+      <path d="M-6 0 L6 0"/>
+      <path d="M-6 4 L6 4"/>
+      <path d="M-4 -6 L-4 6"/>
+      <path d="M0 -6 L0 6"/>
+      <path d="M4 -6 L4 6"/>
+    </g>
+    
+    <!-- Circuit nodes -->
+    <g fill="#A5D6A7">
+      <circle cx="-4" cy="-4" r="1"/>
+      <circle cx="0" cy="-4" r="1"/>
+      <circle cx="4" cy="-4" r="1"/>
+      <circle cx="-4" cy="0" r="1"/>
+      <circle cx="4" cy="0" r="1"/>
+      <circle cx="-4" cy="4" r="1"/>
+      <circle cx="0" cy="4" r="1"/>
+      <circle cx="4" cy="4" r="1"/>
+    </g>
+  </g>
+  
+  <!-- Data streams -->
+  <g transform="translate(20,70)">
+    <g stroke="#00E676" stroke-width="2" fill="none" opacity="0.8">
+      <path d="M0 0 Q10 -5, 20 0 Q30 5, 40 0">
+        <animate attributeName="stroke-dasharray" values="0,40;10,30;0,40" dur="2s" repeatCount="indefinite"/>
+      </path>
+    </g>
+    
+    <!-- Binary digits -->
+    <g fill="#00E676" font-family="monospace" font-size="8" opacity="0.7">
+      <text x="5" y="-2">1</text>
+      <text x="15" y="3">0</text>
+      <text x="25" y="-1">1</text>
+      <text x="35" y="4">1</text>
+    </g>
+  </g>
+  
+  <!-- AI Processing indicators -->
+  <g transform="translate(75,70)">
+    <rect x="-10" y="-3" width="20" height="6" rx="3" fill="#1976D2" stroke="#0D47A1" stroke-width="1" opacity="0.8"/>
+    
+    <!-- Progress bar -->
+    <rect x="-8" y="-1" width="12" height="2" rx="1" fill="#00E676" opacity="0.9">
+      <animate attributeName="width" values="0;16;12;16" dur="1.5s" repeatCount="indefinite"/>
+    </rect>
+    
+    <text x="0" y="1" text-anchor="middle" fill="white" font-size="4" font-weight="bold">AI</text>
+  </g>
+  
+  <!-- Floating data particles -->
+  <g fill="#00E676" opacity="0.6">
+    <circle cx="10" cy="50" r="1">
+      <animate attributeName="cy" values="50;40;50" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="90" cy="60" r="0.8">
+      <animate attributeName="cy" values="60;50;60" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="30" cy="80" r="1.2">
+      <animate attributeName="cy" values="80;70;80" dur="3.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Sparkles/energy -->
+  <g fill="#FFC107" opacity="0.9">
+    <path d="M15 15 L17 17 L15 19 L13 17 Z"/>
+    <path d="M85 85 L87 87 L85 89 L83 87 Z"/>
+    <path d="M85 15 L86 16 L85 17 L84 16 Z"/>
+    <path d="M15 85 L16 86 L15 87 L14 86 Z"/>
+  </g>
+</svg>

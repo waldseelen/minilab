@@ -1,0 +1,69 @@
+/*
+  ========================================
+  THEME VARIABLES
+  ========================================
+  This file contains all CSS custom properties (variables)
+  for light and dark themes to ensure a consistent look and feel.
+*/
+
+/*
+  -------------------
+  LIGHT THEME (default)
+  -------------------
+  Variables for the light color scheme.
+*/
+:root {
+    /* Core Colors */
+    --bg: #f8f9fa;
+    /* Light gray background */
+    --surface: #ffffff;
+    /* White surface for cards, modals */
+    --card: #ffffff;
+    --text: #212529;
+    /* Dark text for readability */
+    --muted: #6c757d;
+    /* Muted text for secondary info */
+    --border: #dee2e6;
+    /* Light border color */
+
+    /* Pastel Palette */
+    --pastel-blue: #a7c7e7;
+    --pastel-pink: #f8c8dc;
+    --pastel-green: #c1e1c1;
+    --pastel-yellow: #fdfd96;
+    --pastel-purple: #d8bfd8;
+
+    /* Spacing & Sizing */
+    --spacing-unit: 8px;
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+    --border-radius-lg: 16px;
+
+    /* Typography */
+    --font-family-sans: 'Poppins', 'Comic Sans MS', system-ui, -apple-system, sans-serif;
+    --font-size-base: 18px;
+    --line-height-base: 1.6;
+}
+
+/*
+  -------------------
+  DARK THEME
+  -------------------
+  Variables for the dark color scheme, activated by [data-theme='dark'].
+*/
+[data-theme='dark'] {
+    /* Core Colors */
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --card: #111827;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --border: #334155;
+
+    /* Pastel Palette (adjusted for dark background) */
+    --pastel-blue: #8cb9e2;
+    --pastel-pink: #f2b3cf;
+    --pastel-green: #a9d6a9;
+    --pastel-yellow: #fafaa0;
+    --pastel-purple: #c9b2c9;
+}

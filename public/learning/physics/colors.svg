@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200">
+  <!-- Rainbow -->
+  <path d="M 50 150 Q 150 50 250 150" stroke="#ff0000" stroke-width="15" fill="none"/>
+  <path d="M 55 155 Q 150 60 245 155" stroke="#ff8000" stroke-width="15" fill="none"/>
+  <path d="M 60 160 Q 150 70 240 160" stroke="#ffff00" stroke-width="15" fill="none"/>
+  <path d="M 65 165 Q 150 80 235 165" stroke="#00ff00" stroke-width="15" fill="none"/>
+  <path d="M 70 170 Q 150 90 230 170" stroke="#0080ff" stroke-width="15" fill="none"/>
+  <path d="M 75 175 Q 150 100 225 175" stroke="#4000ff" stroke-width="15" fill="none"/>
+  <path d="M 80 180 Q 150 110 220 180" stroke="#8000ff" stroke-width="15" fill="none"/>
+  
+  <!-- Sun -->
+  <circle cx="60" cy="60" r="15" fill="#ffd700"/>
+  <line x1="45" y1="45" x2="35" y2="35" stroke="#ffd700" stroke-width="3"/>
+  <line x1="75" y1="45" x2="85" y2="35" stroke="#ffd700" stroke-width="3"/>
+  <line x1="45" y1="75" x2="35" y2="85" stroke="#ffd700" stroke-width="3"/>
+  <line x1="75" y1="75" x2="85" y2="85" stroke="#ffd700" stroke-width="3"/>
+  <line x1="30" y1="60" x2="20" y2="60" stroke="#ffd700" stroke-width="3"/>
+  <line x1="90" y1="60" x2="100" y2="60" stroke="#ffd700" stroke-width="3"/>
+  <line x1="60" y1="30" x2="60" y2="20" stroke="#ffd700" stroke-width="3"/>
+  <line x1="60" y1="90" x2="60" y2="100" stroke="#ffd700" stroke-width="3"/>
+  
+  <!-- Colored Objects -->
+  <!-- Red Apple -->
+  <circle cx="220" cy="70" r="12" fill="#ff0000"/>
+  <ellipse cx="225" cy="65" rx="3" ry="8" fill="#00aa00"/>
+  <text x="205" y="95" font-family="Arial" font-size="12" fill="#333">🍎</text>
+  
+  <!-- Blue Sky -->
+  <rect x="250" y="30" width="30" height="20" fill="#87ceeb" rx="5"/>
+  <circle cx="260" cy="35" r="3" fill="#ffffff" opacity="0.8"/>
+  <circle cx="270" cy="37" r="4" fill="#ffffff" opacity="0.6"/>
+  <text x="245" y="60" font-family="Arial" font-size="10" fill="#333">Gökyüzü</text>
+  
+  <!-- Green Grass -->
+  <rect x="20" y="170" width="260" height="20" fill="#32cd32"/>
+  <path d="M 30 170 L 35 160 L 40 170" fill="#228b22"/>
+  <path d="M 50 170 L 55 160 L 60 170" fill="#228b22"/>
+  <path d="M 70 170 L 75 160 L 80 170" fill="#228b22"/>
+  <path d="M 200 170 L 205 160 L 210 170" fill="#228b22"/>
+  <path d="M 220 170 L 225 160 L 230 170" fill="#228b22"/>
+</svg>

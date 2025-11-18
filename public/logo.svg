@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 32" width="120" height="32">
+  <rect rx="8" width="120" height="32" fill="#0b1220"/>
+  <g font-family="'Comic Sans MS', cursive" font-weight="700" font-size="18" fill="#e5e7eb">
+    <text x="10" y="22">CHILD</text>
+    <text x="60" y="22" fill="#6aa3d6">.edu</text>
+  </g>
+  <circle cx="105" cy="10" r="4" fill="#e4a6bb"/>
+  <circle cx="95" cy="10" r="3" fill="#9fcaa0"/>
+</svg>
