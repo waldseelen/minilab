@@ -1,12 +1,12 @@
-import React, { useCallback, useMemo, useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import ExperimentCard from '../components/ExperimentCard';
-import LearningCard from '../components/LearningCard';
 import HelpBubble from '../components/HelpBubble';
 import InstructionCard from '../components/InstructionCard';
+import LearningCard from '../components/LearningCard';
 import WelcomeModal from '../components/WelcomeModal';
 import { getExperiments } from '../data/experiments';
 import { getCardsByAge, getCardsByCategoryAndAge } from '../data/learningCards';
+import { useI18n } from '../i18n';
 
 const categories = ['All', 'Physics', 'Chemistry', 'Biology', 'Environmental Science', 'Engineering', 'Astronomy', 'Technology', 'AI'];
 const categoryIcons: Record<string, string> = {
@@ -33,9 +33,8 @@ const categoryEmoji: Record<string, string> = {
     AI: '🤖',
 };
 
-const HomePage: React.FC = () => {
-    const { t, i18n } = useTranslation();
-    const lang = i18n.language;
+const HomePage = () => {
+    const { t, lang } = useI18n();
     const [selectedCategory, setSelectedCategory] = useState('Physics');
     const [selectedAgeGroup, setSelectedAgeGroup] = useState<'All' | '4-6' | '6-8' | '8-10'>('6-8');
     const [currentView, setCurrentView] = useState<'learning' | 'experiments'>('learning');
@@ -86,8 +85,10 @@ const HomePage: React.FC = () => {
 
     const handleViewChange = useCallback((view: 'learning' | 'experiments') => {
         setCurrentView(view);
-    }, []); return (
-        <div className="kids-homepage">
+    }, []);
+
+    return (
+        <div className="kids-homepage container mx-auto">
             {/* Hero Section */}
             <div className="hero-section">
                 <div className="hero-background-elements">
@@ -126,38 +127,36 @@ const HomePage: React.FC = () => {
                 ]}
             />
 
-            <div className="kids-homepage">
-                {/* Yaş Grubu Seçimi */}
-                <div className="age-filter-section" style={{ marginTop: '20px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-                        <h3 className="age-filter-title">{t('home.age.title')}</h3>
-                        <HelpBubble
-                            message={t('help.age')}
-                            icon="🎈"
-                            position="right"
-                        />
-                    </div>
-                    <div className="age-filter-buttons">
+            {/* Yaş Grubu Seçimi */}
+            <div className="age-filter-section" style={{ marginTop: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                    <h3 className="age-filter-title">{t('home.age.title')}</h3>
+                    <HelpBubble
+                        message={t('help.age')}
+                        icon="🎈"
+                        position="right"
+                    />
+                </div>
+                <div className="age-filter-buttons">
+                    <button
+                        onClick={() => handleAgeGroupSelect('All')}
+                        className={`age-filter-btn clickable ${selectedAgeGroup === 'All' ? 'active' : ''}`}
+                        aria-label="Tüm yaş gruplarını göster"
+                        aria-pressed={selectedAgeGroup === 'All'}
+                    >
+                        🌟 {t('home.age.all') || 'Tümü'}
+                    </button>
+                    {(['4-6', '6-8', '8-10'] as const).map(age => (
                         <button
-                            onClick={() => handleAgeGroupSelect('All')}
-                            className={`age-filter-btn clickable ${selectedAgeGroup === 'All' ? 'active' : ''}`}
-                            aria-label="Tüm yaş gruplarını göster"
-                            aria-pressed={selectedAgeGroup === 'All'}
+                            key={age}
+                            onClick={() => handleAgeGroupSelect(age)}
+                            className={`age-filter-btn clickable ${selectedAgeGroup === age ? 'active' : ''}`}
+                            aria-label={`${age} yaş grubunu seç`}
+                            aria-pressed={selectedAgeGroup === age}
                         >
-                            🌟 {t('home.age.all') || 'Tümü'}
+                            👶 {age} yaş
                         </button>
-                        {(['4-6', '6-8', '8-10'] as const).map(age => (
-                            <button
-                                key={age}
-                                onClick={() => handleAgeGroupSelect(age)}
-                                className={`age-filter-btn clickable ${selectedAgeGroup === age ? 'active' : ''}`}
-                                aria-label={`${age} yaş grubunu seç`}
-                                aria-pressed={selectedAgeGroup === age}
-                            >
-                                👶 {age} yaş
-                            </button>
-                        ))}
-                    </div>
+                    ))}
                 </div>
             </div>
 
@@ -247,58 +246,65 @@ const HomePage: React.FC = () => {
             </div>
 
             {/* İçerik Gösterimi */}
-            {currentView === 'learning' && learningCards.length > 0 && (
-                <div className="learning-section">
-                    <h2 className="section-title">
-                        {categoryEmoji[selectedCategory]} {selectedCategory} - Seviye {selectedAgeGroup} yaş
-                    </h2>
-                    <div className="learning-cards-container">
-                        {learningCards.map((card, index) => (
-                            <div key={card.id} className="learning-card-wrapper">
-                                <div className="learning-card-level">📚 {index + 1}{t('level.card')}</div>
-                                <LearningCard card={card} />
-                            </div>
-                        ))}
+            {
+                currentView === 'learning' && learningCards.length > 0 && (
+                    <div className="learning-section tab-panel">
+                        <h2 className="section-title">
+                            {categoryEmoji[selectedCategory]} {selectedCategory} - Seviye {selectedAgeGroup} yaş
+                        </h2>
+                        <div className="learning-cards-container">
+                            {learningCards.map((card, index) => (
+                                <div key={card.id} className="learning-card-wrapper">
+                                    <div className="learning-card-level">📚 {index + 1}{t('level.card')}</div>
+                                    <LearningCard card={card} />
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
-            {currentView === 'experiments' && (
-                <div className="experiments-section">
-                    <h2 className="section-title">
-                        {categoryEmoji[selectedCategory]} {selectedCategory} Deneyleri - {selectedAgeGroup} yaş
-                    </h2>
-                    <div className="experiments-grid">
-                        {filteredExperiments.map(experiment => (
-                            <ExperimentCard key={experiment.id} experiment={experiment} />
-                        ))}
+            {
+                currentView === 'experiments' && (
+                    <div className="experiments-section tab-panel">
+                        <h2 className="section-title">
+                            {categoryEmoji[selectedCategory]} {selectedCategory} Deneyleri - {selectedAgeGroup} yaş
+                        </h2>
+                        <div className="experiments-grid">
+                            {filteredExperiments.map(experiment => (
+                                <ExperimentCard key={experiment.id} experiment={experiment} />
+                            ))}
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
-            {currentView === 'learning' && learningCards.length === 0 && (
-                <div className="no-content" role="status" aria-live="polite">
-                    <div className="no-content-message">
-                        <span className="no-content-emoji" aria-hidden="true">🔄</span>
-                        <h3>{t('home.nocontent.title')}</h3>
-                        <p>{t('home.nocontent.subtitle')}</p>
+            {
+                currentView === 'learning' && learningCards.length === 0 && (
+                    <div className="no-content" role="status" aria-live="polite">
+                        <div className="no-content-message">
+                            <span className="no-content-emoji" aria-hidden="true">🔄</span>
+                            <h3>{t('home.nocontent.title')}</h3>
+                            <p>{t('home.nocontent.subtitle')}</p>
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
-            {currentView === 'experiments' && filteredExperiments.length === 0 && (
-                <div className="no-content" role="status" aria-live="polite">
-                    <div className="no-content-message">
-                        <span className="no-content-emoji" aria-hidden="true">🔍</span>
-                        <h3>{t('home.nocontent.title')}</h3>
-                        <p>{t('home.nocontent.subtitle')}</p>
+            {
+                currentView === 'experiments' && filteredExperiments.length === 0 && (
+                    <div className="no-content" role="status" aria-live="polite">
+                        <div className="no-content-message">
+                            <span className="no-content-emoji" aria-hidden="true">🔍</span>
+                            <h3>{t('home.nocontent.title')}</h3>
+                            <p>{t('home.nocontent.subtitle')}</p>
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             {/* Welcome Modal */}
             {showWelcome && <WelcomeModal onClose={() => setShowWelcome(false)} />}
-        </div>
         </div >
     );
 };

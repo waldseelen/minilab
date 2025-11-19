@@ -40,12 +40,29 @@ MiniLab, 4-10 yaş arası çocuklar için tasarlanmış, eğlenceli ve öğretic
 
 - **Frontend Framework:** React 19 + TypeScript
 - **Build Tool:** Vite 7
-- **Styling:** Tailwind CSS 4
-- **Routing:** React Router DOM
+- **Styling:** Tailwind CSS 4 + Custom CSS
+- **Routing:** React Router DOM 7
 - **AI Integration:** Google Generative AI (Gemini)
-- **Animations:** PixiJS
-- **Internationalization:** i18next
-- **Linting:** ESLint 9
+- **Animations:** PixiJS 8
+- **Internationalization:** Custom i18n Implementation
+- **Linting:** ESLint 9 + TypeScript ESLint
+- **Code Quality:** Prettier + Unused Imports Plugin
+
+## ✨ Son Güncellemeler
+
+### v2.0 - Tam Yenileme (2025)
+- ✅ Modern React 19 yapısına geçiş (React.FC kaldırıldı)
+- ✅ Tüm TypeScript type hataları düzeltildi
+- ✅ CSS hizalama ve responsive tasarım iyileştirildi
+- ✅ Erişilebilirlik (a11y) iyileştirmeleri
+  - Skip links eklendi
+  - ARIA labels ve roles eklendi
+  - Keyboard navigation desteği
+- ✅ Performans optimizasyonları
+  - Code splitting ve lazy loading
+  - useMemo ve useCallback optimizasyonları
+- ✅ i18n çeviri eksiklikleri tamamlandı
+- ✅ Gelişmiş hata yönetimi (ErrorBoundary)
 
 ## 🚀 Kurulum
 

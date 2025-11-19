@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import type { Experiment } from '../data/experiments';
 import { useI18n } from '../i18n';
@@ -7,7 +6,7 @@ interface ExperimentCardProps {
     experiment: Experiment;
 }
 
-const ExperimentCard: React.FC<ExperimentCardProps> = ({ experiment }) => {
+const ExperimentCard = ({ experiment }: ExperimentCardProps) => {
     const { t } = useI18n();
 
     const categoryEmojis: Record<string, string> = {

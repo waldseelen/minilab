@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useI18n } from '../i18n';
 
 interface WelcomeModalProps {
     onClose: () => void;
 }
 
-const WelcomeModal: React.FC<WelcomeModalProps> = ({ onClose }) => {
+const WelcomeModal = ({ onClose }: WelcomeModalProps) => {
     const { t } = useI18n();
     const [step, setStep] = useState(0);
     const [isVisible, setIsVisible] = useState(false);

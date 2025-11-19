@@ -1,14 +1,14 @@
-import React from 'react';
-
-const Footer: React.FC = () => {
-  return (
-    <footer className="bg-gray-200 p-4 mt-8">
-      <div className="container mx-auto text-center text-gray-600">
-        <p className="font-semibold">© 2024 MiniLab</p>
-        <p>Bilim ve eğlence bir arada! ✨</p>
-      </div>
-    </footer>
-  );
+const Footer = () => {
+    return (
+        <footer className="bg-surface border-t border-border p-6 mt-12 transition-colors duration-300">
+            <div className="container mx-auto text-center text-muted">
+                <p className="font-semibold text-lg mb-2">© 2024 MiniLab</p>
+                <p className="flex items-center justify-center gap-2">
+                    Bilim ve eğlence bir arada! <span className="animate-bounce">✨</span>
+                </p>
+            </div>
+        </footer>
+    );
 };
 
 export default Footer;

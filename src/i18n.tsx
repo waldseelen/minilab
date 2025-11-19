@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
 type Lang = 'tr' | 'en';
 
@@ -10,8 +10,8 @@ const tr: Dictionary = {
     'nav.profile': 'Profil',
     'nav.minibot': 'MiniBot',
     'nav.parent': 'Ebeveyn Paneli',
-    'toggle.dark': 'Tema: Açık/Koyu',
-    'toggle.lang': 'TR/EN',
+    'toggle.dark': 'Açık/Koyu Tema',
+    'toggle.lang': 'Dil: TR/EN',
     'home.title': 'MiniLab\'a Hoş Geldin! 🎉',
     'home.all': 'Hepsi',
     'home.hero.title': 'Bilimi Öğrenmeye Hazır mısın?',
@@ -24,6 +24,7 @@ const tr: Dictionary = {
     'home.category.experiments': '🧪 Hangi Deneyleri Yapmak İstiyorsun?',
     'home.nocontent.title': 'Bu kategori için içerik hazırlanıyor!',
     'home.nocontent.subtitle': 'Başka bir kategori veya yaş grubu seçmeyi dene! 😊',
+    'cat.All': 'Tümü',
     'cat.Physics': 'Fizik',
     'cat.Chemistry': 'Kimya',
     'cat.Biology': 'Biyoloji',
@@ -91,7 +92,10 @@ const tr: Dictionary = {
     'instruction.home.step1': 'Önce yaşını seç ki sana uygun içerikler görelim!',
     'instruction.home.step2': 'Sonra ilgini çeken bir kategori seç (Fizik, Kimya, vb.)',
     'instruction.home.step3': 'Bilgi kartlarını oku veya deneylere bak!',
-    'instruction.home.step4': 'Her şeyi tamamladıkça rozetler kazanacaksın! 🏆'
+    'instruction.home.step4': 'Her şeyi tamamladıkça rozetler kazanacaksın! 🏆',
+    // Skip links
+    'skip.main': 'Ana içeriğe geç',
+    'skip.nav': 'Navigasyona geç'
 };
 
 const en: Dictionary = {
@@ -100,8 +104,8 @@ const en: Dictionary = {
     'nav.profile': 'Profile',
     'nav.minibot': 'MiniBot',
     'nav.parent': 'Parent Dashboard',
-    'toggle.dark': 'Dark Mode',
-    'toggle.lang': 'TR/EN',
+    'toggle.dark': 'Light/Dark Theme',
+    'toggle.lang': 'Language: TR/EN',
     'home.title': 'Welcome to MiniLab!',
     'home.all': 'All',
     'home.hero.title': 'Ready to Learn Science?',
@@ -114,6 +118,7 @@ const en: Dictionary = {
     'home.category.experiments': '🧪 Which Experiments Do You Want to Do?',
     'home.nocontent.title': 'Content is being prepared for this category!',
     'home.nocontent.subtitle': 'Try selecting another category or age group! 😊',
+    'cat.All': 'All',
     'cat.Physics': 'Physics',
     'cat.Chemistry': 'Chemistry',
     'cat.Biology': 'Biology',
@@ -181,7 +186,10 @@ const en: Dictionary = {
     'instruction.home.step1': 'First, select your age so we can show you the right content!',
     'instruction.home.step2': 'Then pick a category you\'re interested in (Physics, Chemistry, etc.)',
     'instruction.home.step3': 'Read learning cards or check out experiments!',
-    'instruction.home.step4': 'You\'ll earn badges as you complete everything! 🏆'
+    'instruction.home.step4': 'You\'ll earn badges as you complete everything! 🏆',
+    // Skip links
+    'skip.main': 'Skip to main content',
+    'skip.nav': 'Skip to navigation'
 };
 
 const DICTS: Record<Lang, Dictionary> = { tr, en };
@@ -194,7 +202,7 @@ type Ctx = {
 
 const I18nContext = createContext<Ctx | null>(null);
 
-export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const I18nProvider = ({ children }: { children: ReactNode }) => {
     const [lang, setLang] = useState<Lang>('tr');
 
     useEffect(() => {

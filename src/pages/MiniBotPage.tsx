@@ -1,5 +1,5 @@
 import type { ChatSession } from '@google/generative-ai';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import BackButton from '../components/BackButton';
 import HelpBubble from '../components/HelpBubble';
 import InstructionCard from '../components/InstructionCard';
@@ -11,7 +11,7 @@ interface Message {
     sender: 'user' | 'bot';
 }
 
-const MiniBotPage: React.FC = () => {
+const MiniBotPage = () => {
     const { t } = useI18n();
     const [messages, setMessages] = useState<Message[]>([
         { text: 'Merhaba! Ben MiniBot! 🤖 Bilimle eğlenceye hazır mısın? Bugün neye merak ettin? ✨', sender: 'bot' }
@@ -82,7 +82,7 @@ const MiniBotPage: React.FC = () => {
                 </div>
             )}
 
-            <div className="flex flex-col h-[70vh] max-w-2xl mx-auto border-4 border-pastel-purple rounded-2xl shadow-lg" style={{ marginTop: '20px' }}>
+            <div className="flex flex-col h-[70vh] max-w-2xl mx-auto border-4 border-pastel-purple rounded-2xl shadow-lg" style={{ marginTop: '20px' }} role="region" aria-label="Chat Interface">
                 <div className="bg-pastel-purple p-4 text-white font-bold text-2xl text-center rounded-t-lg" style={{
                     background: 'linear-gradient(135deg, #C5A3FF 0%, #A78BFA 100%)',
                     display: 'flex',
@@ -97,7 +97,7 @@ const MiniBotPage: React.FC = () => {
                         position="bottom"
                     />
                 </div>
-                <div className="flex-grow p-4 overflow-y-auto bg-gray-50">
+                <div className="flex-grow p-4 overflow-y-auto bg-gray-50" role="log" aria-live="polite" aria-atomic="false">
                     {messages.map((msg, index) => (
                         <div key={index} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} mb-4`} style={{ animation: 'slideIn 0.3s ease-out' }}>
                             <div
@@ -124,20 +124,21 @@ const MiniBotPage: React.FC = () => {
                     <div ref={messagesEndRef} />
                 </div>
                 <div className="p-4 border-t-2 border-pastel-purple bg-white rounded-b-lg">
-                    <div className="flex">
+                    <form className="flex" onSubmit={(e) => { e.preventDefault(); handleSend(); }} role="search">
                         <input
                             type="text"
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
-                            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                             placeholder={t('minibot.placeholder')}
                             className="flex-grow p-2 border-2 border-gray-300 rounded-l-lg focus:outline-none focus:border-pastel-blue"
                             disabled={isLoading}
+                            aria-label={t('minibot.placeholder')}
                         />
                         <button
-                            onClick={handleSend}
+                            type="submit"
                             className="bg-pastel-green text-white font-bold p-2 rounded-r-lg hover:bg-pastel-pink transition-colors disabled:bg-gray-400"
                             disabled={isLoading}
+                            aria-label="Mesaj gönder"
                             style={{
                                 background: isLoading
                                     ? '#ccc'
@@ -161,7 +162,7 @@ const MiniBotPage: React.FC = () => {
                         >
                             {isLoading ? '⏳ Bekle...' : '🚀 Gönder'}
                         </button>
-                    </div>
+                    </form>
                 </div>
             </div>
 
@@ -178,7 +179,6 @@ const MiniBotPage: React.FC = () => {
                 }
             `}</style>
         </div>
-        </div >
     );
 };
 

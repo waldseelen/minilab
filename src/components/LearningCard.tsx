@@ -9,7 +9,7 @@ interface LearningCardProps {
     onComplete?: (cardId: string) => void;
 }
 
-const LearningCardComponent: React.FC<LearningCardProps> = ({ card, onComplete }) => {
+const LearningCardComponent = ({ card, onComplete }: LearningCardProps) => {
     const { t } = useI18n();
     const { celebrate, success } = useToast();
     const [currentView, setCurrentView] = useState<'content' | 'quiz'>('content');

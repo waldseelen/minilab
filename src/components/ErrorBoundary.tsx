@@ -72,7 +72,7 @@ class ErrorBoundary extends Component<Props, State> {
                         >
                             🔄 Tekrar Dene
                         </button>
-                        {this.state.error && process.env.NODE_ENV === 'development' && (
+                        {this.state.error && import.meta.env.DEV && (
                             <details style={{
                                 marginTop: '2rem',
                                 textAlign: 'left',
