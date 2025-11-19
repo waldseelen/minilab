@@ -382,7 +382,7 @@ export function getExperiments(lang: Lang): Experiment[] {
   return experimentRecords.map((r) => ({
     id: r.id,
     category: r.category,
-    ageGroup: r.ageGroup || '6-8',
+    ageGroup: r.ageGroup || 'All',
     difficulty: r.difficulty || 'Kolay',
     duration: r.duration || '20 dakika',
     gallery: r.gallery,
@@ -401,7 +401,7 @@ export function getExperiment(lang: Lang, id: number): Experiment | undefined {
   return {
     id: r.id,
     category: r.category,
-    ageGroup: r.ageGroup || '6-8',
+    ageGroup: r.ageGroup || 'All',
     difficulty: r.difficulty || 'Kolay',
     duration: r.duration || '20 dakika',
     gallery: r.gallery,
