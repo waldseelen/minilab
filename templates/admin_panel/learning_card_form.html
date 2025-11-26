@@ -1,0 +1,149 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block page_title %}{% if card %}Kartı Düzenle{% else %}Yeni Bilgi Kartı{% endif %}{% endblock %}
+{% block page_subtitle %}{% if card %}{{ card.title }}{% else %}Yeni bir öğrenme kartı oluştur{% endif %}{% endblock %}
+
+{% block admin_content %}
+<div class="max-w-4xl">
+
+    <form method="post" class="space-y-6">
+        {% csrf_token %}
+
+        <!-- Temel Bilgiler -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+            <h2 class="font-display text-xl text-gray-800 dark:text-white mb-6 flex items-center gap-2">
+                🃏 Kart Bilgileri
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Deney Seçimi -->
+                <div>
+                    <label class="block text-sm font-bold text-gray-600 dark:text-gray-300 mb-2">
+                        🔬 Deney *
+                    </label>
+                    <select name="experiment" required
+                            class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-minilab-blue-400 focus:ring-0 transition">
+                        <option value="">Deney seçin...</option>
+                        {% for exp in experiments %}
+                        <option value="{{ exp.id }}" {% if card and card.experiment_id == exp.id %}selected{% endif %}>
+                            {{ exp.category.icon }} {{ exp.category.name }} → {{ exp.title }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Başlık -->
+                <div>
+                    <label class="block text-sm font-bold text-gray-600 dark:text-gray-300 mb-2">
+                        📝 Başlık *
+                    </label>
+                    <input type="text" name="title" value="{{ card.title|default:'' }}" required
+                           placeholder="Örn: Su Döngüsü Nedir?"
+                           class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-minilab-blue-400 focus:ring-0 transition">
+                </div>
+            </div>
+        </div>
+
+        <!-- Kart İçerikleri -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+            <h2 class="font-display text-xl text-gray-800 dark:text-white mb-6 flex items-center gap-2">
+                🔄 Kart İçeriği
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Ön Yüz -->
+                <div>
+                    <label class="block text-sm font-bold text-gray-600 dark:text-gray-300 mb-2">
+                        📖 Ön Yüz (Soru/Konu) *
+                    </label>
+                    <textarea name="front_content" required rows="5"
+                              placeholder="Kartın ön yüzünde görünecek metin. Örn: Su nereden gelir ve nereye gider?"
+                              class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-minilab-blue-400 focus:ring-0 transition resize-none">{{ card.front_content|default:'' }}</textarea>
+                    <p class="text-xs text-gray-500 mt-1">Çocuğun merak edeceği, öğrenmek isteyeceği bir soru veya konu yazın.</p>
+                </div>
+
+                <!-- Arka Yüz -->
+                <div>
+                    <label class="block text-sm font-bold text-gray-600 dark:text-gray-300 mb-2">
+                        💡 Arka Yüz (Cevap/Açıklama) *
+                    </label>
+                    <textarea name="back_content" required rows="5"
+                              placeholder="Kartın arka yüzünde görünecek metin. Örn: Su, bulutlardan yağmur olarak yere düşer..."
+                              class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-minilab-blue-400 focus:ring-0 transition resize-none">{{ card.back_content|default:'' }}</textarea>
+                    <p class="text-xs text-gray-500 mt-1">Basit, anlaşılır ve eğlenceli bir açıklama yazın. 4-6 yaş için uygun olmalı.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ayarlar -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+            <h2 class="font-display text-xl text-gray-800 dark:text-white mb-6 flex items-center gap-2">
+                ⚙️ Ayarlar
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Sıralama -->
+                <div>
+                    <label class="block text-sm font-bold text-gray-600 dark:text-gray-300 mb-2">
+                        📊 Sıralama
+                    </label>
+                    <input type="number" name="order" value="{{ card.order|default:0 }}" min="0"
+                           class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-minilab-blue-400 focus:ring-0 transition">
+                    <p class="text-xs text-gray-500 mt-1">Düşük sayılar önce gösterilir.</p>
+                </div>
+
+                <!-- Eğlenceli İpucu -->
+                <div>
+                    <label class="block text-sm font-bold text-gray-600 dark:text-gray-300 mb-2">
+                        🎯 Eğlenceli İpucu (Opsiyonel)
+                    </label>
+                    <input type="text" name="fun_fact" value="{{ card.fun_fact|default:'' }}"
+                           placeholder="Örn: Biliyor musun? Bir bulut tonlarca su taşır!"
+                           class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-minilab-blue-400 focus:ring-0 transition">
+                </div>
+            </div>
+        </div>
+
+        <!-- Önizleme -->
+        <div class="bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-2xl p-6">
+            <h2 class="font-display text-xl text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                👁️ Önizleme
+            </h2>
+
+            <div class="flex justify-center">
+                <div class="w-72 h-48 bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 flex flex-col items-center justify-center text-center border-4 border-dashed border-purple-300">
+                    <span class="text-4xl mb-2">🃏</span>
+                    <h3 class="font-display text-lg text-purple-600" id="preview-title">Kart Başlığı</h3>
+                    <p class="text-sm text-gray-500 mt-2" id="preview-content">Kart içeriği burada görünecek...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Butonlar -->
+        <div class="flex justify-between items-center">
+            <a href="{% url 'admin_panel:learning_cards' %}"
+               class="px-6 py-3 rounded-xl bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 font-bold transition">
+                ← Geri
+            </a>
+
+            <button type="submit"
+                    class="px-8 py-3 rounded-xl bg-gradient-to-r from-minilab-yellow to-minilab-orange-400 text-white font-bold shadow-lg hover:shadow-xl transition hover:scale-105">
+                💾 {% if card %}Güncelle{% else %}Kaydet{% endif %}
+            </button>
+        </div>
+
+    </form>
+
+</div>
+
+<script>
+// Canlı önizleme
+document.querySelector('input[name="title"]').addEventListener('input', function() {
+    document.getElementById('preview-title').textContent = this.value || 'Kart Başlığı';
+});
+
+document.querySelector('textarea[name="front_content"]').addEventListener('input', function() {
+    document.getElementById('preview-content').textContent = this.value || 'Kart içeriği burada görünecek...';
+});
+</script>
+{% endblock %}

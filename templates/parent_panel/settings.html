@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <!-- Header -->
+    <div class="bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <a href="{% url 'parent_panel:dashboard' %}" class="text-gray-500 hover:text-gray-700 dark:text-gray-400">
+                        ← Geri
+                    </a>
+                    <div>
+                        <h1 class="text-2xl font-display text-gray-800 dark:text-white">⚙️ Ebeveyn Ayarları</h1>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Tercihlerinizi ve bağlı çocukları yönetin</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Genel Ayarlar -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                <h3 class="font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
+                    ⚙️ Genel Ayarlar
+                </h3>
+
+                <form method="POST" class="space-y-6">
+                    {% csrf_token %}
+
+                    <!-- Zaman Limiti -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            ⏱️ Günlük Kullanım Limiti
+                        </label>
+                        <div class="flex items-center gap-4">
+                            <input type="number"
+                                   name="daily_time_limit"
+                                   value="{{ settings.daily_time_limit }}"
+                                   min="15" max="240" step="15"
+                                   class="w-24 px-4 py-2 rounded-lg border dark:border-gray-600 dark:bg-gray-700">
+                            <span class="text-gray-500 dark:text-gray-400">dakika</span>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1">Önerilen: 30-60 dakika</p>
+                    </div>
+
+                    <!-- İzin Verilen Saatler -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                🌅 Başlangıç Saati
+                            </label>
+                            <input type="time"
+                                   name="allowed_start_time"
+                                   value="{{ settings.allowed_start_time|time:'H:i' }}"
+                                   class="w-full px-4 py-2 rounded-lg border dark:border-gray-600 dark:bg-gray-700">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                🌙 Bitiş Saati
+                            </label>
+                            <input type="time"
+                                   name="allowed_end_time"
+                                   value="{{ settings.allowed_end_time|time:'H:i' }}"
+                                   class="w-full px-4 py-2 rounded-lg border dark:border-gray-600 dark:bg-gray-700">
+                        </div>
+                    </div>
+
+                    <!-- Toggle Ayarları -->
+                    <div class="space-y-4">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox"
+                                   name="allow_chatbot"
+                                   {% if settings.allow_chatbot %}checked{% endif %}
+                                   class="w-5 h-5 rounded text-minilab-purple focus:ring-minilab-purple">
+                            <span class="text-gray-700 dark:text-gray-300">🤖 MiniBot sohbetine izin ver</span>
+                        </label>
+
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox"
+                                   name="allow_voice_messages"
+                                   {% if settings.allow_voice_messages %}checked{% endif %}
+                                   class="w-5 h-5 rounded text-minilab-purple focus:ring-minilab-purple">
+                            <span class="text-gray-700 dark:text-gray-300">🎤 Sesli mesajlara izin ver</span>
+                        </label>
+
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox"
+                                   name="email_notifications"
+                                   {% if settings.email_notifications %}checked{% endif %}
+                                   class="w-5 h-5 rounded text-minilab-purple focus:ring-minilab-purple">
+                            <span class="text-gray-700 dark:text-gray-300">📧 E-posta bildirimleri al</span>
+                        </label>
+                    </div>
+
+                    <button type="submit"
+                            class="w-full py-3 bg-minilab-purple text-white rounded-lg hover:bg-purple-600 transition-colors font-medium">
+                        💾 Ayarları Kaydet
+                    </button>
+                </form>
+            </div>
+
+            <!-- Bağlı Çocuklar -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                <h3 class="font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
+                    👶 Bağlı Çocuklar
+                </h3>
+
+                {% if children_links %}
+                <div class="space-y-4 mb-6">
+                    {% for link in children_links %}
+                    <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">{{ link.child.avatar|default:"👶" }}</span>
+                            <div>
+                                <p class="font-medium text-gray-800 dark:text-white">{{ link.child.nickname }}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                    {% if link.is_verified %}✅ Doğrulanmış{% else %}⏳ Doğrulama bekliyor{% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <a href="{% url 'parent_panel:child_detail' link.child.id %}"
+                               class="p-2 text-minilab-purple hover:bg-purple-100 rounded-lg transition-colors"
+                               title="Detayları Gör">
+                                📊
+                            </a>
+                            <form method="POST" action="{% url 'parent_panel:remove_child' link.id %}"
+                                  class="inline" onsubmit="return confirm('Bu çocuğu kaldırmak istediğinize emin misiniz?')">
+                                {% csrf_token %}
+                                <button type="submit"
+                                        class="p-2 text-red-500 hover:bg-red-100 rounded-lg transition-colors"
+                                        title="Bağlantıyı Kaldır">
+                                    🗑️
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-8 mb-6">
+                    <span class="text-4xl block mb-2">👶</span>
+                    <p class="text-gray-500 dark:text-gray-400">Henüz bağlı çocuk yok</p>
+                </div>
+                {% endif %}
+
+                <!-- Çocuk Ekleme Formu -->
+                <div class="border-t dark:border-gray-700 pt-6">
+                    <h4 class="font-medium text-gray-700 dark:text-gray-300 mb-4">➕ Yeni Çocuk Ekle</h4>
+                    <form method="POST" action="{% url 'parent_panel:add_child' %}" class="space-y-4">
+                        {% csrf_token %}
+                        <div>
+                            <label class="block text-sm text-gray-600 dark:text-gray-400 mb-2">
+                                Çocuğun Kullanıcı Adı
+                            </label>
+                            <input type="text"
+                                   name="child_username"
+                                   placeholder="ornek_kullanici"
+                                   class="w-full px-4 py-3 rounded-lg border dark:border-gray-600 dark:bg-gray-700 focus:ring-2 focus:ring-minilab-purple focus:border-transparent">
+                        </div>
+                        <button type="submit"
+                                class="w-full py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-medium">
+                            ➕ Çocuk Ekle
+                        </button>
+                    </form>
+                    <p class="text-xs text-gray-400 mt-3 text-center">
+                        💡 Çocuğunuzun MiniLab'daki kullanıcı adını girin
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Güvenlik Bilgilendirmesi -->
+        <div class="mt-8 bg-gradient-to-r from-green-100 to-blue-100 dark:from-green-900/30 dark:to-blue-900/30 rounded-2xl p-6">
+            <h3 class="font-bold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
+                🛡️ Güvenlik Bilgilendirmesi
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div class="flex items-start gap-3">
+                    <span class="text-green-500">✓</span>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        MiniBot, çocuklar için güvenli içerik filtreleri kullanır
+                    </p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="text-green-500">✓</span>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Kişisel bilgiler asla istenmez veya paylaşılmaz
+                    </p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="text-green-500">✓</span>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Tüm sohbet geçmişi ebeveyn tarafından görüntülenebilir
+                    </p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="text-green-500">✓</span>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Uygunsuz içerik otomatik olarak engellenir
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

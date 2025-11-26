@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center px-4 py-8"
+     x-data="surpriseEgg()">
+
+    <div class="max-w-lg mx-auto text-center">
+
+        <!-- Yumurta Açılmadan Önce -->
+        <div x-show="!opened" x-transition>
+            <h1 class="font-display text-4xl text-minilab-yellow mb-6">
+                🎁 Günlük Sürpriz Yumurta!
+            </h1>
+            <p class="text-xl text-gray-600 dark:text-gray-300 mb-8">
+                Bugünün hediyesini açmak için yumurtaya tıkla!
+            </p>
+
+            <!-- Yumurta -->
+            <div class="relative inline-block cursor-pointer"
+                 @click="openEgg()">
+                <div class="text-[200px] animate-wiggle hover:animate-bounce transition-all">
+                    🥚
+                </div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <span class="text-4xl animate-pulse">✨</span>
+                </div>
+            </div>
+
+            <p class="text-gray-500 mt-8">
+                Her gün yeni bir sürpriz seni bekliyor!
+            </p>
+        </div>
+
+        <!-- Yumurta Açıldıktan Sonra -->
+        <div x-show="opened" x-transition class="card-cute p-12">
+            <!-- Konfeti Efekti -->
+            <div class="absolute inset-0 pointer-events-none overflow-hidden">
+                <template x-for="i in 20">
+                    <div class="absolute text-2xl animate-confetti"
+                         :style="'left: ' + (Math.random() * 100) + '%; animation-delay: ' + (Math.random() * 0.5) + 's;'">
+                        <span x-text="['⭐', '🌟', '✨', '💫', '🎉'][Math.floor(Math.random() * 5)]"></span>
+                    </div>
+                </template>
+            </div>
+
+            <h2 class="font-display text-3xl text-minilab-green mb-6">
+                🎉 Tebrikler!
+            </h2>
+
+            <!-- Ödül -->
+            <div class="text-9xl mb-6 animate-bounce">
+                <span x-text="reward.icon">⭐</span>
+            </div>
+
+            <h3 class="font-display text-2xl mb-2" x-text="reward.name">Yıldız Tozu</h3>
+
+            <!-- Nadirlik Rozeti -->
+            <span class="inline-block px-4 py-2 rounded-full text-sm font-bold mb-4"
+                  :class="{
+                      'bg-minilab-yellow/20 text-minilab-yellow': reward.rarity === 'legendary',
+                      'bg-minilab-purple/20 text-minilab-purple': reward.rarity === 'epic',
+                      'bg-minilab-blue-500/20 text-minilab-blue-500': reward.rarity === 'rare',
+                      'bg-gray-100 text-gray-500': reward.rarity === 'common'
+                  }"
+                  x-text="rarityText[reward.rarity]">
+                Yaygın
+            </span>
+
+            <!-- Miktar (varsa) -->
+            <div x-show="reward.amount" class="mb-6">
+                <p class="text-gray-500">Kazandığın:</p>
+                <p class="font-display text-3xl text-minilab-yellow">
+                    +<span x-text="reward.amount">10</span> ⭐
+                </p>
+            </div>
+
+            <div class="flex gap-4 justify-center mt-8">
+                <a href="{% url 'dashboard:child_dashboard' %}" class="btn-primary">
+                    Ana Sayfaya Dön 🏠
+                </a>
+                <a href="{% url 'gamification:badges' %}" class="btn-secondary">
+                    Rozetlerime Bak 🏆
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes confetti {
+    0% { transform: translateY(-100%) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+.animate-confetti {
+    animation: confetti 3s ease-out forwards;
+}
+</style>
+
+<script>
+function surpriseEgg() {
+    return {
+        opened: false,
+        reward: {
+            icon: '⭐',
+            name: 'Yıldız Tozu',
+            amount: 10,
+            rarity: 'common'
+        },
+        rarityText: {
+            common: 'Yaygın',
+            rare: 'Nadir',
+            epic: 'Destansı',
+            legendary: 'Efsanevi'
+        },
+
+        async openEgg() {
+            // Ses çal
+            if (typeof Alpine !== 'undefined' && Alpine.store('app')) {
+                Alpine.store('app').playSound('success');
+            }
+
+            // AJAX ile ödül al
+            try {
+                const response = await fetch("{% url 'gamification:surprise_egg' %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const data = await response.json();
+                if (data.success) {
+                    this.reward = {
+                        icon: this.getRewardIcon(data.reward_type),
+                        name: data.reward_name,
+                        amount: data.reward_amount,
+                        rarity: data.rarity
+                    };
+                }
+            } catch (error) {
+                console.error('Hata:', error);
+                // Demo ödüller
+                const demoRewards = [
+                    { icon: '⭐', name: 'Yıldız Tozu', amount: 10, rarity: 'common' },
+                    { icon: '⭐', name: 'Yıldız Tozu', amount: 25, rarity: 'rare' },
+                    { icon: '🎨', name: 'Gökkuşağı Fırçası', amount: 0, rarity: 'epic' },
+                    { icon: '👑', name: 'Altın Taç', amount: 0, rarity: 'legendary' },
+                ];
+                this.reward = demoRewards[Math.floor(Math.random() * demoRewards.length)];
+            }
+
+            this.opened = true;
+        },
+
+        getRewardIcon(type) {
+            const icons = {
+                'star_dust': '⭐',
+                'badge': '🏆',
+                'avatar_item': '👕',
+                'special': '🎁'
+            };
+            return icons[type] || '⭐';
+        }
+    }
+}
+</script>
+{% endblock %}

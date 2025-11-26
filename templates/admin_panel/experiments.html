@@ -1,0 +1,97 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block page_title %}Deneyler{% endblock %}
+{% block page_subtitle %}Tüm deneyleri yönet{% endblock %}
+
+{% block admin_content %}
+<div class="space-y-6">
+
+    <!-- Üst Bar -->
+    <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <!-- Kategori Filtresi -->
+            <select onchange="location = this.value" class="px-4 py-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                <option value="{% url 'admin_panel:experiments' %}">Tüm Kategoriler</option>
+                {% for cat in categories %}
+                <option value="{% url 'admin_panel:experiments' %}?category={{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"i" %}selected{% endif %}>
+                    {{ cat.icon }} {{ cat.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <a href="{% url 'admin_panel:add_experiment' %}"
+           class="px-6 py-3 bg-gradient-to-r from-minilab-green to-minilab-blue-400 text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition hover:scale-105">
+            + Yeni Deney Ekle
+        </a>
+    </div>
+
+    <!-- Deneyler Tablosu -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+        <table class="w-full">
+            <thead class="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-600 dark:text-gray-300">Kategori</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-600 dark:text-gray-300">Başlık</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-600 dark:text-gray-300">Zorluk</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-600 dark:text-gray-300">Puan</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-600 dark:text-gray-300">Kartlar</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-600 dark:text-gray-300">Durum</th>
+                    <th class="px-6 py-4 text-center text-sm font-bold text-gray-600 dark:text-gray-300">İşlemler</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                {% for exp in experiments %}
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
+                    <td class="px-6 py-4">
+                        <span class="text-2xl" title="{{ exp.category.name }}">{{ exp.category.icon }}</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="font-bold text-gray-800 dark:text-white">{{ exp.title }}</span>
+                        <span class="block text-xs text-gray-500">/{{ exp.slug }}/</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs rounded-full
+                            {% if exp.difficulty == 'easy' %}bg-green-100 text-green-600
+                            {% elif exp.difficulty == 'medium' %}bg-yellow-100 text-yellow-600
+                            {% else %}bg-red-100 text-red-600{% endif %}">
+                            {{ exp.get_difficulty_display }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="font-bold text-minilab-yellow">⭐ {{ exp.points }}</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="text-sm text-gray-500">🃏 {{ exp.learning_cards.count }}</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if exp.is_active %}
+                        <span class="px-2 py-1 text-xs bg-green-100 text-green-600 rounded-full">Aktif</span>
+                        {% else %}
+                        <span class="px-2 py-1 text-xs bg-red-100 text-red-600 rounded-full">Pasif</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <a href="{% url 'admin_panel:edit_experiment' exp.id %}"
+                           class="p-2 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200 transition inline-block" title="Düzenle">
+                            ✏️
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="px-6 py-12 text-center">
+                        <span class="text-6xl block mb-4">🔬</span>
+                        <p class="text-gray-500">Henüz deney yok</p>
+                        <a href="{% url 'admin_panel:add_experiment' %}" class="text-minilab-blue-500 hover:underline mt-2 inline-block">
+                            İlk deneyi ekle →
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

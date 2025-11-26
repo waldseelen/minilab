@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <!-- Header -->
+    <div class="bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <a href="{% url 'parent_panel:dashboard' %}" class="text-gray-500 hover:text-gray-700 dark:text-gray-400">
+                        ← Geri
+                    </a>
+                    <div class="w-12 h-12 bg-gradient-to-br from-minilab-blue-400 to-minilab-purple rounded-full flex items-center justify-center text-2xl">
+                        {{ child.avatar|default:"👶" }}
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-display text-gray-800 dark:text-white">{{ child.nickname }}'in İlerlemesi</h1>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Seviye {{ level }} • {{ total_points }} puan</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <a href="{% url 'parent_panel:activity_log' child.id %}"
+                       class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                        📜 Aktiviteler
+                    </a>
+                    <a href="{% url 'parent_panel:reports' child.id %}"
+                       class="px-4 py-2 bg-minilab-purple text-white rounded-lg hover:bg-purple-600 transition-colors">
+                        📊 Raporlar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <!-- İstatistik Kartları -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">✅</span>
+                    <span class="text-gray-500 dark:text-gray-400 text-sm">Tamamlanan</span>
+                </div>
+                <p class="text-3xl font-bold text-green-600 dark:text-green-400">{{ completed_count }}</p>
+                <p class="text-xs text-gray-400">deney</p>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">🔄</span>
+                    <span class="text-gray-500 dark:text-gray-400 text-sm">Devam Eden</span>
+                </div>
+                <p class="text-3xl font-bold text-blue-600 dark:text-blue-400">{{ in_progress_count }}</p>
+                <p class="text-xs text-gray-400">deney</p>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">🏅</span>
+                    <span class="text-gray-500 dark:text-gray-400 text-sm">Rozetler</span>
+                </div>
+                <p class="text-3xl font-bold text-yellow-600 dark:text-yellow-400">{{ earned_badges.count }}</p>
+                <p class="text-xs text-gray-400">kazanıldı</p>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-2xl">⭐</span>
+                    <span class="text-gray-500 dark:text-gray-400 text-sm">Seviye</span>
+                </div>
+                <p class="text-3xl font-bold text-purple-600 dark:text-purple-400">{{ level }}</p>
+                <p class="text-xs text-gray-400">{{ total_points }} puan</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Haftalık Aktivite Grafiği -->
+            <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                <h3 class="font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                    📈 Haftalık Aktivite
+                </h3>
+                <div class="h-64" x-data="weeklyChart()" x-init="init()">
+                    <canvas x-ref="chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Kategori Dağılımı -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                <h3 class="font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                    🎯 İlgi Alanları
+                </h3>
+                {% if category_stats %}
+                <div class="space-y-4">
+                    {% for stat in category_stats %}
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-sm text-gray-600 dark:text-gray-300">
+                                {{ stat.experiment__category__icon }} {{ stat.experiment__category__name }}
+                            </span>
+                            <span class="text-sm font-medium text-minilab-purple">{{ stat.count }}</span>
+                        </div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-minilab-blue-400 to-minilab-purple h-2 rounded-full"
+                                 style="width: {% widthratio stat.count completed_count 100 %}%"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-gray-500 dark:text-gray-400 text-center py-8">Henüz veri yok</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Rozetler -->
+        <div class="mt-8 bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+            <h3 class="font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                🏆 Kazanılan Rozetler
+            </h3>
+            {% if earned_badges %}
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                {% for eb in earned_badges %}
+                <div class="text-center p-4 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-xl border-2 border-yellow-200 dark:border-yellow-700">
+                    <span class="text-4xl block mb-2">{{ eb.badge.icon }}</span>
+                    <p class="font-medium text-gray-800 dark:text-white text-sm">{{ eb.badge.name }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ eb.earned_at|date:"d.m.Y" }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-gray-500 dark:text-gray-400 text-center py-8">Henüz rozet kazanılmadı</p>
+            {% endif %}
+        </div>
+
+        <!-- Sohbet Geçmişi (İzin Varsa) -->
+        {% if can_view_chat and chat_messages %}
+        <div class="mt-8 bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+            <h3 class="font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                💬 Son MiniBot Sohbetleri
+            </h3>
+            <div class="space-y-3 max-h-96 overflow-y-auto">
+                {% for msg in chat_messages %}
+                <div class="flex gap-3 {% if msg.is_user %}flex-row-reverse{% endif %}">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-lg flex-shrink-0
+                                {% if msg.is_user %}bg-minilab-blue-400{% else %}bg-minilab-purple{% endif %}">
+                        {% if msg.is_user %}{{ child.avatar|default:"👶" }}{% else %}🤖{% endif %}
+                    </div>
+                    <div class="max-w-[80%] p-3 rounded-xl text-sm
+                                {% if msg.is_user %}bg-minilab-blue-100 dark:bg-blue-900/30{% else %}bg-gray-100 dark:bg-gray-700{% endif %}">
+                        <p class="text-gray-700 dark:text-gray-200">{{ msg.message }}</p>
+                        <p class="text-xs text-gray-400 mt-1">{{ msg.created_at|timesince }} önce</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+function weeklyChart() {
+    return {
+        chart: null,
+        init() {
+            const ctx = this.$refs.chart.getContext('2d');
+            const data = {{ weekly_activity|safe }};
+
+            this.chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(d => d.day),
+                    datasets: [{
+                        label: 'Tamamlanan Deneyler',
+                        data: data.map(d => d.count),
+                        backgroundColor: 'rgba(139, 92, 246, 0.5)',
+                        borderColor: 'rgb(139, 92, 246)',
+                        borderWidth: 2,
+                        borderRadius: 8,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+}
+</script>
+{% endblock %}

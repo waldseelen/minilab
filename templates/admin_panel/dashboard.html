@@ -1,0 +1,110 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block page_title %}Dashboard{% endblock %}
+{% block page_subtitle %}Genel bakış ve istatistikler{% endblock %}
+
+{% block admin_content %}
+<div class="space-y-6">
+
+    <!-- İstatistik Kartları -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Kategoriler -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-4xl">📁</span>
+                <span class="text-xs px-2 py-1 bg-green-100 text-green-600 rounded-full">Aktif</span>
+            </div>
+            <h3 class="text-3xl font-display text-gray-800 dark:text-white">{{ stats.categories }}</h3>
+            <p class="text-gray-500">Kategori</p>
+        </div>
+
+        <!-- Deneyler -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-4xl">🔬</span>
+                <span class="text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded-full">Toplam</span>
+            </div>
+            <h3 class="text-3xl font-display text-gray-800 dark:text-white">{{ stats.experiments }}</h3>
+            <p class="text-gray-500">Deney</p>
+        </div>
+
+        <!-- Bilgi Kartları -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-4xl">🃏</span>
+                <span class="text-xs px-2 py-1 bg-purple-100 text-purple-600 rounded-full">Toplam</span>
+            </div>
+            <h3 class="text-3xl font-display text-gray-800 dark:text-white">{{ stats.learning_cards }}</h3>
+            <p class="text-gray-500">Bilgi Kartı</p>
+        </div>
+
+        <!-- Kullanıcılar -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-4xl">👥</span>
+                <span class="text-xs px-2 py-1 bg-pink-100 text-pink-600 rounded-full">Kayıtlı</span>
+            </div>
+            <h3 class="text-3xl font-display text-gray-800 dark:text-white">{{ stats.users }}</h3>
+            <p class="text-gray-500">Kullanıcı</p>
+        </div>
+    </div>
+
+    <!-- Hızlı Aksiyonlar -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+        <h2 class="font-display text-xl text-gray-800 dark:text-white mb-4">⚡ Hızlı İşlemler</h2>
+        <div class="flex flex-wrap gap-3">
+            <a href="{% url 'admin_panel:add_category' %}" class="px-4 py-2 bg-minilab-purple/20 text-minilab-purple rounded-xl hover:bg-minilab-purple/30 transition font-bold">
+                + Yeni Kategori
+            </a>
+            <a href="{% url 'admin_panel:add_experiment' %}" class="px-4 py-2 bg-minilab-green/20 text-minilab-green rounded-xl hover:bg-minilab-green/30 transition font-bold">
+                + Yeni Deney
+            </a>
+            <a href="{% url 'admin_panel:add_learning_card' %}" class="px-4 py-2 bg-minilab-yellow/20 text-minilab-orange-500 rounded-xl hover:bg-minilab-yellow/30 transition font-bold">
+                + Yeni Bilgi Kartı
+            </a>
+        </div>
+    </div>
+
+    <!-- Son Eklenenler -->
+    <div class="grid md:grid-cols-2 gap-6">
+        <!-- Son Deneyler -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+            <h2 class="font-display text-xl text-gray-800 dark:text-white mb-4">🔬 Son Deneyler</h2>
+            <div class="space-y-3">
+                {% for exp in recent_experiments %}
+                <div class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl">
+                    <span class="text-2xl">{{ exp.category.icon }}</span>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-gray-700 dark:text-gray-200">{{ exp.title }}</h4>
+                        <p class="text-xs text-gray-500">{{ exp.category.name }}</p>
+                    </div>
+                    <a href="{% url 'admin_panel:edit_experiment' exp.id %}" class="text-minilab-blue-500 hover:underline text-sm">Düzenle</a>
+                </div>
+                {% empty %}
+                <p class="text-gray-500 text-center py-4">Henüz deney yok</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Son Kartlar -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+            <h2 class="font-display text-xl text-gray-800 dark:text-white mb-4">🃏 Son Bilgi Kartları</h2>
+            <div class="space-y-3">
+                {% for card in recent_cards %}
+                <div class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl">
+                    <span class="text-2xl">{{ card.experiment.category.icon }}</span>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-gray-700 dark:text-gray-200">{{ card.title }}</h4>
+                        <p class="text-xs text-gray-500">{{ card.experiment.title }}</p>
+                    </div>
+                    <a href="{% url 'admin_panel:edit_learning_card' card.id %}" class="text-minilab-blue-500 hover:underline text-sm">Düzenle</a>
+                </div>
+                {% empty %}
+                <p class="text-gray-500 text-center py-4">Henüz kart yok</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

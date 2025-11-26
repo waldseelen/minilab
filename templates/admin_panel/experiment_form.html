@@ -1,0 +1,105 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block page_title %}{% if experiment %}Deney Düzenle{% else %}Yeni Deney{% endif %}{% endblock %}
+{% block page_subtitle %}{% if experiment %}{{ experiment.title }}{% else %}Yeni bir deney oluştur{% endif %}{% endblock %}
+
+{% block admin_content %}
+<div class="max-w-2xl">
+
+    <form method="post" class="space-y-6">
+        {% csrf_token %}
+
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg space-y-6">
+
+            <!-- Kategori -->
+            <div>
+                <label class="block text-sm font-bold text-gray-600 dark:text-gray-300 mb-2">
+                    Kategori *
+                </label>
+                <select name="category" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700">
+                    <option value="">Kategori seçin...</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if experiment and experiment.category_id == cat.id %}selected{% endif %}>
+                        {{ cat.icon }} {{ cat.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Başlık -->
+            <div>
+                <label class="block text-sm font-bold text-gray-600 dark:text-gray-300 mb-2">
+                    Deney Başlığı *
+                </label>
+                <input type="text" name="title" value="{{ experiment.title|default:'' }}" required
+                       class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700">
+            </div>
+
+            <!-- Slug -->
+            <div>
+                <label class="block text-sm font-bold text-gray-600 dark:text-gray-300 mb-2">
+                    URL Slug *
+                </label>
+                <input type="text" name="slug" value="{{ experiment.slug|default:'' }}" required
+                       class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700">
+            </div>
+
+            <!-- Açıklama -->
+            <div>
+                <label class="block text-sm font-bold text-gray-600 dark:text-gray-300 mb-2">
+                    Açıklama
+                </label>
+                <textarea name="description" rows="4"
+                          class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700">{{ experiment.description|default:'' }}</textarea>
+            </div>
+
+            <!-- Zorluk ve Puan -->
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-bold text-gray-600 dark:text-gray-300 mb-2">
+                        Zorluk
+                    </label>
+                    <select name="difficulty" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700">
+                        <option value="easy" {% if experiment.difficulty == 'easy' %}selected{% endif %}>🟢 Kolay</option>
+                        <option value="medium" {% if experiment.difficulty == 'medium' %}selected{% endif %}>🟡 Orta</option>
+                        <option value="hard" {% if experiment.difficulty == 'hard' %}selected{% endif %}>🔴 Zor</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-600 dark:text-gray-300 mb-2">
+                        Puan
+                    </label>
+                    <input type="number" name="points" value="{{ experiment.points|default:10 }}" min="0"
+                           class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700">
+                </div>
+            </div>
+
+            {% if experiment %}
+            <div class="flex items-center">
+                <label class="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" name="is_active" {% if experiment.is_active %}checked{% endif %}
+                           class="w-5 h-5 rounded accent-minilab-green">
+                    <span class="font-bold text-gray-600 dark:text-gray-300">Aktif</span>
+                </label>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <!-- Butonlar -->
+        <div class="flex justify-between items-center">
+            <a href="{% url 'admin_panel:experiments' %}"
+               class="px-6 py-3 rounded-xl bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 font-bold transition">
+                ← Geri
+            </a>
+
+            <button type="submit"
+                    class="px-8 py-3 rounded-xl bg-gradient-to-r from-minilab-green to-minilab-blue-400 text-white font-bold shadow-lg hover:shadow-xl transition hover:scale-105">
+                💾 {% if experiment %}Güncelle{% else %}Kaydet{% endif %}
+            </button>
+        </div>
+
+    </form>
+
+</div>
+{% endblock %}

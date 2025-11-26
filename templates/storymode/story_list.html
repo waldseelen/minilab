@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+<style>
+    /* Kitap açılma animasyonu */
+    @keyframes book-open {
+        0% { transform: perspective(1000px) rotateY(-90deg); opacity: 0; }
+        100% { transform: perspective(1000px) rotateY(0deg); opacity: 1; }
+    }
+
+    .book-card {
+        animation: book-open 0.6s ease-out forwards;
+        transform-origin: left center;
+    }
+
+    .book-card:nth-child(2) { animation-delay: 0.1s; }
+    .book-card:nth-child(3) { animation-delay: 0.2s; }
+    .book-card:nth-child(4) { animation-delay: 0.3s; }
+
+    /* Kitap hover efekti */
+    .book-hover:hover {
+        transform: translateY(-8px) rotate(-2deg);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen py-8" x-data="{ speaking: false }">
+    <div class="max-w-6xl mx-auto px-4">
+
+        <!-- Başlık -->
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center gap-4 bg-gradient-to-r from-minilab-purple to-minilab-pink text-white px-8 py-4 rounded-full shadow-2xl">
+                <span class="text-5xl animate-wiggle">📖</span>
+                <div class="text-left">
+                    <h1 class="font-display text-3xl">Hikaye Modu</h1>
+                    <p class="text-white/80">Bilim dolu maceralar seni bekliyor!</p>
+                </div>
+                <!-- Dinle Butonu -->
+                <button @click="Alpine.store('app').speak('Hikaye moduna hoş geldin! Burada bilim dolu maceralar seni bekliyor. Bir hikaye seç ve macerana başla!')"
+                        class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full flex items-center gap-2 transition-all hover:scale-105 ml-4">
+                    🔊 Dinle
+                </button>
+            </div>
+        </div>
+
+        <!-- Hikayeler Grid -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for story in stories %}
+            <a href="{% url 'storymode:story_detail' story.slug %}"
+               class="book-card book-hover card-cute group overflow-hidden">
+
+                <!-- Kapak Görseli -->
+                <div class="h-48 bg-gradient-to-br from-minilab-purple/20 to-minilab-blue-200 flex items-center justify-center -mx-6 -mt-6 mb-4 relative overflow-hidden">
+                    {% if story.cover_image %}
+                    <img src="{{ story.cover_image.url }}" alt="{{ story.title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    {% else %}
+                    <span class="text-8xl group-hover:animate-wiggle">📚</span>
+                    {% endif %}
+
+                    <!-- Süre Badge -->
+                    <div class="absolute top-4 right-4 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold">
+                        ⏱️ {{ story.estimated_time }} dk
+                    </div>
+                </div>
+
+                <h2 class="font-display text-xl text-minilab-purple mb-2 group-hover:text-minilab-pink transition-colors">
+                    {{ story.title }}
+                </h2>
+                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">{{ story.description|truncatewords:20 }}</p>
+
+                <div class="flex items-center justify-between text-sm pt-4 border-t dark:border-gray-700">
+                    <div class="flex items-center gap-2">
+                        <span class="text-minilab-yellow">⭐</span>
+                        <span class="font-bold text-gray-600">+{{ story.points }} puan</span>
+                    </div>
+                    <span class="text-minilab-purple font-bold group-hover:translate-x-1 transition-transform">
+                        Oku →
+                    </span>
+                </div>
+            </a>
+            {% empty %}
+            <!-- Demo Hikayeler -->
+            <div class="book-card book-hover card-cute group overflow-hidden cursor-pointer" onclick="Alpine.store('app').speak('Uzay Macerası hikayesi yakında eklenecek!')">
+                <div class="h-48 bg-gradient-to-br from-minilab-purple/20 to-minilab-blue-200 flex items-center justify-center -mx-6 -mt-6 mb-4">
+                    <span class="text-8xl group-hover:animate-wiggle">🚀</span>
+                </div>
+                <h2 class="font-display text-xl text-minilab-purple mb-2">Uzay Macerası</h2>
+                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Küçük astronot Ela'nın güneş sistemini keşfetme hikayesi...</p>
+                <div class="flex items-center justify-between text-sm pt-4 border-t dark:border-gray-700">
+                    <span class="text-gray-500">5 sayfa • Kolay</span>
+                    <span class="bg-minilab-yellow/20 text-minilab-yellow px-2 py-1 rounded-full text-xs font-bold">Yakında</span>
+                </div>
+            </div>
+
+            <div class="book-card book-hover card-cute group overflow-hidden cursor-pointer" style="animation-delay: 0.1s" onclick="Alpine.store('app').speak('Minik Tohum hikayesi yakında eklenecek!')">
+                <div class="h-48 bg-gradient-to-br from-minilab-green/20 to-minilab-yellow flex items-center justify-center -mx-6 -mt-6 mb-4">
+                    <span class="text-8xl group-hover:animate-wiggle">🌱</span>
+                </div>
+                <h2 class="font-display text-xl text-minilab-green mb-2">Minik Tohum</h2>
+                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Bir tohumun büyük bir ağaç olma yolculuğu...</p>
+                <div class="flex items-center justify-between text-sm pt-4 border-t dark:border-gray-700">
+                    <span class="text-gray-500">4 sayfa • Kolay</span>
+                    <span class="bg-minilab-yellow/20 text-minilab-yellow px-2 py-1 rounded-full text-xs font-bold">Yakında</span>
+                </div>
+            </div>
+
+            <div class="book-card book-hover card-cute group overflow-hidden cursor-pointer" style="animation-delay: 0.2s" onclick="Alpine.store('app').speak('Renklerin Sırrı hikayesi yakında eklenecek!')">
+                <div class="h-48 bg-gradient-to-br from-minilab-blue-200 to-minilab-purple/20 flex items-center justify-center -mx-6 -mt-6 mb-4">
+                    <span class="text-8xl group-hover:animate-wiggle">🧪</span>
+                </div>
+                <h2 class="font-display text-xl text-minilab-blue-500 mb-2">Renklerin Sırrı</h2>
+                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Renkler nasıl karışır? Gökkuşağı nasıl oluşur?</p>
+                <div class="flex items-center justify-between text-sm pt-4 border-t dark:border-gray-700">
+                    <span class="text-gray-500">6 sayfa • Orta</span>
+                    <span class="bg-minilab-yellow/20 text-minilab-yellow px-2 py-1 rounded-full text-xs font-bold">Yakında</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- İpucu -->
+        <div class="mt-12 text-center">
+            <div class="inline-flex items-center gap-3 bg-minilab-yellow/20 px-6 py-3 rounded-full">
+                <span class="text-2xl">💡</span>
+                <p class="text-gray-600 dark:text-gray-400">
+                    <strong>İpucu:</strong> Hikayelerde seçim yaparak farklı sonlara ulaşabilirsin!
+                </p>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

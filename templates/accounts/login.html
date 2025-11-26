@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center px-4 py-12">
+    <div class="card-cute max-w-md w-full">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <span class="text-6xl">🧪</span>
+            <h1 class="font-display text-3xl text-minilab-blue-600 mt-2">MiniLab'a Giriş</h1>
+        </div>
+
+        <!-- Form -->
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+
+            <!-- Kullanıcı Adı -->
+            <div>
+                <label for="username" class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                    👤 Kullanıcı Adı
+                </label>
+                <input type="text" name="username" id="username" required
+                       class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-minilab-blue-400 focus:outline-none transition-colors"
+                       placeholder="Kullanıcı adını yaz...">
+            </div>
+
+            <!-- Şifre -->
+            <div>
+                <label for="password" class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                    🔒 Şifre
+                </label>
+                <input type="password" name="password" id="password" required
+                       class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-minilab-blue-400 focus:outline-none transition-colors"
+                       placeholder="Şifreni yaz...">
+            </div>
+
+            <!-- Giriş Butonu -->
+            <button type="submit" class="btn-primary w-full text-lg">
+                🚀 Giriş Yap
+            </button>
+        </form>
+
+        <!-- Kayıt Linki -->
+        <div class="text-center mt-6">
+            <p class="text-gray-600 dark:text-gray-400">
+                Hesabın yok mu?
+                <a href="{% url 'accounts:register' %}" class="text-minilab-orange-500 font-bold hover:underline">
+                    Kayıt Ol
+                </a>
+            </p>
+        </div>
+
+        <!-- Ana Sayfaya Dön -->
+        <div class="text-center mt-4">
+            <a href="{% url 'dashboard:landing' %}" class="text-minilab-blue-500 hover:underline text-sm">
+                ← Ana sayfaya dön
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

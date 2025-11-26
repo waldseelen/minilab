@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+
+    <!-- Başlık -->
+    <div class="text-center mb-12">
+        <h1 class="font-display text-4xl text-minilab-orange-500 mb-4">
+            🏆 Rozet Koleksiyonum
+        </h1>
+        <p class="text-xl text-gray-600 dark:text-gray-300">
+            Deneyler yaparak ve hikayeler okuyarak rozetler kazan!
+        </p>
+    </div>
+
+    <!-- Rozet Sayacı -->
+    <div class="card-cute mb-8 bg-gradient-to-r from-minilab-yellow to-minilab-orange-400 text-white">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-white/80">Toplam Rozetlerin</p>
+                <p class="font-display text-4xl">{{ earned_count|default:0 }} / {{ badges.count }}</p>
+            </div>
+            <div class="text-6xl">🎖️</div>
+        </div>
+    </div>
+
+    <!-- Rozetler Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for badge in badges %}
+        <div class="card-cute text-center p-6 relative group
+                    {% if not badge.is_earned %}opacity-50 grayscale{% endif %}">
+
+            <!-- Rozet İkonu -->
+            <div class="text-6xl mb-4
+                        {% if badge.is_earned %}animate-float{% endif %}">
+                {{ badge.icon }}
+            </div>
+
+            <!-- Rozet Adı -->
+            <h3 class="font-display text-lg mb-2
+                       {% if badge.rarity == 'legendary' %}text-minilab-yellow
+                       {% elif badge.rarity == 'epic' %}text-minilab-purple
+                       {% elif badge.rarity == 'rare' %}text-minilab-blue-500
+                       {% else %}text-gray-600{% endif %}">
+                {{ badge.name }}
+            </h3>
+
+            <!-- Açıklama -->
+            <p class="text-sm text-gray-500 mb-2">{{ badge.description }}</p>
+
+            <!-- Nadirlik -->
+            <span class="inline-block px-2 py-1 text-xs rounded-full
+                         {% if badge.rarity == 'legendary' %}bg-minilab-yellow/20 text-minilab-yellow
+                         {% elif badge.rarity == 'epic' %}bg-minilab-purple/20 text-minilab-purple
+                         {% elif badge.rarity == 'rare' %}bg-minilab-blue-500/20 text-minilab-blue-500
+                         {% else %}bg-gray-100 text-gray-500{% endif %}">
+                {% if badge.rarity == 'legendary' %}Efsanevi
+                {% elif badge.rarity == 'epic' %}Destansı
+                {% elif badge.rarity == 'rare' %}Nadir
+                {% else %}Yaygın{% endif %}
+            </span>
+
+            <!-- Kilit İkonu (kazanılmamış) -->
+            {% if not badge.is_earned %}
+            <div class="absolute top-2 right-2 text-2xl">🔒</div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div class="col-span-full text-center py-12">
+            <span class="text-6xl">🎯</span>
+            <p class="text-gray-500 mt-4">Henüz rozet yok. Deneyler yaparak rozetler kazan!</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Demo Rozetler (Eğer veritabanında yoksa) -->
+    {% if not badges %}
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
+        <div class="card-cute text-center p-6">
+            <div class="text-6xl mb-4 animate-float">🔬</div>
+            <h3 class="font-display text-lg text-minilab-blue-500 mb-2">Genç Bilim İnsanı</h3>
+            <p class="text-sm text-gray-500 mb-2">İlk deneyini tamamla</p>
+            <span class="inline-block px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-500">Yaygın</span>
+        </div>
+        <div class="card-cute text-center p-6 opacity-50 grayscale relative">
+            <div class="text-6xl mb-4">🚀</div>
+            <h3 class="font-display text-lg text-minilab-blue-500 mb-2">Uzay Kaşifi</h3>
+            <p class="text-sm text-gray-500 mb-2">Astronomi kategorisini tamamla</p>
+            <span class="inline-block px-2 py-1 text-xs rounded-full bg-minilab-blue-500/20 text-minilab-blue-500">Nadir</span>
+            <div class="absolute top-2 right-2 text-2xl">🔒</div>
+        </div>
+        <div class="card-cute text-center p-6 opacity-50 grayscale relative">
+            <div class="text-6xl mb-4">🧪</div>
+            <h3 class="font-display text-lg text-minilab-purple mb-2">Süper Kimyager</h3>
+            <p class="text-sm text-gray-500 mb-2">10 kimya deneyi yap</p>
+            <span class="inline-block px-2 py-1 text-xs rounded-full bg-minilab-purple/20 text-minilab-purple">Destansı</span>
+            <div class="absolute top-2 right-2 text-2xl">🔒</div>
+        </div>
+        <div class="card-cute text-center p-6 opacity-50 grayscale relative">
+            <div class="text-6xl mb-4">👑</div>
+            <h3 class="font-display text-lg text-minilab-yellow mb-2">Bilim Ustası</h3>
+            <p class="text-sm text-gray-500 mb-2">Tüm kategorileri tamamla</p>
+            <span class="inline-block px-2 py-1 text-xs rounded-full bg-minilab-yellow/20 text-minilab-yellow">Efsanevi</span>
+            <div class="absolute top-2 right-2 text-2xl">🔒</div>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

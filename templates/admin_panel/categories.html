@@ -1,0 +1,66 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block page_title %}Kategoriler{% endblock %}
+{% block page_subtitle %}Tüm bilim kategorilerini yönet{% endblock %}
+
+{% block admin_content %}
+<div class="space-y-6">
+
+    <!-- Üst Bar -->
+    <div class="flex items-center justify-between">
+        <div class="text-gray-500">
+            <span class="font-bold text-gray-800 dark:text-white">{{ categories|length }}</span> kategori
+        </div>
+
+        <a href="{% url 'admin_panel:add_category' %}"
+           class="px-6 py-3 bg-gradient-to-r from-minilab-purple to-minilab-pink text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition hover:scale-105">
+            + Yeni Kategori Ekle
+        </a>
+    </div>
+
+    <!-- Kategoriler Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for category in categories %}
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition">
+            <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center gap-4">
+                    <span class="text-5xl">{{ category.icon }}</span>
+                    <div>
+                        <h3 class="font-display text-xl text-gray-800 dark:text-white">{{ category.name }}</h3>
+                        <p class="text-sm text-gray-500">/{{ category.slug }}/</p>
+                    </div>
+                </div>
+                {% if category.is_active %}
+                <span class="px-2 py-1 text-xs bg-green-100 text-green-600 rounded-full">Aktif</span>
+                {% else %}
+                <span class="px-2 py-1 text-xs bg-red-100 text-red-600 rounded-full">Pasif</span>
+                {% endif %}
+            </div>
+
+            <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">{{ category.description|truncatewords:15 }}</p>
+
+            <div class="flex items-center justify-between pt-4 border-t dark:border-gray-700">
+                <div class="flex gap-3 text-sm text-gray-500">
+                    <span>🔬 {{ category.experiments.count }} deney</span>
+                    <span>📊 Sıra: {{ category.order }}</span>
+                </div>
+
+                <a href="{% url 'admin_panel:edit_category' category.id %}"
+                   class="px-4 py-2 rounded-lg bg-minilab-blue-100 text-minilab-blue-600 hover:bg-minilab-blue-200 transition text-sm font-bold">
+                    Düzenle
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full text-center py-16 bg-white dark:bg-gray-800 rounded-2xl">
+            <span class="text-8xl block mb-4">📁</span>
+            <h3 class="font-display text-2xl text-gray-600 mb-2">Henüz Kategori Yok</h3>
+            <a href="{% url 'admin_panel:add_category' %}" class="text-minilab-blue-500 hover:underline">
+                İlk kategoriyi ekle →
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

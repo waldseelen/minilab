@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+
+    <!-- Breadcrumb -->
+    <nav class="mb-6">
+        <ol class="flex items-center gap-2 text-sm">
+            <li><a href="{% url 'dashboard:child_dashboard' %}" class="text-minilab-blue-500 hover:underline">Ana Sayfa</a></li>
+            <li class="text-gray-400">/</li>
+            <li><a href="{% url 'experiments:category_detail' experiment.category.slug %}" class="text-minilab-blue-500 hover:underline">{{ experiment.category.name }}</a></li>
+            <li class="text-gray-400">/</li>
+            <li class="text-gray-600 dark:text-gray-300">{{ experiment.title }}</li>
+        </ol>
+    </nav>
+
+    <!-- Deney Başlığı -->
+    <div class="card-cute mb-8">
+        <div class="flex flex-col md:flex-row items-center gap-8">
+            <div class="text-8xl animate-float">{{ experiment.category.icon }}</div>
+            <div class="flex-1 text-center md:text-left">
+                <span class="inline-block px-3 py-1 rounded-full text-sm mb-2"
+                      style="background-color: {{ experiment.category.color }}20; color: {{ experiment.category.color }};">
+                    {{ experiment.category.name }}
+                </span>
+                <h1 class="font-display text-3xl md:text-4xl text-minilab-blue-600 dark:text-minilab-blue-400 mb-2">
+                    {{ experiment.title }}
+                </h1>
+                <p class="text-gray-600 dark:text-gray-300 text-lg">
+                    {{ experiment.short_description }}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deney Bilgileri -->
+    <div class="grid md:grid-cols-3 gap-4 mb-8">
+        <div class="card-cute text-center">
+            <div class="text-3xl mb-2">⏱️</div>
+            <div class="text-sm text-gray-500">Süre</div>
+            <div class="font-bold text-minilab-blue-600">{{ experiment.estimated_time }} dakika</div>
+        </div>
+        <div class="card-cute text-center">
+            <div class="text-3xl mb-2">{{ experiment.get_difficulty_display|slice:":1" }}</div>
+            <div class="text-sm text-gray-500">Zorluk</div>
+            <div class="font-bold text-minilab-orange-500">{{ experiment.get_difficulty_display }}</div>
+        </div>
+        <div class="card-cute text-center">
+            <div class="text-3xl mb-2">⭐</div>
+            <div class="text-sm text-gray-500">Puan</div>
+            <div class="font-bold text-minilab-yellow">{{ experiment.points }} puan</div>
+        </div>
+    </div>
+
+    <!-- Açıklama -->
+    <div class="card-cute mb-8">
+        <h2 class="font-display text-xl text-minilab-purple mb-4">📖 Bu Deneyde Ne Öğreneceksin?</h2>
+        <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+            {{ experiment.description }}
+        </p>
+
+        {% if experiment.learning_objectives_list %}
+        <h3 class="font-bold text-minilab-green mb-2">Öğrenme Hedefleri:</h3>
+        <ul class="space-y-2">
+            {% for objective in experiment.learning_objectives_list %}
+            <li class="flex items-center gap-2">
+                <span class="text-minilab-green">✓</span>
+                <span class="text-gray-600 dark:text-gray-300">{{ objective }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+
+    <!-- Öğrenme Kartları -->
+    {% if experiment.learning_cards.exists %}
+    <div class="card-cute mb-8">
+        <h2 class="font-display text-xl text-minilab-blue-600 mb-4">🃏 Öğrenme Kartları</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {% for card in experiment.learning_cards.all %}
+            <div class="bg-gradient-to-br from-minilab-blue-50 to-minilab-purple/10 dark:from-gray-700 dark:to-gray-800 rounded-xl p-4 cursor-pointer hover:scale-105 transition-transform"
+                 x-data="{ show: false }"
+                 @click="show = true">
+                <div class="text-center">
+                    <span class="text-3xl">{{ experiment.category.icon }}</span>
+                    <p class="font-bold text-sm mt-2">{{ card.title }}</p>
+                </div>
+
+                <!-- Modal -->
+                <div x-show="show" x-transition
+                     class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+                     @click.self="show = false">
+                    <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 max-w-lg mx-4 relative">
+                        <button @click="show = false"
+                                class="absolute top-4 right-4 text-2xl hover:scale-110">✕</button>
+                        <h3 class="font-display text-2xl text-minilab-blue-600 mb-4">{{ card.title }}</h3>
+                        <div class="text-gray-700 dark:text-gray-300 mb-4">
+                            <strong>Soru:</strong>
+                            <p>{{ card.front_content }}</p>
+                        </div>
+                        <div class="bg-minilab-green/10 rounded-xl p-4">
+                            <strong class="text-minilab-green">Cevap:</strong>
+                            <p class="text-gray-700 dark:text-gray-300">{{ card.back_content }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Başlat Butonu -->
+    <div class="text-center">
+        <a href="{% url 'experiments:start_experiment' experiment.slug %}"
+           class="btn-primary text-2xl px-12 py-5 inline-flex items-center gap-3">
+            🚀 Deneyi Başlat!
+        </a>
+        <p class="text-gray-500 mt-4 text-sm">
+            Deneyi tamamladığında {{ experiment.points }} puan kazanacaksın!
+        </p>
+    </div>
+
+</div>
+{% endblock %}

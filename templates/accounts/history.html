@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+
+    <!-- Filigran Dekorasyon -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
+        <div class="absolute top-10 left-10 text-8xl animate-float">📚</div>
+        <div class="absolute top-32 right-20 text-6xl animate-float" style="animation-delay: 1s;">📖</div>
+        <div class="absolute bottom-20 left-20 text-7xl animate-float" style="animation-delay: 2s;">🎓</div>
+    </div>
+
+    <div class="max-w-5xl mx-auto px-4 py-8 relative z-10">
+
+        <!-- Başlık -->
+        <div class="text-center mb-10">
+            <span class="text-7xl animate-bounce-slow inline-block mb-4">📜</span>
+            <h1 class="font-display text-4xl text-minilab-orange-600 dark:text-minilab-orange-400">Öğrenme Geçmişi</h1>
+            <p class="text-gray-500 mt-2">Şimdiye kadar neler öğrendin?</p>
+        </div>
+
+        <!-- İstatistik Kartları -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+            <div class="bg-white dark:bg-gray-800 rounded-[1.5rem] p-6 text-center shadow-lg">
+                <span class="text-4xl block mb-2">🃏</span>
+                <span class="font-display text-3xl text-minilab-blue-500">{{ total_cards_viewed|default:0 }}</span>
+                <p class="text-gray-500 text-sm">Görülen Kart</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-[1.5rem] p-6 text-center shadow-lg">
+                <span class="text-4xl block mb-2">✅</span>
+                <span class="font-display text-3xl text-minilab-green">{{ completed_experiments|default:0 }}</span>
+                <p class="text-gray-500 text-sm">Tamamlanan</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-[1.5rem] p-6 text-center shadow-lg">
+                <span class="text-4xl block mb-2">⭐</span>
+                <span class="font-display text-3xl text-minilab-yellow">{{ total_points|default:0 }}</span>
+                <p class="text-gray-500 text-sm">Toplam Puan</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-[1.5rem] p-6 text-center shadow-lg">
+                <span class="text-4xl block mb-2">🔥</span>
+                <span class="font-display text-3xl text-minilab-orange-500">{{ streak|default:0 }}</span>
+                <p class="text-gray-500 text-sm">Günlük Seri</p>
+            </div>
+        </div>
+
+        <!-- Sekme Menüsü -->
+        <div class="flex justify-center gap-2 mb-8" x-data="{ activeTab: 'recent' }">
+            <button @click="activeTab = 'recent'"
+                    :class="activeTab === 'recent' ? 'bg-minilab-orange-500 text-white' : 'bg-white dark:bg-gray-800'"
+                    class="px-6 py-3 rounded-full font-bold transition hover:scale-105 shadow-lg">
+                🕐 Son Aktiviteler
+            </button>
+            <button @click="activeTab = 'completed'"
+                    :class="activeTab === 'completed' ? 'bg-minilab-green text-white' : 'bg-white dark:bg-gray-800'"
+                    class="px-6 py-3 rounded-full font-bold transition hover:scale-105 shadow-lg">
+                ✅ Tamamlananlar
+            </button>
+            <button @click="activeTab = 'favorites'"
+                    :class="activeTab === 'favorites' ? 'bg-minilab-pink text-white' : 'bg-white dark:bg-gray-800'"
+                    class="px-6 py-3 rounded-full font-bold transition hover:scale-105 shadow-lg">
+                ❤️ Favoriler
+            </button>
+        </div>
+
+        <!-- Son Aktiviteler -->
+        <div class="bg-white dark:bg-gray-800 rounded-[2rem] shadow-xl p-8">
+
+            {% if recent_activities %}
+            <div class="space-y-4">
+                {% for activity in recent_activities %}
+                <div class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition group">
+                    <span class="text-4xl group-hover:animate-bounce">{{ activity.experiment.category.icon }}</span>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-lg">{{ activity.experiment.title }}</h3>
+                        <p class="text-gray-500 text-sm">{{ activity.experiment.category.name }}</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="block text-minilab-green font-bold">+{{ activity.experiment.points }} ⭐</span>
+                        <span class="text-gray-400 text-xs">{{ activity.completed_at|timesince }} önce</span>
+                    </div>
+                    {% if activity.is_completed %}
+                    <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-sm font-bold">✓ Tamam</span>
+                    {% else %}
+                    <span class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full text-sm font-bold">🔄 Devam</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <!-- Boş Durum -->
+            <div class="text-center py-16">
+                <span class="text-8xl inline-block animate-float mb-6">🌱</span>
+                <h3 class="font-display text-2xl text-gray-600 dark:text-gray-300 mb-2">Henüz Aktivite Yok!</h3>
+                <p class="text-gray-500 mb-6">Hemen bir kategori seç ve öğrenmeye başla!</p>
+                <a href="{% url 'experiments:category_list' %}"
+                   class="inline-flex items-center gap-2 bg-gradient-to-r from-minilab-orange-400 to-minilab-yellow text-white px-8 py-4 rounded-full font-bold shadow-lg hover:shadow-xl transition hover:scale-105">
+                    🚀 Keşfetmeye Başla
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Haftanın Özeti -->
+        <div class="mt-10 bg-gradient-to-r from-minilab-purple to-minilab-pink rounded-[2rem] p-8 text-white shadow-2xl">
+            <h3 class="font-display text-2xl mb-6 text-center">📊 Bu Haftanın Özeti</h3>
+
+            <div class="grid grid-cols-7 gap-2 mb-6">
+                {% for day in week_days %}
+                <div class="text-center">
+                    <span class="text-xs opacity-70">{{ day.name }}</span>
+                    <div class="mt-2 h-20 bg-white/20 rounded-xl flex items-end justify-center p-1">
+                        <div class="bg-white/80 rounded-lg w-full" style="height: {{ day.percent }}%;"></div>
+                    </div>
+                    <span class="text-xs mt-1 block">{{ day.count }}</span>
+                </div>
+                {% empty %}
+                <div class="col-span-7 text-center opacity-70">
+                    <p>Henüz veri yok</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="text-center">
+                <span class="text-lg opacity-90">Bu hafta toplam</span>
+                <span class="font-display text-4xl mx-2">{{ weekly_total|default:0 }}</span>
+                <span class="text-lg opacity-90">kart öğrendin! 🎉</span>
+            </div>
+        </div>
+
+        <!-- Alt Menü -->
+        <div class="flex justify-center gap-4 mt-10">
+            <a href="{% url 'dashboard:child_dashboard' %}" class="px-8 py-4 rounded-full bg-white dark:bg-gray-800 font-bold shadow-lg hover:shadow-xl transition hover:scale-105">
+                ← Ana Sayfa
+            </a>
+            <a href="{% url 'experiments:category_list' %}" class="px-8 py-4 rounded-full bg-gradient-to-r from-minilab-orange-400 to-minilab-yellow text-white font-bold shadow-lg hover:shadow-xl transition hover:scale-105">
+                🚀 Devam Et
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

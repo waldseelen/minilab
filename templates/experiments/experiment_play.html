@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col">
+
+    <!-- Üst Bar -->
+    <div class="bg-white dark:bg-gray-800 shadow-md py-4 px-6">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <a href="{% url 'experiments:experiment_detail' experiment.slug %}"
+                   class="text-2xl hover:scale-110 transition-transform">
+                    ←
+                </a>
+                <div>
+                    <h1 class="font-display text-xl text-minilab-blue-600">{{ experiment.title }}</h1>
+                    <p class="text-sm text-gray-500">{{ experiment.category.name }}</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-2xl">⭐</span>
+                <span class="font-bold text-minilab-yellow">{{ experiment.points }} puan</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deney Alanı -->
+    <div class="flex-1 bg-gradient-to-b from-minilab-blue-100 to-white dark:from-gray-900 dark:to-gray-800 p-8"
+         x-data="experimentSimulation()">
+
+        <div class="max-w-4xl mx-auto">
+
+            <!-- Simülasyon Canvas Alanı -->
+            <div class="card-cute mb-8 p-8 min-h-[600px] flex flex-col items-center justify-center relative">
+
+                <!-- Pixi.js Container -->
+                <div id="pixi-container" class="w-full h-full flex justify-center items-center rounded-2xl overflow-hidden border-4 border-minilab-blue-100">
+                    {% if not experiment.pixi_script %}
+                        <!-- Fallback / Demo Content if no script -->
+                        <div class="text-center">
+                            <div class="text-9xl mb-6 animate-float">{{ experiment.category.icon }}</div>
+                            <h2 class="font-display text-2xl text-minilab-blue-600 mb-4">
+                                {{ experiment.title }}
+                            </h2>
+                            <p class="text-gray-600 dark:text-gray-300 mb-8">
+                                {{ experiment.description|truncatewords:20 }}
+                            </p>
+                            <p class="text-red-500">Bu deney için henüz simülasyon yüklenmedi.</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- İlerleme ve Mesaj -->
+                <div class="absolute top-4 left-4 bg-white/90 dark:bg-gray-800/90 p-4 rounded-xl shadow-lg backdrop-blur-sm">
+                    <div class="flex items-center gap-4 mb-2">
+                        <span class="text-sm text-gray-500">İlerleme:</span>
+                        <div class="w-32 h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-minilab-green to-minilab-blue-400 transition-all duration-500"
+                                 :style="'width: ' + (step * 33.33) + '%'"></div>
+                        </div>
+                        <span class="text-sm font-bold" x-text="Math.round(step * 33.33) + '%'">0%</span>
+                    </div>
+                    <p class="text-sm font-bold text-minilab-blue-600" x-text="message || 'Deneye başla!'"></p>
+                </div>
+
+            </div>
+
+            <!-- Tamamla Butonu -->
+            <div class="text-center">
+                <button @click="complete()"
+                        class="btn-primary text-xl px-10 py-4"
+                        :disabled="step < 3"
+                        :class="{ 'opacity-50 cursor-not-allowed': step < 3 }">
+                    <span x-show="step < 3">Deneyi Tamamla</span>
+                    <span x-show="step >= 3">🏆 Deneyi Bitir!</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tamamlama Modal -->
+    <div x-show="completed" x-transition
+         class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" style="display: none;">
+        <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 max-w-md mx-4 text-center">
+            <div class="text-8xl mb-4 animate-bounce">🎉</div>
+            <h2 class="font-display text-3xl text-minilab-green mb-4">Tebrikler!</h2>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">
+                {{ experiment.title }} deneyini başarıyla tamamladın!
+            </p>
+            <div class="bg-minilab-yellow/20 rounded-xl p-4 mb-6">
+                <p class="text-sm text-gray-500">Kazandığın puan:</p>
+                <p class="font-display text-3xl text-minilab-yellow">⭐ {{ experiment.points }}</p>
+            </div>
+            <div class="flex gap-4 justify-center">
+                <a href="{% url 'experiments:category_detail' experiment.category.slug %}"
+                   class="btn-secondary">
+                    Başka Deneyler
+                </a>
+                <a href="{% url 'dashboard:child_dashboard' %}"
+                   class="btn-primary">
+                    Ana Sayfaya Dön
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Pixi.js Library -->
+<script src="https://pixijs.download/v7.x/pixi.min.js"></script>
+
+<!-- Experiment Script -->
+{% if experiment.pixi_script %}
+    <script src="/static/js/pixi/{{ experiment.pixi_script }}"></script>
+{% endif %}
+
+<script>
+function experimentSimulation() {
+    return {
+        step: 0,
+        completed: false,
+        message: '',
+
+        init() {
+            // Global fonksiyonu tanımla ki Pixi içinden erişilebilsin
+            window.updateExperimentProgress = (step, msg) => {
+                this.step = step;
+                if (msg) this.message = msg;
+
+                if (step >= 3 && !this.completed) {
+                    this.playSound('success');
+                    this.message = "Harika! Tüm renkleri keşfettin!";
+                }
+            };
+
+            window.playSound = (type) => {
+                this.playSound(type);
+            };
+
+            // Pixi scriptini başlat
+            {% if experiment.pixi_script %}
+                // Script dosya adına göre sınıfı başlat
+                if ('{{ experiment.pixi_script }}' === 'color_lab.js') {
+                    new ColorLab('pixi-container');
+                } else if ('{{ experiment.pixi_script }}' === 'orbit_game.js') {
+                    new OrbitGame('pixi-container');
+                } else if ('{{ experiment.pixi_script }}' === 'plant_growth.js') {
+                    new PlantGrowth('pixi-container');
+                } else if ('{{ experiment.pixi_script }}' === 'pattern_puzzle.js') {
+                    new PatternPuzzle('pixi-container');
+                } else if ('{{ experiment.pixi_script }}' === 'solar_quiz.js') {
+                    new SolarQuiz('pixi-container');
+                } else if ('{{ experiment.pixi_script }}' === 'creative_drawing.js') {
+                    new CreativeDrawing('pixi-container');
+                } else if ('{{ experiment.pixi_script }}' === 'inventor_workshop.js') {
+                    new InventorWorkshop('pixi-container');
+                } else if ('{{ experiment.pixi_script }}' === 'circuit_design.js') {
+                    new CircuitDesign('pixi-container');
+                }
+            {% endif %}
+        },
+
+        playSound(type) {
+            if (typeof Alpine !== 'undefined' && Alpine.store('app')) {
+                Alpine.store('app').playSound(type);
+            }
+        },
+
+        async complete() {
+            if (this.step < 3) return;
+
+            // AJAX ile tamamlama gönder
+            try {
+                const response = await fetch("{% url 'experiments:complete_experiment' experiment.slug %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const data = await response.json();
+                if (data.success) {
+                    // Başarı sesi çal
+                    if (typeof Alpine !== 'undefined' && Alpine.store('app')) {
+                        Alpine.store('app').playSound('success');
+                    }
+                    // Rapor sayfasına yönlendir
+                    if (data.redirect_url) {
+                        window.location.href = data.redirect_url;
+                    } else {
+                        window.location.href = "{% url 'experiments:experiment_report' experiment.slug %}";
+                    }
+                }
+            } catch (error) {
+                console.error('Hata:', error);
+                // Hata durumunda da rapor sayfasına yönlendir
+                window.location.href = "{% url 'experiments:experiment_report' experiment.slug %}";
+            }
+        }
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+<style>
+    /* Filigran Arka Plan */
+    .filigran-bg {
+        background-image:
+            radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.05) 0%, transparent 20%),
+            radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 20%),
+            radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.03) 0%, transparent 30%);
+    }
+
+    /* Kart Çevirme */
+    .card-flip {
+        perspective: 1000px;
+    }
+    .card-flip-inner {
+        transform-style: preserve-3d;
+        transition: transform 0.6s;
+    }
+    .card-flip.flipped .card-flip-inner {
+        transform: rotateY(180deg);
+    }
+    .card-front, .card-back {
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+    }
+    .card-back {
+        transform: rotateY(180deg);
+    }
+
+    /* Dekoratif Elementler */
+    .deco-star {
+        position: absolute;
+        opacity: 0.1;
+        animation: twinkle 3s ease-in-out infinite;
+    }
+    @keyframes twinkle {
+        0%, 100% { opacity: 0.1; transform: scale(1); }
+        50% { opacity: 0.3; transform: scale(1.2); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen filigran-bg relative" x-data="{ speaking: false }">
+
+    <!-- Dekoratif Elementler -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <span class="deco-star text-6xl" style="top: 5%; left: 5%;">⭐</span>
+        <span class="deco-star text-4xl" style="top: 15%; right: 10%; animation-delay: 1s;">✨</span>
+        <span class="deco-star text-5xl" style="bottom: 20%; left: 8%; animation-delay: 2s;">🌟</span>
+        <span class="deco-star text-4xl" style="bottom: 30%; right: 5%; animation-delay: 0.5s;">💫</span>
+        <span class="deco-star text-7xl" style="top: 40%; right: 3%; animation-delay: 1.5s;">{{ category.icon }}</span>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-4 py-8 relative z-10">
+
+        <!-- Breadcrumb -->
+        <nav class="mb-6">
+            <ol class="flex items-center gap-2 text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-full px-4 py-2 w-fit">
+                <li><a href="{% url 'dashboard:child_dashboard' %}" class="text-minilab-blue-500 hover:underline">🏠 Ana Sayfa</a></li>
+                <li class="text-gray-400">›</li>
+                <li><a href="{% url 'experiments:category_list' %}" class="text-minilab-blue-500 hover:underline">📚 Kategoriler</a></li>
+                <li class="text-gray-400">›</li>
+                <li class="text-gray-600 dark:text-gray-300 font-bold">{{ category.icon }} {{ category.name }}</li>
+            </ol>
+        </nav>
+
+        <!-- Kategori Başlık Kartı -->
+        <div class="bg-gradient-to-r from-minilab-blue-400 via-minilab-purple to-minilab-pink rounded-[2rem] p-8 mb-10 text-white shadow-2xl">
+            <div class="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
+                <div class="text-8xl animate-bounce-slow bg-white/20 rounded-full p-6">
+                    {{ category.icon }}
+                </div>
+                <div class="flex-1">
+                    <h1 class="font-display text-4xl md:text-5xl mb-3">{{ category.name }}</h1>
+                    <p class="text-white/90 text-lg mb-4">{{ category.description }}</p>
+                    <div class="flex flex-wrap gap-3 justify-center md:justify-start">
+                        <a href="{% url 'experiments:learning_cards' category.slug %}"
+                           class="bg-white/30 hover:bg-white/40 px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2 transition-all hover:scale-105">
+                            🃏 {{ total_cards }} Bilgi Kartı
+                        </a>
+                        <span class="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-bold">
+                            🔬 {{ experiments.count }} Deney
+                        </span>
+                        <!-- Dinle Butonu -->
+                        <button @click="Alpine.store('app').speak('{{ category.name }} kategorisine hoş geldin! Burada {{ category.description|truncatewords:15 }} {{ total_cards }} tane bilgi kartı ve {{ experiments.count }} tane deney var.'); speaking = true; setTimeout(() => speaking = false, 6000)"
+                                class="bg-white/30 hover:bg-white/40 px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2 transition-all hover:scale-105"
+                                :class="{ 'animate-pulse': speaking }">
+                            <span x-show="!speaking">🔊</span>
+                            <span x-show="speaking">🗣️</span>
+                            Dinle
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rastgele Kart Önerisi -->
+        {% if random_card %}
+        <div class="mb-10 text-center">
+            <h2 class="font-display text-2xl text-minilab-purple mb-4">
+                🎲 Bugün Şanslı Kartın!
+            </h2>
+            <div class="inline-block">
+                <div class="card-flip cursor-pointer w-80 h-56 mx-auto" onclick="this.classList.toggle('flipped')">
+                    <div class="card-flip-inner w-full h-full relative">
+                        <!-- Ön Yüz -->
+                        <div class="card-front absolute inset-0 bg-gradient-to-br from-minilab-yellow to-minilab-orange-400 rounded-[1.5rem] p-6 flex flex-col items-center justify-center shadow-xl">
+                            <span class="text-5xl mb-3">{{ category.icon }}</span>
+                            <h3 class="font-display text-xl text-white mb-2">{{ random_card.title }}</h3>
+                            <p class="text-white/80 text-sm">{{ random_card.front_content|truncatewords:8 }}</p>
+                            <span class="mt-3 text-white/60 text-xs">👆 Tıkla ve öğren!</span>
+                        </div>
+                        <!-- Arka Yüz -->
+                        <div class="card-back absolute inset-0 bg-gradient-to-br from-minilab-green to-minilab-blue-400 rounded-[1.5rem] p-6 flex flex-col items-center justify-center shadow-xl">
+                            <span class="text-3xl mb-2">💡</span>
+                            <p class="text-white text-center text-sm leading-relaxed">{{ random_card.back_content|truncatewords:25 }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Tüm Öğrenme Kartları -->
+        <div class="flex items-center justify-center gap-4 mb-8">
+            <h2 class="font-display text-3xl text-center text-minilab-blue-600 dark:text-minilab-blue-400">
+                🃏 Bilgi Kartları
+            </h2>
+            <button @click="Alpine.store('app').speak('Bilgi kartları bölümüne hoş geldin! Kartların üstüne tıklayarak onları çevirebilir ve arkalarındaki bilgiyi öğrenebilirsin.')"
+                    class="bg-minilab-blue-100 hover:bg-minilab-blue-200 text-minilab-blue-600 px-3 py-2 rounded-full text-sm font-bold flex items-center gap-1 transition-all hover:scale-105">
+                🔊 Açıkla
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+            {% for card in learning_cards %}
+            <div class="card-flip cursor-pointer h-52 group" x-data="{ flipped: false }" @click="flipped = !flipped" :class="{ 'flipped': flipped }">
+                <div class="card-flip-inner w-full h-full relative">
+                    <!-- Ön Yüz -->
+                    <div class="card-front absolute inset-0 bg-white dark:bg-gray-800 rounded-[1.5rem] p-5 flex flex-col items-center justify-center shadow-lg border-4 border-dashed {% if category.color == 'blue' %}border-blue-300{% elif category.color == 'purple' %}border-purple-300{% elif category.color == 'green' %}border-green-300{% elif category.color == 'indigo' %}border-indigo-300{% elif category.color == 'cyan' %}border-cyan-300{% elif category.color == 'pink' %}border-pink-300{% elif category.color == 'emerald' %}border-emerald-300{% elif category.color == 'amber' %}border-amber-300{% elif category.color == 'red' %}border-red-300{% elif category.color == 'rose' %}border-rose-300{% else %}border-gray-300{% endif %}">
+                        <span class="text-4xl mb-2">{{ category.icon }}</span>
+                        <h3 class="font-display text-lg text-center {% if category.color == 'blue' %}text-blue-600{% elif category.color == 'purple' %}text-purple-600{% elif category.color == 'green' %}text-green-600{% elif category.color == 'indigo' %}text-indigo-600{% elif category.color == 'cyan' %}text-cyan-600{% elif category.color == 'pink' %}text-pink-600{% elif category.color == 'emerald' %}text-emerald-600{% elif category.color == 'amber' %}text-amber-600{% elif category.color == 'red' %}text-red-600{% elif category.color == 'rose' %}text-rose-600{% else %}text-gray-600{% endif %} mb-1">{{ card.title }}</h3>
+                        <p class="text-gray-500 text-xs text-center">{{ card.front_content|truncatewords:10 }}</p>
+                        <div class="mt-2 flex items-center gap-2">
+                            <span class="text-gray-400 text-xs">🔄 Çevir</span>
+                            <button @click.stop="Alpine.store('app').speak('{{ card.title }}. {{ card.front_content|truncatewords:15 }}')"
+                                    class="text-minilab-blue-400 hover:text-minilab-blue-600 text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                                🔊
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Arka Yüz -->
+                    <div class="card-back absolute inset-0 {% if category.color == 'blue' %}bg-blue-50{% elif category.color == 'purple' %}bg-purple-50{% elif category.color == 'green' %}bg-green-50{% elif category.color == 'indigo' %}bg-indigo-50{% elif category.color == 'cyan' %}bg-cyan-50{% elif category.color == 'pink' %}bg-pink-50{% elif category.color == 'emerald' %}bg-emerald-50{% elif category.color == 'amber' %}bg-amber-50{% elif category.color == 'red' %}bg-red-50{% elif category.color == 'rose' %}bg-rose-50{% else %}bg-gray-50{% endif %} dark:bg-gray-700 rounded-[1.5rem] p-5 flex flex-col items-center justify-center shadow-lg">
+                        <span class="text-2xl mb-2">💡</span>
+                        <p class="text-gray-700 dark:text-gray-200 text-sm text-center leading-relaxed">{{ card.back_content|truncatewords:20 }}</p>
+                        <button @click.stop="Alpine.store('app').speak('{{ card.back_content|truncatewords:25 }}')"
+                                class="mt-2 text-minilab-green hover:text-minilab-green/80 text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                            🔊 Oku
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-full text-center py-12">
+                <span class="text-6xl">📭</span>
+                <p class="text-gray-500 mt-4">Bu kategoride henüz kart yok.</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Kategoriye Dön -->
+        <div class="text-center">
+            <a href="{% url 'experiments:category_list' %}" class="inline-flex items-center gap-2 bg-white dark:bg-gray-800 px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-105">
+                ← Diğer Kategoriler
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

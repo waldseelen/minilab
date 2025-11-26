@@ -1,0 +1,112 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block page_title %}Kullanıcılar{% endblock %}
+{% block page_subtitle %}Tüm kayıtlı kullanıcıları görüntüle{% endblock %}
+
+{% block admin_content %}
+<div class="space-y-6">
+
+    <!-- Üst Bar -->
+    <div class="flex items-center justify-between">
+        <div class="text-gray-500">
+            <span class="font-bold text-gray-800 dark:text-white">{{ users.paginator.count }}</span> kullanıcı
+        </div>
+
+        <div class="relative">
+            <input type="text" placeholder="Kullanıcı ara..."
+                   class="pl-10 pr-4 py-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+        </div>
+    </div>
+
+    <!-- Kullanıcılar Tablosu -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+        <table class="w-full">
+            <thead class="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-600 dark:text-gray-300">Kullanıcı</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-600 dark:text-gray-300">E-posta</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-600 dark:text-gray-300">Tip</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-600 dark:text-gray-300">Kayıt Tarihi</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-600 dark:text-gray-300">Son Giriş</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-600 dark:text-gray-300">Durum</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                {% for u in users %}
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-minilab-purple flex items-center justify-center text-white font-bold">
+                                {{ u.first_name|slice:":1"|default:u.username|slice:":1"|upper }}
+                            </div>
+                            <div>
+                                <span class="font-bold text-gray-800 dark:text-white">{{ u.get_full_name|default:u.username }}</span>
+                                <span class="block text-xs text-gray-500">@{{ u.username }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-gray-600 dark:text-gray-300">
+                        {{ u.email }}
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if u.is_superuser %}
+                        <span class="px-2 py-1 text-xs bg-red-100 text-red-600 rounded-full">Admin</span>
+                        {% elif u.is_staff %}
+                        <span class="px-2 py-1 text-xs bg-purple-100 text-purple-600 rounded-full">Staff</span>
+                        {% else %}
+                        <span class="px-2 py-1 text-xs bg-blue-100 text-blue-600 rounded-full">Kullanıcı</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-gray-500 text-sm">
+                        {{ u.date_joined|date:"d.m.Y" }}
+                    </td>
+                    <td class="px-6 py-4 text-gray-500 text-sm">
+                        {% if u.last_login %}
+                        {{ u.last_login|timesince }} önce
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if u.is_active %}
+                        <span class="px-2 py-1 text-xs bg-green-100 text-green-600 rounded-full">Aktif</span>
+                        {% else %}
+                        <span class="px-2 py-1 text-xs bg-red-100 text-red-600 rounded-full">Pasif</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center">
+                        <span class="text-6xl block mb-4">👥</span>
+                        <p class="text-gray-500">Henüz kullanıcı yok</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Sayfalama -->
+    {% if users.has_other_pages %}
+    <div class="flex justify-center gap-2">
+        {% if users.has_previous %}
+        <a href="?page={{ users.previous_page_number }}" class="px-4 py-2 rounded-xl bg-white dark:bg-gray-800 hover:bg-gray-100 transition">←</a>
+        {% endif %}
+
+        {% for num in users.paginator.page_range %}
+        <a href="?page={{ num }}"
+           class="px-4 py-2 rounded-xl {% if users.number == num %}bg-minilab-blue-500 text-white{% else %}bg-white dark:bg-gray-800 hover:bg-gray-100{% endif %} transition">
+            {{ num }}
+        </a>
+        {% endfor %}
+
+        {% if users.has_next %}
+        <a href="?page={{ users.next_page_number }}" class="px-4 py-2 rounded-xl bg-white dark:bg-gray-800 hover:bg-gray-100 transition">→</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

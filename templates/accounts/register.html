@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center px-4 py-12">
+    <div class="card-cute max-w-lg w-full">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <span class="text-6xl">👨‍👩‍👧‍👦</span>
+            <h1 class="font-display text-3xl text-minilab-purple mt-2">Ebeveyn Kaydı</h1>
+            <p class="text-gray-600 mt-2">Çocuğunuz için güvenli bir hesap oluşturun</p>
+        </div>
+
+        <!-- Form -->
+        <form method="post" class="space-y-5">
+            {% csrf_token %}
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <!-- Ad -->
+                <div>
+                    <label for="first_name" class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                        Ad
+                    </label>
+                    <input type="text" name="first_name" id="first_name" required
+                           class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-minilab-purple focus:outline-none transition-colors"
+                           placeholder="Adınız">
+                </div>
+
+                <!-- Soyad -->
+                <div>
+                    <label for="last_name" class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                        Soyad
+                    </label>
+                    <input type="text" name="last_name" id="last_name" required
+                           class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-minilab-purple focus:outline-none transition-colors"
+                           placeholder="Soyadınız">
+                </div>
+            </div>
+
+            <!-- E-posta -->
+            <div>
+                <label for="email" class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                    📧 E-posta
+                </label>
+                <input type="email" name="email" id="email" required
+                       class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-minilab-purple focus:outline-none transition-colors"
+                       placeholder="ornek@email.com">
+            </div>
+
+            <!-- Kullanıcı Adı -->
+            <div>
+                <label for="username" class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                    👤 Kullanıcı Adı
+                </label>
+                <input type="text" name="username" id="username" required
+                       class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-minilab-purple focus:outline-none transition-colors"
+                       placeholder="kullanici_adi">
+            </div>
+
+            <!-- Şifre -->
+            <div>
+                <label for="password1" class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                    🔒 Şifre
+                </label>
+                <input type="password" name="password1" id="password1" required
+                       class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-minilab-purple focus:outline-none transition-colors"
+                       placeholder="En az 8 karakter">
+            </div>
+
+            <!-- Şifre Tekrar -->
+            <div>
+                <label for="password2" class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                    🔒 Şifre Tekrar
+                </label>
+                <input type="password" name="password2" id="password2" required
+                       class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-minilab-purple focus:outline-none transition-colors"
+                       placeholder="Şifreyi tekrar yazın">
+            </div>
+
+            <!-- Onay -->
+            <div class="flex items-start gap-3">
+                <input type="checkbox" name="terms" id="terms" required
+                       class="mt-1 w-5 h-5 rounded text-minilab-purple focus:ring-minilab-purple">
+                <label for="terms" class="text-sm text-gray-600 dark:text-gray-400">
+                    <a href="#" class="text-minilab-purple hover:underline">Kullanım koşullarını</a> ve
+                    <a href="#" class="text-minilab-purple hover:underline">gizlilik politikasını</a> okudum, kabul ediyorum.
+                </label>
+            </div>
+
+            <!-- Kayıt Butonu -->
+            <button type="submit" class="w-full px-6 py-4 rounded-full bg-minilab-purple text-white font-bold text-lg shadow-lg hover:bg-minilab-purple/90 hover:scale-105 active:scale-95 transition-all">
+                ✨ Hesap Oluştur
+            </button>
+        </form>
+
+        <!-- Giriş Linki -->
+        <div class="text-center mt-6">
+            <p class="text-gray-600 dark:text-gray-400">
+                Zaten hesabın var mı?
+                <a href="{% url 'accounts:login' %}" class="text-minilab-blue-500 font-bold hover:underline">
+                    Giriş Yap
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

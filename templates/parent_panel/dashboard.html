@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <!-- Header -->
+    <div class="bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <span class="text-4xl">👨‍👩‍👧‍👦</span>
+                    <div>
+                        <h1 class="text-2xl font-display text-gray-800 dark:text-white">Ebeveyn Paneli</h1>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Çocuğunuzun öğrenme yolculuğunu takip edin</p>
+                    </div>
+                </div>
+                <a href="{% url 'parent_panel:settings' %}"
+                   class="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                    ⚙️ <span>Ayarlar</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        {% if not has_children %}
+        <!-- Çocuk Yok Uyarısı -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 text-center">
+            <span class="text-6xl block mb-4">👶</span>
+            <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Henüz bağlı çocuk yok</h2>
+            <p class="text-gray-500 dark:text-gray-400 mb-6">
+                Çocuğunuzun hesabını ekleyerek öğrenme yolculuğunu takip edebilirsiniz.
+            </p>
+            <a href="{% url 'parent_panel:settings' %}"
+               class="inline-flex items-center gap-2 px-6 py-3 bg-minilab-purple text-white rounded-full hover:bg-purple-600 transition-colors">
+                ➕ Çocuk Ekle
+            </a>
+        </div>
+        {% else %}
+
+        <!-- Hızlı İstatistikler -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-blue-100 text-sm">Toplam Çocuk</p>
+                        <p class="text-3xl font-bold">{{ children_data|length }}</p>
+                    </div>
+                    <span class="text-4xl opacity-80">👶</span>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-6 text-white shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-green-100 text-sm">Haftalık Deneyler</p>
+                        <p class="text-3xl font-bold">
+                            {% with total=0 %}
+                            {% for c in children_data %}{{ c.experiments_completed|add:total }}{% endfor %}
+                            {% endwith %}
+                        </p>
+                    </div>
+                    <span class="text-4xl opacity-80">🔬</span>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-yellow-500 to-orange-500 rounded-2xl p-6 text-white shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-yellow-100 text-sm">Kazanılan Rozetler</p>
+                        <p class="text-3xl font-bold">
+                            {% with total=0 %}
+                            {% for c in children_data %}{{ c.badges_earned|add:total }}{% endfor %}
+                            {% endwith %}
+                        </p>
+                    </div>
+                    <span class="text-4xl opacity-80">🏅</span>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-purple-100 text-sm">Bugün Aktif Süre</p>
+                        <p class="text-3xl font-bold">
+                            {% with total=0 %}
+                            {% for c in children_data %}{{ c.today_time_minutes|add:total }}{% endfor %}
+                            {% endwith %} dk
+                        </p>
+                    </div>
+                    <span class="text-4xl opacity-80">⏱️</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Çocuklar Listesi -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            {% for data in children_data %}
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <!-- Çocuk Başlığı -->
+                <div class="bg-gradient-to-r from-minilab-blue-400 to-minilab-purple p-6 text-white">
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-3xl">
+                            {{ data.child.avatar|default:"👶" }}
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">{{ data.child.nickname }}</h3>
+                            <div class="flex items-center gap-2 text-sm text-white/80">
+                                <span>Seviye {{ data.level }}</span>
+                                <span>•</span>
+                                <span>{{ data.total_points }} puan</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- İstatistikler -->
+                <div class="p-6">
+                    <div class="grid grid-cols-3 gap-4 mb-6">
+                        <div class="text-center p-3 bg-blue-50 dark:bg-blue-900/30 rounded-xl">
+                            <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ data.experiments_completed }}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Deney (hafta)</p>
+                        </div>
+                        <div class="text-center p-3 bg-yellow-50 dark:bg-yellow-900/30 rounded-xl">
+                            <p class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ data.badges_earned }}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Rozet (hafta)</p>
+                        </div>
+                        <div class="text-center p-3 bg-green-50 dark:bg-green-900/30 rounded-xl">
+                            <p class="text-2xl font-bold text-green-600 dark:text-green-400">{{ data.today_time_minutes }}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">dk (bugün)</p>
+                        </div>
+                    </div>
+
+                    <!-- Son Aktiviteler -->
+                    {% if data.recent_activities %}
+                    <div class="mb-4">
+                        <h4 class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">Son Aktiviteler</h4>
+                        <div class="space-y-2">
+                            {% for activity in data.recent_activities|slice:":3" %}
+                            <div class="flex items-center gap-3 text-sm">
+                                <span class="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                                    {% if activity.activity_type == 'experiment_complete' %}🔬
+                                    {% elif activity.activity_type == 'badge_earned' %}🏅
+                                    {% elif activity.activity_type == 'story_read' %}📖
+                                    {% elif activity.activity_type == 'chat_message' %}💬
+                                    {% else %}📌{% endif %}
+                                </span>
+                                <span class="flex-1 text-gray-600 dark:text-gray-300">{{ activity.description|default:activity.get_activity_type_display }}</span>
+                                <span class="text-xs text-gray-400">{{ activity.created_at|timesince }} önce</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Aksiyon Butonları -->
+                    <div class="flex gap-3">
+                        <a href="{% url 'parent_panel:child_detail' data.child.id %}"
+                           class="flex-1 py-2 text-center bg-minilab-purple text-white rounded-lg hover:bg-purple-600 transition-colors text-sm font-medium">
+                            📊 Detaylı Rapor
+                        </a>
+                        <a href="{% url 'parent_panel:activity_log' data.child.id %}"
+                           class="flex-1 py-2 text-center bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm font-medium">
+                            📜 Aktiviteler
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Hızlı İpuçları -->
+        <div class="bg-gradient-to-r from-green-100 to-blue-100 dark:from-green-900/30 dark:to-blue-900/30 rounded-2xl p-6">
+            <h3 class="font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                💡 Ebeveyn İpuçları
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white/60 dark:bg-gray-800/60 rounded-xl p-4">
+                    <span class="text-2xl">🗣️</span>
+                    <h4 class="font-semibold text-gray-800 dark:text-white mt-2">Birlikte Konuşun</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                        Çocuğunuzun öğrendiği konular hakkında sohbet edin. Merakını destekleyin!
+                    </p>
+                </div>
+                <div class="bg-white/60 dark:bg-gray-800/60 rounded-xl p-4">
+                    <span class="text-2xl">⏰</span>
+                    <h4 class="font-semibold text-gray-800 dark:text-white mt-2">Düzenli Molalar</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                        Her 30 dakikada bir mola vermelerini sağlayın. Gözler ve zihin dinlenmeli!
+                    </p>
+                </div>
+                <div class="bg-white/60 dark:bg-gray-800/60 rounded-xl p-4">
+                    <span class="text-2xl">🎉</span>
+                    <h4 class="font-semibold text-gray-800 dark:text-white mt-2">Başarıları Kutlayın</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                        Rozet kazandığında, deney tamamladığında birlikte kutlayın!
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

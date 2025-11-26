@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+
+    <!-- Başlık -->
+    <div class="text-center mb-12">
+        <h1 class="font-display text-4xl text-minilab-purple mb-4">
+            🎨 Avatar Özelleştir
+        </h1>
+        <p class="text-xl text-gray-600 dark:text-gray-300">
+            Avatarını dilediğin gibi süsle!
+        </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8">
+
+        <!-- Avatar Önizleme -->
+        <div class="card-cute text-center">
+            <h2 class="font-display text-xl text-minilab-blue-600 mb-6">Avatarın</h2>
+
+            <div class="relative w-64 h-64 mx-auto bg-gradient-to-br from-minilab-blue-100 to-minilab-purple/20 rounded-full flex items-center justify-center">
+                <!-- Arka Plan -->
+                <div class="absolute inset-0 rounded-full overflow-hidden">
+                    <div class="w-full h-full bg-gradient-to-br from-minilab-blue-200 to-minilab-purple/30"></div>
+                </div>
+
+                <!-- Karakter -->
+                <div class="relative z-10 text-9xl">
+                    👶
+                </div>
+
+                <!-- Şapka -->
+                <div class="absolute top-2 left-1/2 -translate-x-1/2 text-5xl z-20">
+                    🎩
+                </div>
+            </div>
+
+            <div class="mt-6 flex gap-2 justify-center">
+                <button class="btn-primary">Kaydet</button>
+                <button class="btn-secondary">Sıfırla</button>
+            </div>
+        </div>
+
+        <!-- Özelleştirme Seçenekleri -->
+        <div class="space-y-6">
+
+            <!-- Şapkalar -->
+            <div class="card-cute">
+                <h3 class="font-bold text-lg mb-4">🎩 Şapkalar</h3>
+                <div class="flex gap-3 flex-wrap">
+                    <button class="w-14 h-14 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center text-2xl hover:scale-110 transition-transform ring-2 ring-minilab-purple">
+                        🎩
+                    </button>
+                    <button class="w-14 h-14 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center text-2xl hover:scale-110 transition-transform">
+                        👒
+                    </button>
+                    <button class="w-14 h-14 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center text-2xl hover:scale-110 transition-transform opacity-50">
+                        🎓
+                    </button>
+                    <button class="w-14 h-14 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center text-2xl hover:scale-110 transition-transform opacity-50">
+                        👑
+                    </button>
+                </div>
+            </div>
+
+            <!-- Aksesuarlar -->
+            <div class="card-cute">
+                <h3 class="font-bold text-lg mb-4">👓 Aksesuarlar</h3>
+                <div class="flex gap-3 flex-wrap">
+                    <button class="w-14 h-14 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center text-2xl hover:scale-110 transition-transform">
+                        👓
+                    </button>
+                    <button class="w-14 h-14 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center text-2xl hover:scale-110 transition-transform opacity-50">
+                        🕶️
+                    </button>
+                    <button class="w-14 h-14 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center text-2xl hover:scale-110 transition-transform opacity-50">
+                        🎀
+                    </button>
+                </div>
+            </div>
+
+            <!-- Arka Planlar -->
+            <div class="card-cute">
+                <h3 class="font-bold text-lg mb-4">🌈 Arka Planlar</h3>
+                <div class="flex gap-3 flex-wrap">
+                    <button class="w-14 h-14 bg-gradient-to-br from-minilab-blue-200 to-minilab-purple/30 rounded-xl hover:scale-110 transition-transform ring-2 ring-minilab-purple"></button>
+                    <button class="w-14 h-14 bg-gradient-to-br from-minilab-yellow to-minilab-orange-300 rounded-xl hover:scale-110 transition-transform"></button>
+                    <button class="w-14 h-14 bg-gradient-to-br from-minilab-green to-minilab-blue-300 rounded-xl hover:scale-110 transition-transform opacity-50"></button>
+                    <button class="w-14 h-14 bg-gradient-to-br from-minilab-pink to-minilab-purple rounded-xl hover:scale-110 transition-transform opacity-50"></button>
+                </div>
+            </div>
+
+            <p class="text-center text-gray-500 text-sm">
+                🔒 Kilitli öğeleri mağazadan satın alabilirsin!
+            </p>
+            <a href="{% url 'gamification:shop' %}" class="btn-secondary block text-center">
+                Mağazaya Git 🛒
+            </a>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

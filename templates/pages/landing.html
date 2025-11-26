@@ -1,0 +1,288 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+<!-- Modern Navigation Bar -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <!-- Logo -->
+            <a href="/" class="flex items-center gap-2 group">
+                <span class="text-3xl group-hover:animate-bounce">🧪</span>
+                <span class="font-display text-2xl text-minilab-blue-600 dark:text-minilab-blue-400">MiniLab</span>
+            </a>
+
+            <!-- Navigation Links -->
+            <div class="hidden md:flex items-center gap-6">
+                <a href="#features" class="text-gray-700 dark:text-gray-300 hover:text-minilab-blue-600 dark:hover:text-minilab-blue-400 transition-colors font-semibold">
+                    Özellikler
+                </a>
+                <a href="#about" class="text-gray-700 dark:text-gray-300 hover:text-minilab-purple transition-colors font-semibold">
+                    Hakkında
+                </a>
+                <a href="{% url 'experiments:category_list' %}" class="text-gray-700 dark:text-gray-300 hover:text-minilab-green transition-colors font-semibold">
+                    Kategoriler
+                </a>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-3">
+                <a href="{% url 'accounts:login' %}"
+                   class="hidden sm:inline-flex px-4 py-2 rounded-full text-minilab-blue-600 dark:text-minilab-blue-400 hover:bg-minilab-blue-50 dark:hover:bg-gray-800 transition-all font-semibold">
+                    Giriş Yap
+                </a>
+                <a href="{% url 'accounts:register' %}"
+                   class="px-6 py-2 rounded-full bg-gradient-to-r from-minilab-blue-500 to-minilab-purple text-white font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all">
+                    Başla! 🚀
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen relative overflow-hidden pt-16">
+
+    <!-- Arka Plan Bulutları -->
+    <div class="absolute inset-0 pointer-events-none">
+        <!-- Bulut 1 -->
+        <div class="cloud absolute top-20 left-10 text-6xl opacity-30" style="animation-delay: 0s;">☁️</div>
+        <!-- Bulut 2 -->
+        <div class="cloud absolute top-40 right-20 text-8xl opacity-20" style="animation-delay: 2s;">☁️</div>
+        <!-- Bulut 3 -->
+        <div class="cloud absolute top-60 left-1/4 text-5xl opacity-25" style="animation-delay: 4s;">☁️</div>
+        <!-- Bulut 4 -->
+        <div class="cloud absolute bottom-40 right-1/3 text-7xl opacity-15" style="animation-delay: 6s;">☁️</div>
+
+        <!-- Yıldızlar (arka plan süsü) -->
+        <div class="absolute top-32 right-1/4 text-2xl animate-pulse">⭐</div>
+        <div class="absolute top-48 left-1/3 text-xl animate-pulse" style="animation-delay: 1s;">✨</div>
+        <div class="absolute bottom-60 right-1/4 text-2xl animate-pulse" style="animation-delay: 2s;">⭐</div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-20">
+
+        <!-- Logo & Başlık -->
+        <div class="text-center mb-12 animate-float">
+            <div class="text-8xl mb-4">🧪</div>
+            <h1 class="font-display text-6xl md:text-7xl text-minilab-blue-600 dark:text-minilab-blue-400 mb-4">
+                MiniLab
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-300 font-semibold">
+                Bilimin Eğlenceli Dünyasına Hoş Geldin! 🚀
+            </p>
+        </div>
+
+        <!-- Kategori Kartları (Animasyonlu) -->
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-12 max-w-6xl">
+            {% for category in categories %}
+            <a href="{% url 'experiments:category_detail' category.slug %}"
+               class="group relative bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-lg hover:shadow-2xl cursor-pointer transition-all hover:-translate-y-2 overflow-hidden"
+               style="animation: float 3s ease-in-out infinite; animation-delay: {{ forloop.counter0 }}s;">
+                <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-minilab-blue-400/20 to-transparent rounded-bl-full"></div>
+                <div class="relative text-center">
+                    <span class="text-6xl mb-3 inline-block group-hover:scale-110 transition-transform">{{ category.icon }}</span>
+                    <span class="block font-display text-sm font-bold {% if category.color == 'blue' %}text-blue-600{% elif category.color == 'purple' %}text-purple-600{% elif category.color == 'green' %}text-green-600{% elif category.color == 'indigo' %}text-indigo-600{% elif category.color == 'cyan' %}text-cyan-600{% elif category.color == 'pink' %}text-pink-600{% elif category.color == 'emerald' %}text-emerald-600{% elif category.color == 'amber' %}text-amber-600{% elif category.color == 'red' %}text-red-600{% elif category.color == 'rose' %}text-rose-600{% else %}text-gray-600{% endif %} leading-tight">{{ category.name }}</span>
+                </div>
+            </a>
+            {% empty %}
+            <!-- Fallback: Statik kategoriler -->
+            <a href="{% url 'experiments:category_list' %}" class="group relative bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-lg hover:shadow-2xl cursor-pointer transition-all hover:-translate-y-2"
+                 style="animation: float 3s ease-in-out infinite;">
+                <div class="text-center">
+                    <span class="text-6xl mb-3 inline-block group-hover:scale-110 transition-transform">🔬</span>
+                    <span class="block font-display text-sm font-bold text-blue-600">Kategorileri Keşfet</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+
+        <!-- CTA Butonları -->
+        <div class="flex flex-col sm:flex-row gap-4 items-center">
+            <a href="{% url 'accounts:register' %}"
+               class="group relative px-12 py-5 rounded-3xl bg-gradient-to-r from-minilab-blue-500 via-minilab-purple to-minilab-pink text-white font-display text-2xl shadow-2xl hover:shadow-3xl transition-all hover:scale-110 animate-bounce-slow overflow-hidden">
+                <span class="relative z-10 flex items-center gap-3">
+                    <span>🎮</span>
+                    <span>Maceraya Başla!</span>
+                </span>
+                <div class="absolute inset-0 bg-gradient-to-r from-minilab-pink via-minilab-purple to-minilab-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            </a>
+            <a href="{% url 'accounts:login' %}"
+               class="px-8 py-4 rounded-3xl border-3 border-minilab-blue-500 text-minilab-blue-600 dark:text-minilab-blue-400 font-bold text-lg hover:bg-minilab-blue-50 dark:hover:bg-gray-800 transition-all hover:scale-105">
+                Giriş Yap
+            </a>
+        </div>
+
+        <!-- Alt Bilgi -->
+        <p class="mt-8 text-gray-500 dark:text-gray-400 text-sm">
+            4-6 yaş arası çocuklar için tasarlandı 👶
+        </p>
+    </section>
+
+    <!-- Özellikler Section -->
+    <section id="features" class="relative z-10 py-20 bg-gradient-to-b from-white to-minilab-blue-50 dark:from-gray-900 dark:to-gray-800">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="font-display text-5xl text-minilab-blue-600 dark:text-minilab-blue-400 mb-4">
+                    Neler Yapabilirsin? 🌟
+                </h2>
+                <p class="text-xl text-gray-600 dark:text-gray-400">
+                    MiniLab'da seni bekleyen harika deneyimler!
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Özellik 1 -->
+                <div class="group relative bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2">
+                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 w-16 h-16 bg-gradient-to-br from-minilab-orange-400 to-minilab-orange-600 rounded-2xl flex items-center justify-center text-4xl shadow-lg group-hover:animate-bounce">
+                        🎨
+                    </div>
+                    <div class="text-center pt-8">
+                        <h3 class="font-display text-2xl text-minilab-orange-500 mb-3">Deneyler Yap</h3>
+                        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                            Renkleri karıştır, roketler fırlat, bitkiler büyüt! Eğlenceli simülasyonlarla bilimi deneyimle.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Özellik 2 -->
+                <div class="group relative bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2">
+                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 w-16 h-16 bg-gradient-to-br from-minilab-purple to-minilab-pink rounded-2xl flex items-center justify-center text-4xl shadow-lg group-hover:animate-bounce">
+                        📖
+                    </div>
+                    <div class="text-center pt-8">
+                        <h3 class="font-display text-2xl text-minilab-purple mb-3">Hikayeler Oku</h3>
+                        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                            Bilim masallarında kendi seçimlerini yap! İnteraktif hikayelerle öğren.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Özellik 3 -->
+                <div class="group relative bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2">
+                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 w-16 h-16 bg-gradient-to-br from-minilab-green to-minilab-blue-400 rounded-2xl flex items-center justify-center text-4xl shadow-lg group-hover:animate-bounce">
+                        🏆
+                    </div>
+                    <div class="text-center pt-8">
+                        <h3 class="font-display text-2xl text-minilab-green mb-3">Rozetler Kazan</h3>
+                        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                            Öğrendikçe rozetler topla, avatarını özelleştir! Her başarı ödüllenir.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MiniBot Tanıtım -->
+    <section id="about" class="relative z-10 py-20 bg-gradient-to-br from-minilab-purple/10 to-minilab-pink/10 dark:from-gray-800 dark:to-gray-900">
+        <div class="max-w-5xl mx-auto px-4">
+            <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-8 overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-40 h-40 bg-minilab-purple/20 rounded-full blur-3xl"></div>
+                <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-minilab-pink/20 rounded-full blur-3xl"></div>
+
+                <div class="relative text-9xl animate-wiggle flex-shrink-0">🤖</div>
+
+                <div class="relative">
+                    <h2 class="font-display text-4xl text-minilab-purple dark:text-minilab-pink mb-4">
+                        Merhaba! Ben MiniBot! 👋
+                    </h2>
+                    <p class="text-lg text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+                        Seninle bilim hakkında sohbet etmek için sabırsızlanıyorum!
+                        Bana her şeyi sorabilirsin - gökyüzü neden mavi, bitkiler nasıl büyür,
+                        yıldızlar ne kadar uzakta...
+                    </p>
+                    <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+                        Sana ipuçları vereceğim, deneylerde yardım edeceğim
+                        ve birlikte çok eğleneceğiz! 🎉
+                    </p>
+                    <a href="{% url 'chatbot:chat' %}"
+                       class="inline-block mt-6 px-8 py-4 bg-gradient-to-r from-minilab-purple to-minilab-pink text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105">
+                        MiniBot ile Konuş 💬
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}
+
+{% block minibot %}{% endblock %}
+{% block footer %}
+<footer class="relative z-10 bg-gradient-to-br from-minilab-blue-900 via-minilab-blue-800 to-minilab-purple text-white py-16">
+    <div class="max-w-6xl mx-auto px-4">
+        <div class="grid md:grid-cols-3 gap-12 mb-12">
+            <!-- Logo -->
+            <div>
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-5xl">🧪</span>
+                    <span class="font-display text-3xl">MiniLab</span>
+                </div>
+                <p class="text-minilab-blue-200 text-base leading-relaxed mb-6">
+                    Bilimi sevdiren, merakı ödüllendiren eğlenceli platform.
+                </p>
+                <div class="flex gap-4">
+                    <a href="#" class="w-12 h-12 bg-white/10 hover:bg-white/20 rounded-2xl flex items-center justify-center transition-all hover:scale-110">
+                        <span class="text-2xl">📱</span>
+                    </a>
+                    <a href="#" class="w-12 h-12 bg-white/10 hover:bg-white/20 rounded-2xl flex items-center justify-center transition-all hover:scale-110">
+                        <span class="text-2xl">💻</span>
+                    </a>
+                    <a href="#" class="w-12 h-12 bg-white/10 hover:bg-white/20 rounded-2xl flex items-center justify-center transition-all hover:scale-110">
+                        <span class="text-2xl">📧</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Linkler -->
+            <div>
+                <h4 class="font-display text-xl font-bold mb-6">Keşfet</h4>
+                <ul class="space-y-3 text-minilab-blue-200">
+                    <li><a href="{% url 'experiments:category_list' %}" class="hover:text-white transition-colors flex items-center gap-2">
+                        <span>🔬</span> Deneyler
+                    </a></li>
+                    <li><a href="{% url 'storymode:story_list' %}" class="hover:text-white transition-colors flex items-center gap-2">
+                        <span>📖</span> Hikayeler
+                    </a></li>
+                    <li><a href="{% url 'gamification:badges' %}" class="hover:text-white transition-colors flex items-center gap-2">
+                        <span>🏆</span> Rozetler
+                    </a></li>
+                    <li><a href="{% url 'chatbot:chat' %}" class="hover:text-white transition-colors flex items-center gap-2">
+                        <span>🤖</span> MiniBot
+                    </a></li>
+                </ul>
+            </div>
+
+            <!-- Ebeveynler İçin -->
+            <div>
+                <h4 class="font-display text-xl font-bold mb-6">Ebeveynler İçin</h4>
+                <ul class="space-y-3 text-minilab-blue-200">
+                    <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2">
+                        <span>ℹ️</span> Hakkımızda
+                    </a></li>
+                    <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2">
+                        <span>🛡️</span> Güvenlik
+                    </a></li>
+                    <li><a href="#" class="hover:text-white transition-colors flex items-center gap-2">
+                        <span>🔒</span> Gizlilik
+                    </a></li>
+                    <li><a href="{% url 'parent_panel:dashboard' %}" class="hover:text-white transition-colors flex items-center gap-2">
+                        <span>👨‍👩‍👧</span> Ebeveyn Paneli
+                    </a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="border-t border-white/20 pt-8 text-center">
+            <p class="text-minilab-blue-200 text-base">
+                © 2025 MiniLab. Çocuklar için güvenli ve eğlenceli öğrenme. 💙
+            </p>
+            <p class="text-minilab-blue-300 text-sm mt-2">
+                Bilim öğrenmek hiç bu kadar eğlenceli olmamıştı! 🚀
+            </p>
+        </div>
+    </div>
+</footer>
+{% endblock %}

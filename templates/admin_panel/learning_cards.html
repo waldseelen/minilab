@@ -1,0 +1,123 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block page_title %}Bilgi Kartları{% endblock %}
+{% block page_subtitle %}Tüm öğrenme kartlarını yönet{% endblock %}
+
+{% block admin_content %}
+<div class="space-y-6">
+
+    <!-- Üst Bar -->
+    <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <!-- Kategori Filtresi -->
+            <select class="px-4 py-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                <option value="">Tüm Kategoriler</option>
+                {% for cat in categories %}
+                <option value="{{ cat.id }}">{{ cat.icon }} {{ cat.name }}</option>
+                {% endfor %}
+            </select>
+
+            <!-- Arama -->
+            <div class="relative">
+                <input type="text" placeholder="Kart ara..."
+                       class="pl-10 pr-4 py-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+            </div>
+        </div>
+
+        <a href="{% url 'admin_panel:add_learning_card' %}"
+           class="px-6 py-3 bg-gradient-to-r from-minilab-yellow to-minilab-orange-400 text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition hover:scale-105">
+            + Yeni Kart Ekle
+        </a>
+    </div>
+
+    <!-- Kartlar Tablosu -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+        <table class="w-full">
+            <thead class="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-600 dark:text-gray-300">Kategori</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-600 dark:text-gray-300">Deney</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-600 dark:text-gray-300">Başlık</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-600 dark:text-gray-300">Ön İçerik</th>
+                    <th class="px-6 py-4 text-left text-sm font-bold text-gray-600 dark:text-gray-300">Sıra</th>
+                    <th class="px-6 py-4 text-center text-sm font-bold text-gray-600 dark:text-gray-300">İşlemler</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                {% for card in learning_cards %}
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
+                    <td class="px-6 py-4">
+                        <span class="text-2xl">{{ card.experiment.category.icon }}</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="text-sm text-gray-600 dark:text-gray-300">{{ card.experiment.title|truncatewords:3 }}</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="font-bold text-gray-800 dark:text-white">{{ card.title }}</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="text-sm text-gray-500">{{ card.front_content|truncatewords:8 }}</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="text-sm text-gray-500">{{ card.order }}</span>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <a href="{% url 'admin_panel:edit_learning_card' card.id %}"
+                               class="p-2 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200 transition" title="Düzenle">
+                                ✏️
+                            </a>
+                            <button onclick="confirmDelete({{ card.id }})"
+                                    class="p-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition" title="Sil">
+                                🗑️
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center">
+                        <span class="text-6xl block mb-4">📭</span>
+                        <p class="text-gray-500">Henüz bilgi kartı yok</p>
+                        <a href="{% url 'admin_panel:add_learning_card' %}" class="text-minilab-blue-500 hover:underline mt-2 inline-block">
+                            İlk kartı ekle →
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Sayfalama -->
+    {% if learning_cards.has_other_pages %}
+    <div class="flex justify-center gap-2">
+        {% if learning_cards.has_previous %}
+        <a href="?page={{ learning_cards.previous_page_number }}" class="px-4 py-2 rounded-xl bg-white dark:bg-gray-800 hover:bg-gray-100 transition">←</a>
+        {% endif %}
+
+        {% for num in learning_cards.paginator.page_range %}
+        <a href="?page={{ num }}"
+           class="px-4 py-2 rounded-xl {% if learning_cards.number == num %}bg-minilab-blue-500 text-white{% else %}bg-white dark:bg-gray-800 hover:bg-gray-100{% endif %} transition">
+            {{ num }}
+        </a>
+        {% endfor %}
+
+        {% if learning_cards.has_next %}
+        <a href="?page={{ learning_cards.next_page_number }}" class="px-4 py-2 rounded-xl bg-white dark:bg-gray-800 hover:bg-gray-100 transition">→</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</div>
+
+<script>
+function confirmDelete(id) {
+    if (confirm('Bu kartı silmek istediğinize emin misiniz?')) {
+        // AJAX ile silme işlemi
+        window.location.href = '{% url "admin_panel:delete_learning_card" 0 %}'.replace('0', id);
+    }
+}
+</script>
+{% endblock %}

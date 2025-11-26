@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block navbar %}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-100 dark:bg-gray-900 flex">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white dark:bg-gray-800 shadow-xl fixed h-full overflow-y-auto">
+        <!-- Logo -->
+        <div class="p-6 border-b dark:border-gray-700">
+            <a href="{% url 'admin_panel:dashboard' %}" class="flex items-center gap-3">
+                <span class="text-3xl">🧪</span>
+                <div>
+                    <span class="font-display text-xl text-minilab-blue-600 dark:text-minilab-blue-400">MiniLab</span>
+                    <span class="block text-xs text-gray-500">Admin Panel</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- Menü -->
+        <nav class="p-4 space-y-2">
+            <a href="{% url 'admin_panel:dashboard' %}"
+               class="flex items-center gap-3 px-4 py-3 rounded-xl {% if active_menu == 'dashboard' %}bg-minilab-blue-100 text-minilab-blue-600{% else %}hover:bg-gray-100 dark:hover:bg-gray-700{% endif %} transition">
+                <span class="text-xl">📊</span>
+                <span class="font-bold">Dashboard</span>
+            </a>
+
+            <a href="{% url 'admin_panel:categories' %}"
+               class="flex items-center gap-3 px-4 py-3 rounded-xl {% if active_menu == 'categories' %}bg-minilab-purple/20 text-minilab-purple{% else %}hover:bg-gray-100 dark:hover:bg-gray-700{% endif %} transition">
+                <span class="text-xl">📁</span>
+                <span class="font-bold">Kategoriler</span>
+            </a>
+
+            <a href="{% url 'admin_panel:experiments' %}"
+               class="flex items-center gap-3 px-4 py-3 rounded-xl {% if active_menu == 'experiments' %}bg-minilab-green/20 text-minilab-green{% else %}hover:bg-gray-100 dark:hover:bg-gray-700{% endif %} transition">
+                <span class="text-xl">🔬</span>
+                <span class="font-bold">Deneyler</span>
+            </a>
+
+            <a href="{% url 'admin_panel:learning_cards' %}"
+               class="flex items-center gap-3 px-4 py-3 rounded-xl {% if active_menu == 'learning_cards' %}bg-minilab-yellow/20 text-minilab-orange-500{% else %}hover:bg-gray-100 dark:hover:bg-gray-700{% endif %} transition">
+                <span class="text-xl">🃏</span>
+                <span class="font-bold">Bilgi Kartları</span>
+            </a>
+
+            <a href="{% url 'admin_panel:users' %}"
+               class="flex items-center gap-3 px-4 py-3 rounded-xl {% if active_menu == 'users' %}bg-minilab-pink/20 text-minilab-pink{% else %}hover:bg-gray-100 dark:hover:bg-gray-700{% endif %} transition">
+                <span class="text-xl">👥</span>
+                <span class="font-bold">Kullanıcılar</span>
+            </a>
+
+            <hr class="my-4 border-gray-200 dark:border-gray-700">
+
+            <a href="{% url 'admin:index' %}"
+               class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition text-gray-500">
+                <span class="text-xl">⚙️</span>
+                <span>Django Admin</span>
+            </a>
+
+            <a href="{% url 'dashboard:child_dashboard' %}"
+               class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition text-gray-500">
+                <span class="text-xl">🏠</span>
+                <span>Siteye Dön</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Ana İçerik -->
+    <main class="flex-1 ml-64">
+        <!-- Üst Bar -->
+        <header class="bg-white dark:bg-gray-800 shadow-sm px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+            <div>
+                <h1 class="font-display text-2xl text-gray-800 dark:text-white">{% block page_title %}Dashboard{% endblock %}</h1>
+                <p class="text-gray-500 text-sm">{% block page_subtitle %}MiniLab yönetim paneli{% endblock %}</p>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <!-- Arama -->
+                <div class="relative">
+                    <input type="text" placeholder="Ara..."
+                           class="pl-10 pr-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-700 border-none focus:ring-2 focus:ring-minilab-blue-400">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+                </div>
+
+                <!-- Kullanıcı -->
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 rounded-full bg-minilab-purple flex items-center justify-center text-white font-bold">
+                        {{ user.first_name|slice:":1"|default:"A" }}
+                    </div>
+                    <span class="font-bold text-gray-700 dark:text-gray-200">{{ user.username }}</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- İçerik -->
+        <div class="p-6">
+            {% block admin_content %}{% endblock %}
+        </div>
+    </main>
+
+</div>
+{% endblock %}
+
+{% block footer %}{% endblock %}
+{% block minibot %}{% endblock %}

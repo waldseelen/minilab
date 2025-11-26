@@ -1,0 +1,109 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block page_title %}{% if category %}Kategori Düzenle{% else %}Yeni Kategori{% endif %}{% endblock %}
+{% block page_subtitle %}{% if category %}{{ category.name }}{% else %}Yeni bir bilim kategorisi oluştur{% endif %}{% endblock %}
+
+{% block admin_content %}
+<div class="max-w-2xl">
+
+    <form method="post" class="space-y-6">
+        {% csrf_token %}
+
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg space-y-6">
+
+            <!-- İkon ve İsim -->
+            <div class="grid md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-bold text-gray-600 dark:text-gray-300 mb-2">
+                        İkon
+                    </label>
+                    <input type="text" name="icon" value="{{ category.icon|default:'📁' }}"
+                           class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-center text-4xl"
+                           maxlength="5">
+                </div>
+                <div class="md:col-span-3">
+                    <label class="block text-sm font-bold text-gray-600 dark:text-gray-300 mb-2">
+                        Kategori Adı *
+                    </label>
+                    <input type="text" name="name" value="{{ category.name|default:'' }}" required
+                           class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700">
+                </div>
+            </div>
+
+            <!-- Slug -->
+            <div>
+                <label class="block text-sm font-bold text-gray-600 dark:text-gray-300 mb-2">
+                    URL Slug *
+                </label>
+                <input type="text" name="slug" value="{{ category.slug|default:'' }}" required
+                       placeholder="fizik, kimya, biyoloji..."
+                       class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700">
+            </div>
+
+            <!-- Renk -->
+            <div>
+                <label class="block text-sm font-bold text-gray-600 dark:text-gray-300 mb-2">
+                    Renk
+                </label>
+                <select name="color" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700">
+                    <option value="blue" {% if category.color == 'blue' %}selected{% endif %}>🔵 Mavi</option>
+                    <option value="purple" {% if category.color == 'purple' %}selected{% endif %}>🟣 Mor</option>
+                    <option value="green" {% if category.color == 'green' %}selected{% endif %}>🟢 Yeşil</option>
+                    <option value="pink" {% if category.color == 'pink' %}selected{% endif %}>🩷 Pembe</option>
+                    <option value="amber" {% if category.color == 'amber' %}selected{% endif %}>🟠 Turuncu</option>
+                    <option value="cyan" {% if category.color == 'cyan' %}selected{% endif %}>🩵 Camgöbeği</option>
+                    <option value="red" {% if category.color == 'red' %}selected{% endif %}>🔴 Kırmızı</option>
+                    <option value="indigo" {% if category.color == 'indigo' %}selected{% endif %}>🟦 İndigo</option>
+                    <option value="emerald" {% if category.color == 'emerald' %}selected{% endif %}>💚 Zümrüt</option>
+                    <option value="rose" {% if category.color == 'rose' %}selected{% endif %}>🌹 Gül</option>
+                </select>
+            </div>
+
+            <!-- Açıklama -->
+            <div>
+                <label class="block text-sm font-bold text-gray-600 dark:text-gray-300 mb-2">
+                    Açıklama
+                </label>
+                <textarea name="description" rows="3"
+                          class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700">{{ category.description|default:'' }}</textarea>
+            </div>
+
+            <!-- Sıra ve Aktiflik -->
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-bold text-gray-600 dark:text-gray-300 mb-2">
+                        Sıralama
+                    </label>
+                    <input type="number" name="order" value="{{ category.order|default:0 }}" min="0"
+                           class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700">
+                </div>
+                {% if category %}
+                <div class="flex items-center">
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" name="is_active" {% if category.is_active %}checked{% endif %}
+                               class="w-5 h-5 rounded accent-minilab-green">
+                        <span class="font-bold text-gray-600 dark:text-gray-300">Aktif</span>
+                    </label>
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <!-- Butonlar -->
+        <div class="flex justify-between items-center">
+            <a href="{% url 'admin_panel:categories' %}"
+               class="px-6 py-3 rounded-xl bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 font-bold transition">
+                ← Geri
+            </a>
+
+            <button type="submit"
+                    class="px-8 py-3 rounded-xl bg-gradient-to-r from-minilab-purple to-minilab-pink text-white font-bold shadow-lg hover:shadow-xl transition hover:scale-105">
+                💾 {% if category %}Güncelle{% else %}Kaydet{% endif %}
+            </button>
+        </div>
+
+    </form>
+
+</div>
+{% endblock %}

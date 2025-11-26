@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="tr" x-data="{ darkMode: false, soundEnabled: true }" :class="{ 'dark': darkMode }">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ page_title|default:'MiniLab' }} | MiniLab 🧪{% endblock %}</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧪</text></svg>">
+
+    <!-- Google Fonts - Fredoka One & Nunito -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS (CDN - Development) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        // MiniLab Renk Paleti
+                        'minilab-blue': {
+                            50: '#e6f4ff',
+                            100: '#b3dfff',
+                            200: '#80caff',
+                            300: '#4db5ff',
+                            400: '#1aa0ff',
+                            500: '#0088e6',
+                            600: '#006bb3',
+                            700: '#004d80',
+                            800: '#00304d',
+                            900: '#00121a',
+                        },
+                        'minilab-orange': {
+                            50: '#fff5e6',
+                            100: '#ffe0b3',
+                            200: '#ffcc80',
+                            300: '#ffb84d',
+                            400: '#ffa31a',
+                            500: '#e68a00',
+                            600: '#b36b00',
+                            700: '#804d00',
+                            800: '#4d2e00',
+                            900: '#1a0f00',
+                        },
+                        'minilab-purple': '#8B5CF6',
+                        'minilab-pink': '#EC4899',
+                        'minilab-green': '#10B981',
+                        'minilab-yellow': '#FBBF24',
+                    },
+                    fontFamily: {
+                        'display': ['"Fredoka One"', 'cursive'],
+                        'body': ['Nunito', 'sans-serif'],
+                    },
+                    animation: {
+                        'bounce-slow': 'bounce 2s infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'wiggle': 'wiggle 1s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        wiggle: {
+                            '0%, 100%': { transform: 'rotate(-3deg)' },
+                            '50%': { transform: 'rotate(3deg)' },
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Custom CSS -->
+    <style>
+        /* Genel stiller */
+        body {
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .font-display {
+            font-family: 'Fredoka One', cursive;
+        }
+
+        /* Şirin Butonlar */
+        .btn-primary {
+            @apply px-6 py-3 rounded-full bg-minilab-orange-400 text-white font-bold
+                   shadow-lg hover:bg-minilab-orange-500 hover:scale-105
+                   active:scale-95 transition-all duration-200;
+        }
+
+        .btn-secondary {
+            @apply px-6 py-3 rounded-full bg-minilab-blue-400 text-white font-bold
+                   shadow-lg hover:bg-minilab-blue-500 hover:scale-105
+                   active:scale-95 transition-all duration-200;
+        }
+
+        /* Kart stilleri - Düzeltilmiş hover */
+        .card-cute {
+            @apply bg-white rounded-3xl shadow-xl p-6 transition-all duration-300;
+        }
+
+        .card-cute:hover {
+            @apply shadow-2xl;
+            transform: translateY(-4px);
+        }
+
+        /* Gece Modu */
+        .dark body {
+            @apply bg-gray-900;
+        }
+
+        .dark .card-cute {
+            @apply bg-gray-800;
+        }
+
+        /* Bulut animasyonu */
+        @keyframes cloud-float {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            25% { transform: translateX(10px) translateY(-5px); }
+            50% { transform: translateX(20px) translateY(0); }
+            75% { transform: translateX(10px) translateY(5px); }
+        }
+
+        .cloud {
+            animation: cloud-float 8s ease-in-out infinite;
+        }
+
+        /* Parlama efekti */
+        .sparkle {
+            background: linear-gradient(
+                135deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.4) 50%,
+                transparent 100%
+            );
+            background-size: 200% 200%;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0% { background-position: 200% 200%; }
+            100% { background-position: -200% -200%; }
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="min-h-screen bg-gradient-to-b from-minilab-blue-100 via-white to-minilab-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+
+    <!-- Navbar -->
+    {% block navbar %}
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="{% url 'dashboard:landing' %}" class="flex items-center gap-2 hover:scale-105 transition-transform">
+                <span class="text-3xl">🧪</span>
+                <span class="font-display text-2xl text-minilab-blue-600 dark:text-minilab-blue-400">MiniLab</span>
+            </a>
+
+            <!-- Sağ Menü -->
+            <div class="flex items-center gap-4">
+                {% if user.is_authenticated %}
+                    <!-- Yıldız Tozu -->
+                    <div class="flex items-center gap-1 bg-minilab-yellow/20 px-3 py-1 rounded-full">
+                        <span>⭐</span>
+                        <span class="font-bold text-minilab-yellow">{{ star_dust|default:0 }}</span>
+                    </div>
+
+                    <!-- Profil -->
+                    <a href="{% url 'accounts:settings' %}" class="w-10 h-10 rounded-full bg-minilab-purple flex items-center justify-center text-white font-bold hover:scale-110 transition-transform">
+                        {{ user.first_name|slice:":1"|default:"U" }}
+                    </a>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" class="btn-secondary text-sm">Giriş Yap</a>
+                {% endif %}
+
+                <!-- Ses Açık/Kapalı -->
+                <button @click="soundEnabled = !soundEnabled" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center hover:scale-110 transition-transform">
+                    <span x-show="soundEnabled">🔊</span>
+                    <span x-show="!soundEnabled">🔇</span>
+                </button>
+
+                <!-- Gece Modu -->
+                <button @click="darkMode = !darkMode" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center hover:scale-110 transition-transform">
+                    <span x-show="!darkMode">🌙</span>
+                    <span x-show="darkMode">☀️</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+    {% endblock %}
+
+    <!-- Flash Mesajları -->
+    {% if messages %}
+    <div class="fixed top-20 right-4 z-50 space-y-2">
+        {% for message in messages %}
+        <div x-data="{ show: true }" x-show="show" x-transition
+             class="px-4 py-3 rounded-xl shadow-lg flex items-center gap-2
+                    {% if message.tags == 'success' %}bg-green-500{% elif message.tags == 'error' %}bg-red-500{% else %}bg-minilab-blue-500{% endif %} text-white">
+            <span>{{ message }}</span>
+            <button @click="show = false" class="ml-2 hover:scale-110">✕</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Ana İçerik -->
+    <main class="pt-20 min-h-screen">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- MiniBot Maskot (Sağ Alt Köşe) -->
+    {% block minibot %}
+    <div class="fixed bottom-4 right-4 z-40" x-data="{ showHint: false, hint: '' }">
+        <!-- Hint Baloncuğu -->
+        <div x-show="showHint" x-transition
+             class="absolute bottom-16 right-0 w-64 bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-4 mb-2">
+            <p class="text-sm" x-text="hint"></p>
+            <div class="absolute bottom-0 right-8 w-4 h-4 bg-white dark:bg-gray-800 transform rotate-45 translate-y-2"></div>
+        </div>
+
+        <!-- MiniBot -->
+        <a href="{% url 'chatbot:chat' %}"
+           class="w-16 h-16 bg-minilab-purple rounded-full shadow-xl flex items-center justify-center text-3xl hover:scale-110 hover:rotate-12 transition-all duration-300 animate-bounce-slow">
+            🤖
+        </a>
+    </div>
+    {% endblock %}
+
+    <!-- Footer -->
+    {% block footer %}
+    <footer class="bg-minilab-blue-900 text-white py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="font-display text-xl mb-2">🧪 MiniLab</p>
+            <p class="text-minilab-blue-300 text-sm">
+                4-6 yaş çocuklar için eğlenceli bilim platformu
+            </p>
+            <p class="text-minilab-blue-400 text-xs mt-4">
+                © 2025 MiniLab. Tüm hakları saklıdır.
+            </p>
+        </div>
+    </footer>
+    {% endblock %}
+
+    <!-- Ses Efektleri Yöneticisi -->
+    <script>
+        // Alpine.js Store - Global State
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('app', {
+                soundEnabled: true,
+                darkMode: false,
+                starDust: {{ star_dust|default:0 }},
+
+                // Ses çal
+                playSound(type) {
+                    if (!this.soundEnabled) return;
+
+                    const sounds = {
+                        click: '/static/sounds/click.mp3',
+                        success: '/static/sounds/success.mp3',
+                        badge: '/static/sounds/badge.mp3',
+                    };
+
+                    if (sounds[type]) {
+                        const audio = new Audio(sounds[type]);
+                        audio.volume = 0.5;
+                        audio.play().catch(() => {});
+                    }
+                },
+
+                // TTS (Text-to-Speech)
+                speak(text) {
+                    if (!this.soundEnabled) return;
+                    if ('speechSynthesis' in window) {
+                        const utterance = new SpeechSynthesisUtterance(text);
+                        utterance.lang = 'tr-TR';
+                        utterance.rate = 0.9;
+                        utterance.pitch = 1.1;
+                        speechSynthesis.speak(utterance);
+                    }
+                }
+            });
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

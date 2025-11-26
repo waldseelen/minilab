@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div class="max-w-4xl mx-auto px-4 py-8">
+
+        <!-- Başlık -->
+        <div class="text-center mb-10">
+            <span class="text-6xl animate-bounce-slow inline-block mb-4">⚙️</span>
+            <h1 class="font-display text-4xl text-minilab-blue-600 dark:text-minilab-blue-400">Ayarlar</h1>
+            <p class="text-gray-500 mt-2">Hesabını ve tercihlerini düzenle</p>
+        </div>
+
+        <div class="grid gap-6">
+
+            <!-- Profil Kartı -->
+            <div class="bg-white dark:bg-gray-800 rounded-[2rem] shadow-xl p-8">
+                <div class="flex items-center gap-4 mb-6">
+                    <span class="text-4xl">👤</span>
+                    <div>
+                        <h2 class="font-display text-2xl text-minilab-purple">Profil Bilgileri</h2>
+                        <p class="text-gray-500 text-sm">Kişisel bilgilerini güncelle</p>
+                    </div>
+                </div>
+
+                <form method="post" class="space-y-4">
+                    {% csrf_token %}
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-600 dark:text-gray-300 mb-2">📧 E-posta</label>
+                            <input type="email" value="{{ user.email }}" readonly
+                                   class="w-full px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-700 border-2 border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-600 dark:text-gray-300 mb-2">👤 Kullanıcı Adı</label>
+                            <input type="text" value="{{ user.username }}" readonly
+                                   class="w-full px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-700 border-2 border-transparent">
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Avatar Seçimi -->
+            <div class="bg-white dark:bg-gray-800 rounded-[2rem] shadow-xl p-8">
+                <div class="flex items-center gap-4 mb-6">
+                    <span class="text-4xl">🎭</span>
+                    <div>
+                        <h2 class="font-display text-2xl text-minilab-orange-500">Avatar</h2>
+                        <p class="text-gray-500 text-sm">Sevdiğin avatarı seç!</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-4 justify-center">
+                    {% for avatar in '🧒🧒🏻🧒🏼🧒🏽🧒🏾🧒🏿👧👧🏻👧🏼👧🏽👧🏾👧🏿🦸🦹🧙🧚🧜🦊🐼🐨🦄🐶' %}
+                    <button class="text-5xl hover:scale-125 transition-transform p-2 rounded-2xl hover:bg-minilab-yellow/20">
+                        {{ avatar }}
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Tema Ayarları -->
+            <div class="bg-white dark:bg-gray-800 rounded-[2rem] shadow-xl p-8">
+                <div class="flex items-center gap-4 mb-6">
+                    <span class="text-4xl">🎨</span>
+                    <div>
+                        <h2 class="font-display text-2xl text-minilab-green">Görünüm</h2>
+                        <p class="text-gray-500 text-sm">Tema ve renk tercihlerini seç</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4">
+                    <button class="p-6 rounded-2xl bg-gradient-to-br from-white to-gray-100 border-4 border-minilab-blue-400 shadow-lg transition hover:scale-105">
+                        <span class="text-3xl block mb-2">☀️</span>
+                        <span class="text-sm font-bold">Açık Tema</span>
+                    </button>
+                    <button class="p-6 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 text-white border-4 border-transparent shadow-lg transition hover:scale-105">
+                        <span class="text-3xl block mb-2">🌙</span>
+                        <span class="text-sm font-bold">Koyu Tema</span>
+                    </button>
+                    <button class="p-6 rounded-2xl bg-gradient-to-br from-blue-400 to-purple-500 text-white border-4 border-transparent shadow-lg transition hover:scale-105">
+                        <span class="text-3xl block mb-2">✨</span>
+                        <span class="text-sm font-bold">Otomatik</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bildirim Ayarları -->
+            <div class="bg-white dark:bg-gray-800 rounded-[2rem] shadow-xl p-8">
+                <div class="flex items-center gap-4 mb-6">
+                    <span class="text-4xl">🔔</span>
+                    <div>
+                        <h2 class="font-display text-2xl text-minilab-pink">Bildirimler</h2>
+                        <p class="text-gray-500 text-sm">Hangi bildirimleri almak istiyorsun?</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <label class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 dark:bg-gray-700 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition">
+                        <input type="checkbox" checked class="w-6 h-6 rounded-lg accent-minilab-green">
+                        <span class="flex-1">
+                            <span class="font-bold block">🎯 Günlük Hedefler</span>
+                            <span class="text-sm text-gray-500">Günlük hedeflerini hatırlat</span>
+                        </span>
+                    </label>
+                    <label class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 dark:bg-gray-700 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition">
+                        <input type="checkbox" checked class="w-6 h-6 rounded-lg accent-minilab-green">
+                        <span class="flex-1">
+                            <span class="font-bold block">🏆 Başarılar</span>
+                            <span class="text-sm text-gray-500">Yeni rozet kazandığında bildir</span>
+                        </span>
+                    </label>
+                    <label class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 dark:bg-gray-700 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition">
+                        <input type="checkbox" class="w-6 h-6 rounded-lg accent-minilab-green">
+                        <span class="flex-1">
+                            <span class="font-bold block">📧 E-posta Bülteni</span>
+                            <span class="text-sm text-gray-500">Haftalık özet e-postası al</span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Ses Ayarları -->
+            <div class="bg-white dark:bg-gray-800 rounded-[2rem] shadow-xl p-8">
+                <div class="flex items-center gap-4 mb-6">
+                    <span class="text-4xl">🔊</span>
+                    <div>
+                        <h2 class="font-display text-2xl text-minilab-blue-500">Ses Ayarları</h2>
+                        <p class="text-gray-500 text-sm">Ses efektlerini kontrol et</p>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <label class="flex justify-between mb-2">
+                            <span class="font-bold">🎵 Müzik</span>
+                            <span class="text-minilab-purple">75%</span>
+                        </label>
+                        <input type="range" value="75" class="w-full h-3 rounded-full accent-minilab-purple">
+                    </div>
+                    <div>
+                        <label class="flex justify-between mb-2">
+                            <span class="font-bold">🔔 Efektler</span>
+                            <span class="text-minilab-green">100%</span>
+                        </label>
+                        <input type="range" value="100" class="w-full h-3 rounded-full accent-minilab-green">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kaydet Butonu -->
+            <div class="flex justify-center gap-4 mt-4">
+                <a href="{% url 'dashboard:child_dashboard' %}" class="px-8 py-4 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 font-bold transition hover:scale-105">
+                    ← Geri
+                </a>
+                <button class="px-8 py-4 rounded-full bg-gradient-to-r from-minilab-green to-minilab-blue-400 text-white font-bold shadow-lg hover:shadow-xl transition hover:scale-105">
+                    💾 Kaydet
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

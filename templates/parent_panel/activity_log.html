@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <!-- Header -->
+    <div class="bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 py-6">
+            <div class="flex items-center gap-4">
+                <a href="{% url 'parent_panel:child_detail' child.id %}" class="text-gray-500 hover:text-gray-700 dark:text-gray-400">
+                    ← Geri
+                </a>
+                <div>
+                    <h1 class="text-2xl font-display text-gray-800 dark:text-white">{{ child.nickname }}'in Aktiviteleri</h1>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Detaylı aktivite günlüğü</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <!-- Tarih Filtresi -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg mb-6 flex items-center gap-4">
+            <span class="text-gray-500 dark:text-gray-400">📅 Göster:</span>
+            <div class="flex gap-2">
+                <a href="?date=today"
+                   class="px-4 py-2 rounded-lg transition-colors {% if date_filter == 'today' %}bg-minilab-purple text-white{% else %}bg-gray-100 dark:bg-gray-700 hover:bg-gray-200{% endif %}">
+                    Bugün
+                </a>
+                <a href="?date=week"
+                   class="px-4 py-2 rounded-lg transition-colors {% if date_filter == 'week' %}bg-minilab-purple text-white{% else %}bg-gray-100 dark:bg-gray-700 hover:bg-gray-200{% endif %}">
+                    Bu Hafta
+                </a>
+                <a href="?date=month"
+                   class="px-4 py-2 rounded-lg transition-colors {% if date_filter == 'month' %}bg-minilab-purple text-white{% else %}bg-gray-100 dark:bg-gray-700 hover:bg-gray-200{% endif %}">
+                    Bu Ay
+                </a>
+            </div>
+        </div>
+
+        <!-- Aktivite Listesi -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+            {% if activities %}
+            <div class="divide-y dark:divide-gray-700">
+                {% for activity in activities %}
+                <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                    <div class="flex items-start gap-4">
+                        <!-- İkon -->
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl
+                                    {% if activity.activity_type == 'experiment_complete' %}bg-green-100 dark:bg-green-900/30
+                                    {% elif activity.activity_type == 'experiment_start' %}bg-blue-100 dark:bg-blue-900/30
+                                    {% elif activity.activity_type == 'badge_earned' %}bg-yellow-100 dark:bg-yellow-900/30
+                                    {% elif activity.activity_type == 'story_read' %}bg-purple-100 dark:bg-purple-900/30
+                                    {% elif activity.activity_type == 'chat_message' %}bg-pink-100 dark:bg-pink-900/30
+                                    {% elif activity.activity_type == 'login' %}bg-gray-100 dark:bg-gray-700
+                                    {% else %}bg-gray-100 dark:bg-gray-700{% endif %}">
+                            {% if activity.activity_type == 'experiment_complete' %}✅
+                            {% elif activity.activity_type == 'experiment_start' %}🔬
+                            {% elif activity.activity_type == 'badge_earned' %}🏅
+                            {% elif activity.activity_type == 'story_read' %}📖
+                            {% elif activity.activity_type == 'chat_message' %}💬
+                            {% elif activity.activity_type == 'card_view' %}🃏
+                            {% elif activity.activity_type == 'avatar_purchase' %}🛒
+                            {% elif activity.activity_type == 'level_up' %}⬆️
+                            {% elif activity.activity_type == 'login' %}🔑
+                            {% elif activity.activity_type == 'logout' %}👋
+                            {% else %}📌{% endif %}
+                        </div>
+
+                        <!-- İçerik -->
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <p class="font-medium text-gray-800 dark:text-white">
+                                    {{ activity.get_activity_type_display }}
+                                </p>
+                                <span class="text-sm text-gray-400">
+                                    {{ activity.created_at|date:"d.m.Y H:i" }}
+                                </span>
+                            </div>
+
+                            {% if activity.description %}
+                            <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                                {{ activity.description }}
+                            </p>
+                            {% endif %}
+
+                            {% if activity.related_experiment %}
+                            <p class="text-sm text-minilab-purple mt-1">
+                                🔬 {{ activity.related_experiment.title }}
+                            </p>
+                            {% endif %}
+
+                            {% if activity.related_story %}
+                            <p class="text-sm text-minilab-purple mt-1">
+                                📖 {{ activity.related_story.title }}
+                            </p>
+                            {% endif %}
+
+                            {% if activity.duration_seconds > 0 %}
+                            <p class="text-xs text-gray-400 mt-1">
+                                ⏱️ {{ activity.duration_seconds|floatformat:0 }} saniye
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="p-12 text-center">
+                <span class="text-6xl block mb-4">📭</span>
+                <p class="text-gray-500 dark:text-gray-400">Bu dönemde aktivite bulunamadı</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,273 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+<style>
+    /* Ürün parlama efekti */
+    @keyframes item-shine {
+        0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
+        70% { box-shadow: 0 0 0 15px rgba(139, 92, 246, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
+    }
+
+    .item-new {
+        animation: item-shine 2s ease-out infinite;
+    }
+
+    /* Nadir ürün efekti */
+    .item-rare {
+        background: linear-gradient(135deg, #f3e8ff 0%, #ddd6fe 50%, #f3e8ff 100%);
+    }
+
+    .item-epic {
+        background: linear-gradient(135deg, #fdf4ff 0%, #f5d0fe 50%, #fdf4ff 100%);
+    }
+
+    .item-legendary {
+        background: linear-gradient(135deg, #fefce8 0%, #fde047 50%, #fefce8 100%);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8" x-data="shopPage()">
+
+    <!-- Başlık -->
+    <div class="text-center mb-8">
+        <div class="inline-flex items-center gap-4 bg-gradient-to-r from-minilab-purple to-minilab-pink text-white px-8 py-4 rounded-full shadow-2xl">
+            <span class="text-5xl animate-wiggle">🛍️</span>
+            <div class="text-left">
+                <h1 class="font-display text-3xl">Avatar Mağazası</h1>
+                <p class="text-white/80">Yıldız tozlarınla avatarını özelleştir!</p>
+            </div>
+            <button @click="Alpine.store('app').speak('Avatar mağazasına hoş geldin! Yıldız tozlarınla avatarına yeni aksesuarlar ve kıyafetler alabilirsin.')"
+                    class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full flex items-center gap-2 transition-all hover:scale-105 ml-4">
+                🔊 Dinle
+            </button>
+        </div>
+    </div>
+
+    <!-- Yıldız Tozu Bakiyesi -->
+    <div class="card-cute mb-8 bg-gradient-to-r from-minilab-yellow to-minilab-orange-400 text-white">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+                <p class="text-white/80">Yıldız Tozu Bakiyen</p>
+                <p class="font-display text-4xl">⭐ <span x-text="starDust">{{ star_dust|default:150 }}</span></p>
+            </div>
+            <div class="flex gap-3">
+                <a href="{% url 'gamification:customize_avatar' %}" class="bg-white/20 hover:bg-white/30 px-6 py-3 rounded-full font-bold transition-all hover:scale-105">
+                    🎨 Avatarım
+                </a>
+                <a href="{% url 'gamification:surprise_egg' %}" class="bg-white text-minilab-orange-500 px-6 py-3 rounded-full font-bold hover:scale-105 transition-all">
+                    🥚 Sürpriz Yumurta
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kategoriler -->
+    <div class="flex gap-3 mb-8 overflow-x-auto pb-2">
+        <button @click="filterCategory('all')"
+                :class="activeCategory === 'all' ? 'bg-minilab-purple text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-minilab-purple/20'"
+                class="px-6 py-2 rounded-full font-bold whitespace-nowrap transition-colors">
+            🌟 Tümü
+        </button>
+        <button @click="filterCategory('body')"
+                :class="activeCategory === 'body' ? 'bg-minilab-purple text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-minilab-purple/20'"
+                class="px-6 py-2 rounded-full font-bold whitespace-nowrap transition-colors">
+            👕 Kıyafetler
+        </button>
+        <button @click="filterCategory('accessory')"
+                :class="activeCategory === 'accessory' ? 'bg-minilab-purple text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-minilab-purple/20'"
+                class="px-6 py-2 rounded-full font-bold whitespace-nowrap transition-colors">
+            🎒 Aksesuarlar
+        </button>
+        <button @click="filterCategory('background')"
+                :class="activeCategory === 'background' ? 'bg-minilab-purple text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-minilab-purple/20'"
+                class="px-6 py-2 rounded-full font-bold whitespace-nowrap transition-colors">
+            🌈 Arka Planlar
+        </button>
+        <button @click="filterCategory('pet')"
+                :class="activeCategory === 'pet' ? 'bg-minilab-purple text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-minilab-purple/20'"
+                class="px-6 py-2 rounded-full font-bold whitespace-nowrap transition-colors">
+            🐾 Evcil Hayvanlar
+        </button>
+    </div>
+
+    <!-- Mağaza Ürünleri -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <template x-for="item in filteredItems" :key="item.id">
+            <div class="card-cute text-center p-6 group hover:scale-105 transition-all cursor-pointer relative"
+                 :class="{
+                     'item-rare': item.rarity === 'rare',
+                     'item-epic': item.rarity === 'epic',
+                     'item-legendary': item.rarity === 'legendary',
+                     'opacity-60': item.owned
+                 }"
+                 @click="!item.owned && openPurchaseModal(item)">
+
+                <!-- Nadir Badge -->
+                <div x-show="item.rarity === 'legendary'"
+                     class="absolute -top-2 -right-2 bg-minilab-yellow text-white text-xs px-2 py-1 rounded-full font-bold animate-bounce">
+                    ✨ Efsanevi
+                </div>
+                <div x-show="item.rarity === 'epic'"
+                     class="absolute -top-2 -right-2 bg-minilab-pink text-white text-xs px-2 py-1 rounded-full font-bold">
+                    💎 Epik
+                </div>
+                <div x-show="item.rarity === 'rare'"
+                     class="absolute -top-2 -right-2 bg-minilab-purple text-white text-xs px-2 py-1 rounded-full font-bold">
+                    ⭐ Nadir
+                </div>
+
+                <!-- Sahip olunuyor badge -->
+                <div x-show="item.owned"
+                     class="absolute top-2 left-2 bg-minilab-green text-white text-xs px-2 py-1 rounded-full font-bold">
+                    ✓ Sahip
+                </div>
+
+                <div class="text-6xl mb-4 group-hover:animate-bounce" x-text="item.icon"></div>
+                <h3 class="font-bold text-lg mb-2" x-text="item.name"></h3>
+
+                <div class="flex items-center justify-center gap-1 mb-4">
+                    <span class="text-minilab-yellow">⭐</span>
+                    <span class="font-bold" x-text="item.price"></span>
+                </div>
+
+                <button x-show="!item.owned"
+                        class="bg-gradient-to-r from-minilab-purple to-minilab-pink text-white w-full py-2 rounded-full font-bold hover:shadow-lg transition-all"
+                        :class="{ 'opacity-50 cursor-not-allowed': starDust < item.price }">
+                    <span x-show="starDust >= item.price">Satın Al</span>
+                    <span x-show="starDust < item.price">Yetersiz ⭐</span>
+                </button>
+                <button x-show="item.owned"
+                        class="bg-minilab-green/20 text-minilab-green w-full py-2 rounded-full font-bold cursor-default">
+                    ✓ Alındı
+                </button>
+            </div>
+        </template>
+    </div>
+
+    <!-- Satın Alma Modal -->
+    <div x-show="showModal"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+         @click.self="showModal = false">
+
+        <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 max-w-md w-full shadow-2xl"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 scale-90"
+             x-transition:enter-end="opacity-100 scale-100">
+
+            <div class="text-center">
+                <div class="text-8xl mb-4" x-text="selectedItem?.icon">🎁</div>
+                <h3 class="font-display text-2xl text-minilab-purple mb-2" x-text="selectedItem?.name">Ürün</h3>
+                <p class="text-gray-500 mb-6">Bu ürünü satın almak istiyor musun?</p>
+
+                <div class="bg-minilab-yellow/20 rounded-2xl p-4 mb-6">
+                    <div class="flex items-center justify-center gap-2">
+                        <span class="text-3xl">⭐</span>
+                        <span class="font-display text-3xl text-minilab-orange-500" x-text="selectedItem?.price">0</span>
+                        <span class="text-gray-500">Yıldız Tozu</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">
+                        Kalan bakiye: <strong x-text="starDust - (selectedItem?.price || 0)"></strong> ⭐
+                    </p>
+                </div>
+
+                <div class="flex gap-3">
+                    <button @click="showModal = false"
+                            class="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 py-3 rounded-full font-bold hover:bg-gray-200 transition-colors">
+                        İptal
+                    </button>
+                    <button @click="purchaseItem()"
+                            class="flex-1 bg-gradient-to-r from-minilab-purple to-minilab-pink text-white py-3 rounded-full font-bold hover:shadow-lg transition-all">
+                        🛒 Satın Al
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Başarı Mesajı -->
+    <div x-show="purchaseSuccess"
+         x-transition
+         class="fixed top-24 left-1/2 -translate-x-1/2 z-50 bg-minilab-green text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3">
+        <span class="text-3xl">🎉</span>
+        <span class="font-bold" x-text="successMessage">Satın alma başarılı!</span>
+    </div>
+
+</div>
+
+<script>
+function shopPage() {
+    return {
+        starDust: {{ star_dust|default:150 }},
+        activeCategory: 'all',
+        showModal: false,
+        selectedItem: null,
+        purchaseSuccess: false,
+        successMessage: '',
+
+        items: [
+            { id: 1, name: 'Bilim Şapkası', icon: '🎩', price: 50, category: 'accessory', rarity: 'common', owned: false },
+            { id: 2, name: 'Laboratuvar Önlüğü', icon: '🥼', price: 75, category: 'body', rarity: 'common', owned: false },
+            { id: 3, name: 'Teleskop', icon: '🔭', price: 100, category: 'accessory', rarity: 'rare', owned: false },
+            { id: 4, name: 'Galaksi Arka Plan', icon: '🌌', price: 150, category: 'background', rarity: 'epic', owned: false },
+            { id: 5, name: 'Akıllı Gözlük', icon: '👓', price: 60, category: 'accessory', rarity: 'common', owned: false },
+            { id: 6, name: 'Roket Çantası', icon: '🚀', price: 120, category: 'accessory', rarity: 'rare', owned: false },
+            { id: 7, name: 'Süper Kahraman Pelerini', icon: '🦸', price: 200, category: 'body', rarity: 'legendary', owned: false },
+            { id: 8, name: 'Gökkuşağı Efekti', icon: '🌈', price: 80, category: 'background', rarity: 'common', owned: false },
+            { id: 9, name: 'Robot Köpek', icon: '🤖', price: 180, category: 'pet', rarity: 'epic', owned: false },
+            { id: 10, name: 'Uzay Kaskı', icon: '👨‍🚀', price: 90, category: 'accessory', rarity: 'rare', owned: false },
+            { id: 11, name: 'Deney Tüpü', icon: '🧪', price: 40, category: 'accessory', rarity: 'common', owned: false },
+            { id: 12, name: 'Altın Robot', icon: '🤖', price: 300, category: 'pet', rarity: 'legendary', owned: false },
+        ],
+
+        get filteredItems() {
+            if (this.activeCategory === 'all') return this.items;
+            return this.items.filter(item => item.category === this.activeCategory);
+        },
+
+        filterCategory(category) {
+            this.activeCategory = category;
+        },
+
+        openPurchaseModal(item) {
+            if (this.starDust < item.price) {
+                Alpine.store('app').speak('Yeterli yıldız tozun yok. Daha fazla deney yaparak yıldız tozu kazanabilirsin!');
+                return;
+            }
+            this.selectedItem = item;
+            this.showModal = true;
+        },
+
+        purchaseItem() {
+            if (!this.selectedItem || this.starDust < this.selectedItem.price) return;
+
+            // Satın alma işlemi
+            this.starDust -= this.selectedItem.price;
+            this.selectedItem.owned = true;
+
+            // Başarı mesajı
+            this.successMessage = `${this.selectedItem.name} satın alındı! 🎉`;
+            this.purchaseSuccess = true;
+
+            // Sesli geri bildirim
+            Alpine.store('app').speak(`Tebrikler! ${this.selectedItem.name} artık senin!`);
+
+            // Modal ve mesajı kapat
+            this.showModal = false;
+            setTimeout(() => this.purchaseSuccess = false, 3000);
+
+            // TODO: Sunucuya kaydet
+            // fetch(`/oyun/satin-al/${this.selectedItem.id}/`, { method: 'POST' });
+        }
+    }
+}
+</script>
+{% endblock %}

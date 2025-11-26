@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <!-- Header -->
+    <div class="bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 py-6">
+            <div class="flex items-center gap-4">
+                <a href="{% url 'parent_panel:child_detail' child.id %}" class="text-gray-500 hover:text-gray-700 dark:text-gray-400">
+                    ← Geri
+                </a>
+                <div>
+                    <h1 class="text-2xl font-display text-gray-800 dark:text-white">{{ child.nickname }}'in Raporları</h1>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Günlük ve haftalık ilerleme raporları</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        <!-- Aylık Özet -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg text-center">
+                <span class="text-3xl block mb-2">⏱️</span>
+                <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    {{ monthly_stats.total_time|default:"0" }}
+                </p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">dk toplam süre</p>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg text-center">
+                <span class="text-3xl block mb-2">🔬</span>
+                <p class="text-2xl font-bold text-green-600 dark:text-green-400">
+                    {{ monthly_stats.total_experiments|default:"0" }}
+                </p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">tamamlanan deney</p>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg text-center">
+                <span class="text-3xl block mb-2">⭐</span>
+                <p class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+                    {{ monthly_stats.total_points|default:"0" }}
+                </p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">kazanılan puan</p>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg text-center">
+                <span class="text-3xl block mb-2">🏅</span>
+                <p class="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                    {{ monthly_stats.total_badges|default:"0" }}
+                </p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">kazanılan rozet</p>
+            </div>
+        </div>
+
+        <!-- Günlük Raporlar Tablosu -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+            <div class="px-6 py-4 border-b dark:border-gray-700">
+                <h3 class="font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                    📊 Günlük Raporlar (Son 30 Gün)
+                </h3>
+            </div>
+
+            {% if reports %}
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50 dark:bg-gray-700">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                Tarih
+                            </th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                Süre
+                            </th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                Deneyler
+                            </th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                Kartlar
+                            </th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                Sohbet
+                            </th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                Puanlar
+                            </th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                Rozetler
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y dark:divide-gray-700">
+                        {% for report in reports %}
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg">📅</span>
+                                    <span class="font-medium text-gray-800 dark:text-white">
+                                        {{ report.date|date:"d.m.Y" }}
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full text-sm">
+                                    {{ report.total_time_minutes }} dk
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="font-medium text-gray-800 dark:text-white">{{ report.experiments_completed }}</span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="text-gray-600 dark:text-gray-300">{{ report.cards_viewed }}</span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="text-gray-600 dark:text-gray-300">{{ report.chat_messages }}</span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="font-medium text-yellow-600 dark:text-yellow-400">+{{ report.points_earned }}</span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                {% if report.badges_earned > 0 %}
+                                <span class="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-full text-sm">
+                                    +{{ report.badges_earned }} 🏅
+                                </span>
+                                {% else %}
+                                <span class="text-gray-400">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="p-12 text-center">
+                <span class="text-6xl block mb-4">📭</span>
+                <p class="text-gray-500 dark:text-gray-400">Henüz günlük rapor oluşturulmadı</p>
+                <p class="text-sm text-gray-400 mt-2">Çocuğunuz uygulamayı kullandıkça raporlar otomatik oluşturulacak</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Açıklama -->
+        <div class="mt-6 bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 text-sm text-gray-600 dark:text-gray-300">
+            <p class="flex items-center gap-2">
+                <span>ℹ️</span>
+                Günlük raporlar, çocuğunuzun her gün yaptığı aktivitelerin özetini içerir.
+                Raporlar gece yarısı otomatik olarak oluşturulur.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

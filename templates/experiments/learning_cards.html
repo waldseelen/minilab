@@ -1,0 +1,357 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+<style>
+    /* 3D Flip Animasyon */
+    .flip-card {
+        perspective: 1500px;
+        cursor: pointer;
+    }
+
+    .flip-card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transform-style: preserve-3d;
+        transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .flip-card.is-flipped .flip-card-inner {
+        transform: rotateY(180deg);
+    }
+
+    .flip-card-face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        border-radius: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .flip-card-front {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .flip-card-back {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        transform: rotateY(180deg);
+    }
+
+    /* Özel renk temaları */
+    .theme-blue .flip-card-front {
+        background: linear-gradient(135deg, #0088e6 0%, #4fc3f7 100%);
+    }
+    .theme-blue .flip-card-back {
+        background: linear-gradient(135deg, #4fc3f7 0%, #0088e6 100%);
+    }
+
+    .theme-green .flip-card-front {
+        background: linear-gradient(135deg, #10B981 0%, #34d399 100%);
+    }
+    .theme-green .flip-card-back {
+        background: linear-gradient(135deg, #34d399 0%, #10B981 100%);
+    }
+
+    .theme-purple .flip-card-front {
+        background: linear-gradient(135deg, #8B5CF6 0%, #a78bfa 100%);
+    }
+    .theme-purple .flip-card-back {
+        background: linear-gradient(135deg, #a78bfa 0%, #8B5CF6 100%);
+    }
+
+    .theme-pink .flip-card-front {
+        background: linear-gradient(135deg, #EC4899 0%, #f9a8d4 100%);
+    }
+    .theme-pink .flip-card-back {
+        background: linear-gradient(135deg, #f9a8d4 0%, #EC4899 100%);
+    }
+
+    .theme-amber .flip-card-front {
+        background: linear-gradient(135deg, #FBBF24 0%, #fcd34d 100%);
+    }
+    .theme-amber .flip-card-back {
+        background: linear-gradient(135deg, #fcd34d 0%, #FBBF24 100%);
+    }
+
+    /* Kartların hover efekti */
+    .flip-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .flip-card {
+        transition: transform 0.3s ease;
+    }
+
+    /* Başarılı kart işareti */
+    .card-completed {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(16, 185, 129, 0.9);
+        color: white;
+        padding: 0.5rem;
+        border-radius: 50%;
+        font-size: 1.2rem;
+        z-index: 10;
+    }
+
+    /* Animasyonlu arka plan */
+    .animated-bg {
+        background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+        background-size: 400% 400%;
+        animation: gradient 15s ease infinite;
+    }
+
+    @keyframes gradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    /* İlerleme çubuğu */
+    .progress-glow {
+        box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+    }
+
+    /* Ses düğmesi animasyonu */
+    .sound-btn:active {
+        transform: scale(0.9);
+    }
+
+    /* Kart sayacı */
+    .card-counter {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-minilab-blue-100 via-white to-minilab-purple-100 dark:from-gray-900 dark:to-gray-800"
+     x-data="learningCardsApp()">
+
+    <!-- Üst Bar - İlerleme ve Kontroller -->
+    <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg py-4 px-6 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-4">
+                    <a href="{% url 'experiments:category_detail' category.slug %}"
+                       class="text-2xl hover:scale-110 transition-transform">
+                        ←
+                    </a>
+                    <div>
+                        <h1 class="font-display text-xl text-minilab-blue-600 dark:text-minilab-blue-400">
+                            {{ category.icon }} {{ category.name }}
+                        </h1>
+                        <p class="text-sm text-gray-500">Öğrenme Kartları</p>
+                    </div>
+                </div>
+
+                <!-- Kart Sayacı -->
+                <div class="card-counter px-4 py-2 rounded-full">
+                    <span class="font-bold text-minilab-blue-600" x-text="currentCard + 1"></span>
+                    <span class="text-gray-500"> / {{ total_cards }}</span>
+                </div>
+            </div>
+
+            <!-- İlerleme Çubuğu -->
+            <div class="w-full bg-gray-200 dark:bg-gray-700 h-3 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-minilab-green to-minilab-blue-400 progress-glow transition-all duration-500"
+                     :style="'width: ' + progress + '%'"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ana İçerik -->
+    <div class="max-w-6xl mx-auto px-4 py-12">
+
+        <!-- Başlık ve Açıklama -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center gap-3 bg-white dark:bg-gray-800 px-6 py-3 rounded-full shadow-lg mb-4">
+                <span class="text-3xl animate-bounce">🃏</span>
+                <h2 class="font-display text-2xl text-gray-800 dark:text-gray-200">
+                    Bilgi Kartlarını Keşfet!
+                </h2>
+            </div>
+            <p class="text-gray-600 dark:text-gray-400">
+                Kartlara tıklayarak çevir ve bilgileri öğren. Sesli dinle butonu ile kartları dinleyebilirsin!
+            </p>
+        </div>
+
+        <!-- Kartlar Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {% for card in learning_cards %}
+            <div class="flip-card h-80 theme-{{ category.color|default:'blue' }}"
+                 x-data="{ flipped: false }"
+                 @click="toggleCard($el, {{ forloop.counter0 }})">
+
+                <div class="flip-card-inner" :class="{ 'is-flipped': flipped }">
+
+                    <!-- Ön Yüz -->
+                    <div class="flip-card-face flip-card-front relative">
+                        <!-- Tamamlanma işareti -->
+                        {% if card_progress %}
+                            {% if card.id in card_progress and card_progress.card.id %}
+                                <div class="card-completed">✓</div>
+                            {% endif %}
+                        {% endif %}
+
+                        <div class="text-6xl mb-4 animate-bounce-slow">{{ category.icon }}</div>
+                        <h3 class="font-display text-2xl mb-3 text-center">{{ card.title }}</h3>
+                        <p class="text-white/90 text-center text-sm leading-relaxed">
+                            {{ card.front_content|truncatewords:15 }}
+                        </p>
+                        <div class="mt-4 text-sm opacity-70">
+                            👆 Çevirmek için tıkla
+                        </div>
+                    </div>
+
+                    <!-- Arka Yüz -->
+                    <div class="flip-card-face flip-card-back relative">
+                        <div class="text-4xl mb-4">💡</div>
+                        <p class="text-white text-center leading-relaxed">
+                            {{ card.back_content }}
+                        </p>
+
+                        <!-- Ses Düğmesi -->
+                        <button @click.stop="speakCard('{{ card.back_content|escapejs }}')"
+                                class="mt-4 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2 transition-all sound-btn"
+                                :class="{ 'animate-pulse': speaking === {{ forloop.counter0 }} }">
+                            <span x-show="speaking !== {{ forloop.counter0 }}">🔊</span>
+                            <span x-show="speaking === {{ forloop.counter0 }}">🗣️</span>
+                            <span>Dinle</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-full text-center py-20">
+                <div class="text-8xl mb-6">📭</div>
+                <p class="text-gray-500 text-xl">Bu kategoride henüz kart bulunmuyor.</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Navigasyon Butonları -->
+        <div class="flex justify-center gap-4">
+            <button @click="previousCard()"
+                    :disabled="currentCard === 0"
+                    class="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed">
+                ← Önceki Kart
+            </button>
+            <button @click="nextCard()"
+                    :disabled="currentCard >= {{ total_cards }} - 1"
+                    class="btn-primary disabled:opacity-50 disabled:cursor-not-allowed">
+                Sonraki Kart →
+            </button>
+        </div>
+
+        <!-- Geri Dön -->
+        <div class="text-center mt-8">
+            <a href="{% url 'experiments:category_detail' category.slug %}"
+               class="inline-flex items-center gap-2 bg-white dark:bg-gray-800 px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-105">
+                ← Kategoriye Dön
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Tebrik Modal -->
+    <div x-show="showCongrats"
+         x-transition
+         class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+         style="display: none;">
+        <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 max-w-md mx-4 text-center">
+            <div class="text-8xl mb-4 animate-bounce">🎉</div>
+            <h2 class="font-display text-3xl text-minilab-green mb-4">Tebrikler!</h2>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">
+                Tüm kartları inceldin! Harika iş başardın! 🌟
+            </p>
+            <div class="flex gap-4 justify-center">
+                <button @click="showCongrats = false" class="btn-secondary">
+                    Devam Et
+                </button>
+                <a href="{% url 'dashboard:child_dashboard' %}" class="btn-primary">
+                    Ana Sayfa
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function learningCardsApp() {
+    return {
+        currentCard: 0,
+        flippedCards: new Set(),
+        speaking: null,
+        showCongrats: false,
+
+        get progress() {
+            return Math.round((this.flippedCards.size / {{ total_cards }}) * 100);
+        },
+
+        toggleCard(element, index) {
+            this.currentCard = index;
+            this.flippedCards.add(index);
+
+            // Tüm kartlar incelendi mi?
+            if (this.flippedCards.size === {{ total_cards }} && {{ total_cards }} > 0) {
+                setTimeout(() => {
+                    this.showCongrats = true;
+                    this.playSound('success');
+                }, 800);
+            }
+        },
+
+        speakCard(text) {
+            if (typeof Alpine !== 'undefined' && Alpine.store('app')) {
+                Alpine.store('app').speak(text);
+                this.speaking = this.currentCard;
+                setTimeout(() => {
+                    this.speaking = null;
+                }, 5000);
+            }
+        },
+
+        nextCard() {
+            if (this.currentCard < {{ total_cards }} - 1) {
+                this.currentCard++;
+                this.scrollToCard(this.currentCard);
+            }
+        },
+
+        previousCard() {
+            if (this.currentCard > 0) {
+                this.currentCard--;
+                this.scrollToCard(this.currentCard);
+            }
+        },
+
+        scrollToCard(index) {
+            const cards = document.querySelectorAll('.flip-card');
+            if (cards[index]) {
+                cards[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        },
+
+        playSound(type) {
+            if (typeof Alpine !== 'undefined' && Alpine.store('app')) {
+                Alpine.store('app').playSound(type);
+            }
+        }
+    }
+}
+</script>
+{% endblock %}
