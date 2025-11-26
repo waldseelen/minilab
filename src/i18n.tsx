@@ -1,234 +1,169 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
-type Lang = 'tr' | 'en';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
-type Dictionary = Record<string, string>;
+type Language = 'tr' | 'en';
 
-const tr: Dictionary = {
+interface I18nContextType {
+  language: Language;
+  toggleLanguage: () => void;
+  t: (key: string) => string;
+}
+
+const translations = {
+  tr: {
     'nav.home': 'Ana Sayfa',
-    'nav.simulations': 'Simülasyonlar',
-    'nav.profile': 'Profil',
     'nav.minibot': 'MiniBot',
-    'nav.parent': 'Ebeveyn Paneli',
-    'toggle.dark': 'Açık/Koyu Tema',
-    'toggle.lang': 'Dil: TR/EN',
-    'home.title': 'MiniLab\'a Hoş Geldin! 🎉',
-    'home.all': 'Hepsi',
-    'home.hero.title': 'Bilimi Öğrenmeye Hazır mısın?',
-    'home.hero.subtitle': 'Eğlenceli bilgi kartları ile öğren! 📚',
-    'home.age.title': 'Kaç yaşındasın? 🎂',
-    'home.age.all': '🌟 Hepsi',
-    'home.content.learning': '📚 Bilgi Kartları',
-    'home.content.experiments': '🧪 Deneyler',
-    'home.category.learning': '📖 Hangi Konuyu Öğrenmek İstiyorsun?',
-    'home.category.experiments': '🧪 Hangi Deneyleri Yapmak İstiyorsun?',
-    'home.nocontent.title': 'Bu kategori için içerik hazırlanıyor!',
-    'home.nocontent.subtitle': 'Başka bir kategori veya yaş grubu seçmeyi dene! 😊',
-    'cat.All': 'Tümü',
+    'hero.title': 'Keşfetmeye Hazır mısın?',
+    'hero.subtitle': 'Bilim, uzay ve teknoloji dolu dünyamıza hoş geldin!',
+    'btn.about': 'Biz Kimiz?',
+    'btn.generate': 'Deney Bul',
+    'search.placeholder': 'Kartlarda ara (örn: uzay, robot, deney)...',
+    'filter.all': 'Hepsi',
+    'filter.category': 'Kategori Seç:',
+    'filter.age': 'Yaş Grubu:',
     'cat.Physics': 'Fizik',
     'cat.Chemistry': 'Kimya',
     'cat.Biology': 'Biyoloji',
-    'cat.Environmental Science': 'Çevre Bilimi',
-    'cat.Engineering': 'Mühendislik',
-    'cat.Astronomy': 'Astronomi',
+    'cat.Astronomy': 'Uzay',
     'cat.Technology': 'Teknoloji',
     'cat.AI': 'Yapay Zeka',
-    'card.count': 'Kart',
-    'experiment.count': 'Deney',
-    'level.card': '. Kart',
-    'daily.fact': 'Günün Bilgisi',
-    'daily.continue': '👀 Devamını Oku',
-    'daily.close': '📖 Kapat',
-    'achievement.title': '🏆 Rozetlerim',
-    'achievement.unlock': 'Tebrikler! 🎉',
-    'achievement.first': 'İlk rozetini kazan için ilk deneyini tamamla! 🚀',
-    'learning.keywords': '🔑 Anahtar Kelimeler',
-    'learning.facts': '🎉 İlginç Bilgiler',
-    'learning.schema': '📊 Şema',
-    'learning.quiz': '🧩 Mini Test Çöz',
-    'learning.complete': '✅ Tamamladım',
-    'learning.back': '← İçeriğe Dön',
-    'quiz.correct': '🎉 Doğru!',
-    'quiz.incorrect': '😅 Yanlış!',
-    'exp.materials': 'Gerekli Malzemeler:',
-    'safety.title': 'Önce Güvenlik! 🛡️',
-    'safety.text': 'Tüm deneylerde ebeveyn gözetimi önerilir.',
-    'sim.title': 'Simülasyonlar Hazırlanıyor!',
-    'sim.text': 'Etkileşimli eğlence için hazır ol! Simülasyonlar kısa süre içinde burada olacak.',
-    'btn.letsgo': 'Başla! 🚀',
-    'experiment.notFound': 'Deney bulunamadı!',
-    'experiment.watchVideo': 'Videoyu İzle:',
-    'loading.text': 'Yükleniyor...',
-    'parent.title': 'Ebeveyn Paneli',
-    'profile.badges': 'Rozetlerim',
-    'profile.name': 'Süper Bilimci',
-    'profile.title': 'Profilim',
-    'sim.open': 'Hemen yönlendirmeli deneyi aç',
-    'parent.stats.experiments': 'Tamamlanan Deney',
-    'parent.stats.time': 'Öğrenme Süresi',
-    'parent.stats.badges': 'Kazanılan Rozet',
-    'recent.activity': 'Son Etkinlikler',
-    'settings': 'Ayarlar',
-    'settings.screenTime': 'Günlük ekran süresi limiti:',
-    'settings.filter': 'İçeriği kategoriye göre filtrele:',
-    'minibot.title': 'MiniBot ile Sohbet 🤖',
-    'minibot.placeholder': 'Bilimle ilgili bir soru sor!',
-    // Welcome modal
-    'welcome.step1.title': 'MiniLab\'a Hoş Geldin! 🎉',
-    'welcome.step1.desc': 'Bilimi öğrenmek için en eğlenceli yerdesin! Birlikte keşfedelim.',
-    'welcome.step2.title': 'Kaç Yaşındasın? 🎂',
-    'welcome.step2.desc': 'Yaş grubunu seçerek sana özel içerikler göreceksin!',
-    'welcome.step3.title': 'Kategori Seç 📚',
-    'welcome.step3.desc': 'Fizik, Kimya, Astronomi... Hangisini öğrenmek istersin?',
-    'welcome.step4.title': 'MiniBot ile Tanış 🤖',
-    'welcome.step4.desc': 'Aklına takılan her şeyi bana sorabilirsin! Ben senin bilim arkadaşınım.',
-    // Help messages
-    'help.age': 'Yaş grubunu seç! Sana uygun içerikler göstereceğim! 🎈',
-    'help.category': 'İlgini çeken konuyu seç! Her kategoride harika şeyler var! ✨',
-    'help.view': 'Bilgi kartları mı okumak istersin, yoksa deney mi yapmak? Seç bakalım! 🎯',
-    'help.minibot': 'Bana istediğin soruyu sorabilirsin! Sana basit ve eğlenceli cevaplar vereceğim! 💬',
-    // Instructions
-    'instruction.home.title': 'Nasıl Kullanılır? 🎮',
-    'instruction.home.step1': 'Önce yaşını seç ki sana uygun içerikler görelim!',
-    'instruction.home.step2': 'Sonra ilgini çeken bir kategori seç (Fizik, Kimya, vb.)',
-    'instruction.home.step3': 'Bilgi kartlarını oku veya deneylere bak!',
-    'instruction.home.step4': 'Her şeyi tamamladıkça rozetler kazanacaksın! 🏆',
-    // Skip links
-    'skip.main': 'Ana içeriğe geç',
-    'skip.nav': 'Navigasyona geç'
-};
-
-const en: Dictionary = {
+    'cat.Environment': 'Çevre Bilimi',
+    'cat.Robotics': 'Robotik',
+    'card.learn': 'Öğren',
+    'card.experiment': 'Deney',
+    'card.simulation': 'Simülasyon',
+    'card.more': 'Daha Fazla',
+    'features.tag': 'Nasıl Çalışır?',
+    'features.title': 'MiniLab ile Öğrenmenin 3 Yolu',
+    'features.cards.title': 'Renkli Bilgi Kartları',
+    'features.cards.desc': 'Uzaydan dinozorlara kadar her şeyi eğlenceli kartlarla keşfet. Sadece oku ve öğren!',
+    'features.experiments.title': 'Çılgın Deneyler',
+    'features.experiments.desc': 'Mutfağını bir laboratuvara dönüştür! Güvenli ve kolay tariflerle bilimi yaşayarak öğren.',
+    'features.minibot.title': 'MiniBot Asistan',
+    'features.minibot.desc': 'Aklına takılan soruları robot arkadaşına sor. O her zaman seninle sohbet etmeye hazır!',
+    'gen.title': '🧪 Kendi Deneyini Oluştur!',
+    'gen.desc': 'Evde yapabileceğin eğlenceli ve güvenli deneyler bulmak için aşağıdan seçim yap.',
+    'gen.loading': 'Düşünüyorum...',
+    'gen.history': 'Son Deneylerin 📜',
+    'gen.result': 'Senin İçin Fikirler:',
+    'minibot.title': 'MiniBot Asistan',
+    'minibot.subtitle': 'Bilim Arkadaşın',
+    'minibot.input': 'Sorunu buraya yaz...',
+    'minibot.anim': 'Animasyon:',
+    'minibot.style': 'Tarz:',
+    'minibot.style.default': 'Klasik',
+    'minibot.style.fancy': 'Şık',
+    'minibot.style.smart': 'Bilgin',
+    'minibot.style.worker': 'Mühendis',
+    'minibot.style.royal': 'Kraliyet',
+    'minibot.eyes': 'Gözler:',
+    'minibot.eyes.normal': 'Normal',
+    'minibot.eyes.big': 'Kocaman',
+    'minibot.eyes.sparkling': 'Işıltılı',
+    'minibot.eyes.curious': 'Meraklı',
+    'minibot.intro': 'Merhaba! Ben MiniBot! 🤖 Bilimle ilgili merak ettiğin her şeyi bana sorabilirsin. Bugün ne keşfetmek istersin?',
+    'modal.welcome': 'MiniLab Kids\'e Hoş Geldin!',
+    'modal.mission': 'Görevimiz',
+    'modal.mission.desc': 'Merak ettiğin sorulara cevap bulmak, güvenli deneyler yapmak ve bilimin ne kadar eğlenceli olduğunu göstermek!',
+    'modal.minibot': 'MiniBot ile Tanış!',
+    'modal.minibot.desc': 'O senin yapay zeka asistanın. "MiniBot" sayfasına gidip ona aklına gelen en çılgın bilim sorularını sorabilirsin.',
+    'modal.start': 'Keşfetmeye Başla!',
+    'footer': '© 2024 MiniLab Kids. Merak etmeye devam et! ✨'
+  },
+  en: {
     'nav.home': 'Home',
-    'nav.simulations': 'Simulations',
-    'nav.profile': 'Profile',
     'nav.minibot': 'MiniBot',
-    'nav.parent': 'Parent Dashboard',
-    'toggle.dark': 'Light/Dark Theme',
-    'toggle.lang': 'Language: TR/EN',
-    'home.title': 'Welcome to MiniLab!',
-    'home.all': 'All',
-    'home.hero.title': 'Ready to Learn Science?',
-    'home.hero.subtitle': 'Learn with fun knowledge cards! 📚',
-    'home.age.title': 'How old are you? 🎂',
-    'home.age.all': '🌟 All',
-    'home.content.learning': '📚 Learning Cards',
-    'home.content.experiments': '🧪 Experiments',
-    'home.category.learning': '📖 Which Topic Do You Want to Learn?',
-    'home.category.experiments': '🧪 Which Experiments Do You Want to Do?',
-    'home.nocontent.title': 'Content is being prepared for this category!',
-    'home.nocontent.subtitle': 'Try selecting another category or age group! 😊',
-    'cat.All': 'All',
+    'hero.title': 'Ready to Explore?',
+    'hero.subtitle': 'Welcome to a world full of science, space, and technology!',
+    'btn.about': 'About Us',
+    'btn.generate': 'Find Experiments',
+    'search.placeholder': 'Search cards (e.g., space, robot, experiment)...',
+    'filter.all': 'All',
+    'filter.category': 'Category:',
+    'filter.age': 'Age Group:',
     'cat.Physics': 'Physics',
     'cat.Chemistry': 'Chemistry',
     'cat.Biology': 'Biology',
-    'cat.Environmental Science': 'Environmental Science',
-    'cat.Engineering': 'Engineering',
-    'cat.Astronomy': 'Astronomy',
-    'cat.Technology': 'Technology',
-    'cat.AI': 'Artificial Intelligence',
-    'card.count': 'Cards',
-    'experiment.count': 'Experiments',
-    'level.card': '. Card',
-    'daily.fact': 'Daily Fact',
-    'daily.continue': '👀 Read More',
-    'daily.close': '📖 Close',
-    'achievement.title': '🏆 My Badges',
-    'achievement.unlock': 'Congratulations! 🎉',
-    'achievement.first': 'Complete your first experiment to earn your first badge! 🚀',
-    'learning.keywords': '🔑 Keywords',
-    'learning.facts': '🎉 Fun Facts',
-    'learning.schema': '📊 Diagram',
-    'learning.quiz': '🧩 Take Mini Quiz',
-    'learning.complete': '✅ Completed',
-    'learning.back': '← Back to Content',
-    'quiz.correct': '🎉 Correct!',
-    'quiz.incorrect': '😅 Wrong!',
-    'exp.materials': 'Materials Needed:',
-    'safety.title': 'Safety First!',
-    'safety.text': 'Parental supervision is recommended for all experiments.',
-    'sim.title': 'Simulations are Loading!',
-    'sim.text': 'Get ready for some interactive fun! Our simulations are being built and will be available soon.',
-    'sim.open': 'Open a guided experiment now',
-    'btn.letsgo': "Let's Go!",
-    'experiment.notFound': 'Experiment not found!',
-    'experiment.watchVideo': 'Watch the Video:',
-    'loading.text': 'Loading...',
-    'profile.title': 'My Profile',
-    'profile.badges': 'My Badges',
-    'profile.name': 'Super Scientist',
-    'parent.title': 'Parent Dashboard',
-    'parent.stats.experiments': 'Completed Experiments',
-    'parent.stats.time': 'Learning Time',
-    'parent.stats.badges': 'Earned Badges',
-    'recent.activity': 'Recent Activities',
-    'settings': 'Settings',
-    'settings.screenTime': 'Daily screen time limit:',
-    'settings.filter': 'Filter content by category:',
-    'minibot.title': 'Chat with MiniBot 🤖',
-    'minibot.placeholder': 'Ask a science question!',
-    // Welcome modal
-    'welcome.step1.title': 'Welcome to MiniLab! 🎉',
-    'welcome.step1.desc': 'You\'re in the most fun place to learn science! Let\'s explore together.',
-    'welcome.step2.title': 'How Old Are You? 🎂',
-    'welcome.step2.desc': 'Select your age group to see content just for you!',
-    'welcome.step3.title': 'Choose a Category 📚',
-    'welcome.step3.desc': 'Physics, Chemistry, Astronomy... Which one do you want to learn?',
-    'welcome.step4.title': 'Meet MiniBot 🤖',
-    'welcome.step4.desc': 'You can ask me anything! I\'m your science buddy.',
-    // Help messages
-    'help.age': 'Choose your age! I\'ll show you the right content for you! 🎈',
-    'help.category': 'Pick a topic you like! Every category has amazing things! ✨',
-    'help.view': 'Do you want to read learning cards or do experiments? Choose! 🎯',
-    'help.minibot': 'Ask me any question! I\'ll give you simple and fun answers! 💬',
-    // Instructions
-    'instruction.home.title': 'How to Use? 🎮',
-    'instruction.home.step1': 'First, select your age so we can show you the right content!',
-    'instruction.home.step2': 'Then pick a category you\'re interested in (Physics, Chemistry, etc.)',
-    'instruction.home.step3': 'Read learning cards or check out experiments!',
-    'instruction.home.step4': 'You\'ll earn badges as you complete everything! 🏆',
-    // Skip links
-    'skip.main': 'Skip to main content',
-    'skip.nav': 'Skip to navigation'
+    'cat.Astronomy': 'Space',
+    'cat.Technology': 'Tech',
+    'cat.AI': 'AI',
+    'cat.Environment': 'Env. Science',
+    'cat.Robotics': 'Robotics',
+    'card.learn': 'Learn',
+    'card.experiment': 'Experiment',
+    'card.simulation': 'Simulation',
+    'card.more': 'Learn More',
+    'features.tag': 'How it Works',
+    'features.title': '3 Ways to Learn with MiniLab',
+    'features.cards.title': 'Fun Learning Cards',
+    'features.cards.desc': 'Discover everything from space to dinosaurs with colorful cards. Just read and learn!',
+    'features.experiments.title': 'Crazy Experiments',
+    'features.experiments.desc': 'Turn your kitchen into a lab! Learn science by doing with safe and easy recipes.',
+    'features.minibot.title': 'MiniBot Assistant',
+    'features.minibot.desc': 'Ask your robot friend any question. It is always ready to chat with you!',
+    'gen.title': '🧪 Create Your Experiment!',
+    'gen.desc': 'Choose below to find fun and safe experiments you can do at home.',
+    'gen.loading': 'Thinking...',
+    'gen.history': 'Your Recent Experiments 📜',
+    'gen.result': 'Ideas for You:',
+    'minibot.title': 'MiniBot Assistant',
+    'minibot.subtitle': 'Your Science Buddy',
+    'minibot.input': 'Type your question here...',
+    'minibot.anim': 'Animation:',
+    'minibot.style': 'Style:',
+    'minibot.style.default': 'Classic',
+    'minibot.style.fancy': 'Fancy',
+    'minibot.style.smart': 'Smart',
+    'minibot.style.worker': 'Engineer',
+    'minibot.style.royal': 'Royal',
+    'minibot.eyes': 'Eyes:',
+    'minibot.eyes.normal': 'Normal',
+    'minibot.eyes.big': 'Big',
+    'minibot.eyes.sparkling': 'Sparkling',
+    'minibot.eyes.curious': 'Curious',
+    'minibot.intro': 'Hello! I am MiniBot! 🤖 You can ask me anything about science. What would you like to discover today?',
+    'modal.welcome': 'Welcome to MiniLab Kids!',
+    'modal.mission': 'Our Mission',
+    'modal.mission.desc': 'To answer your curious questions, perform safe experiments, and show how fun science can be!',
+    'modal.minibot': 'Meet MiniBot!',
+    'modal.minibot.desc': 'It is your AI assistant. Go to the "MiniBot" page and ask it your craziest science questions.',
+    'modal.start': 'Start Exploring!',
+    'footer': '© 2024 MiniLab Kids. Keep being curious! ✨'
+  }
 };
 
-const DICTS: Record<Lang, Dictionary> = { tr, en };
+const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
-type Ctx = {
-    lang: Lang;
-    t: (key: string) => string;
-    toggleLang: () => void;
+export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [language, setLanguage] = useState<Language>('tr');
+
+  useEffect(() => {
+    const savedLang = localStorage.getItem('appLanguage') as Language;
+    if (savedLang) setLanguage(savedLang);
+  }, []);
+
+  const toggleLanguage = () => {
+    const newLang = language === 'tr' ? 'en' : 'tr';
+    setLanguage(newLang);
+    localStorage.setItem('appLanguage', newLang);
+  };
+
+  const t = (key: string): string => {
+    // @ts-ignore
+    return translations[language][key] || key;
+  };
+
+  return (
+    <I18nContext.Provider value={{ language, toggleLanguage, t }}>
+      {children}
+    </I18nContext.Provider>
+  );
 };
 
-const I18nContext = createContext<Ctx | null>(null);
-
-export const I18nProvider = ({ children }: { children: ReactNode }) => {
-    const [lang, setLang] = useState<Lang>('tr');
-
-    useEffect(() => {
-        const saved = (localStorage.getItem('minilab:lang') as Lang) || 'tr';
-        setLang(saved);
-    }, []);
-
-    useEffect(() => {
-        localStorage.setItem('minilab:lang', lang);
-    }, [lang]);
-
-    const t = useMemo(() => (key: string) => {
-        const dict = DICTS[lang] || en;
-        return dict[key] ?? key;
-    }, [lang]);
-
-    const toggleLang = () => setLang((prev) => (prev === 'tr' ? 'en' : 'tr'));
-
-    const value = useMemo(() => ({ lang, t, toggleLang }), [lang, t]);
-    return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
+export const useI18n = () => {
+  const context = useContext(I18nContext);
+  if (!context) {
+    throw new Error('useI18n must be used within an I18nProvider');
+  }
+  return context;
 };
-
-export const useI18n = (): Ctx => {
-    const ctx = useContext(I18nContext);
-    if (!ctx) throw new Error('useI18n must be used within I18nProvider');
-    return ctx;
-};
-
-

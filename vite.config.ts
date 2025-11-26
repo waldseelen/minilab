@@ -1,24 +1,23 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import path from 'path';
+import { defineConfig, loadEnv } from 'vite';
+import react from '@vitejs/plugin-react';
 
-import { visualizer } from 'rollup-plugin-visualizer';
-
-// https://vite.dev/config/
-export default defineConfig({
-  plugins: [
-    react(),
-    visualizer({ open: true, filename: 'bundle-analysis.html' })
-  ],
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          ai: ['@google/generative-ai'],
-          ui: ['pixi.js']
+export default defineConfig(({ mode }) => {
+    const env = loadEnv(mode, '.', '');
+    return {
+      server: {
+        port: 3000,
+        host: '0.0.0.0',
+      },
+      plugins: [react()],
+      define: {
+        'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
+      },
+      resolve: {
+        alias: {
+          '@': path.resolve(__dirname, '.'),
         }
       }
-    },
-    chunkSizeWarningLimit: 1000
-  }
-})
+    };
+});

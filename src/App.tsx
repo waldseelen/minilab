@@ -1,46 +1,41 @@
-import { lazy, Suspense } from 'react';
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import ErrorBoundary from './components/ErrorBoundary';
-import Footer from './components/Footer';
+
+import React, { Suspense } from 'react';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
-import LoadingSpinner from './components/LoadingSpinner';
-import SkipLinks from './components/SkipLinks';
-import { I18nProvider } from './i18n';
-import './index.css';
+import HomePage from './pages/HomePage';
+import MiniBotPage from './pages/MiniBotPage';
+import { I18nProvider, useI18n } from './i18n';
 
-const HomePage = lazy(() => import('./pages/HomePage'));
-const ExperimentDetailPage = lazy(() => import('./pages/ExperimentDetailPage'));
-const MiniBotPage = lazy(() => import('./pages/MiniBotPage'));
-const SimulationsPage = lazy(() => import('./pages/SimulationsPage'));
-const ProfilePage = lazy(() => import('./pages/ProfilePage'));
-const ParentDashboard = lazy(() => import('./pages/ParentDashboard'));
+const FooterContent = () => {
+  const { t } = useI18n();
+  return (
+    <footer className="bg-white p-6 mt-8 border-t-4 border-pastel-blue">
+      <div className="text-center text-gray-500 font-comic">
+        <p>{t('footer')}</p>
+      </div>
+    </footer>
+  );
+};
 
-const App = () => {
-    return (
-        <I18nProvider>
-            <ErrorBoundary>
-                <Router>
-                    <SkipLinks />
-                    <div className="flex flex-col min-h-screen">
-                        <Header />
-                        <main id="main-content" className="flex-grow container mx-auto p-4" role="main">
-                            <Suspense fallback={<LoadingSpinner />}>
-                                <Routes>
-                                    <Route path="/" element={<HomePage />} />
-                                    <Route path="/experiment/:id" element={<ExperimentDetailPage />} />
-                                    <Route path="/minibot" element={<MiniBotPage />} />
-                                    <Route path="/simulations" element={<SimulationsPage />} />
-                                    <Route path="/profile" element={<ProfilePage />} />
-                                    <Route path="/parent" element={<ParentDashboard />} />
-                                </Routes>
-                            </Suspense>
-                        </main>
-                        <Footer />
-                    </div>
-                </Router>
-            </ErrorBoundary>
-        </I18nProvider>
-    );
+const App: React.FC = () => {
+  return (
+    <I18nProvider>
+      <HashRouter>
+        <div className="flex flex-col min-h-screen bg-slate-50">
+          <Header />
+          <main className="flex-grow container mx-auto p-4 md:p-6">
+            <Suspense fallback={<div className="text-center p-10 text-2xl text-pastel-blue animate-pulse">Loading... 🚀</div>}>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/minibot" element={<MiniBotPage />} />
+              </Routes>
+            </Suspense>
+          </main>
+          <FooterContent />
+        </div>
+      </HashRouter>
+    </I18nProvider>
+  );
 };
 
 export default App;
