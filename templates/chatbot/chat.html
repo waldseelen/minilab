@@ -119,38 +119,44 @@
             </div>
         </div>
 
-        <!-- Hızlı Sorular -->
+            <!-- Hızlı Sorular -->
         <div class="p-4 border-t dark:border-gray-700 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-800">
-            <p class="text-xs text-gray-500 mb-2 font-medium">💡 Hızlı Sorular:</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-2 font-medium">💡 Hızlı Sorular (Tıkla ve sor!):</p>
             <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
                 <button @click="sendQuickQuestion('Gökyüzü neden mavi?')"
-                        class="px-4 py-2 bg-gradient-to-r from-blue-100 to-blue-200 dark:from-blue-900/50 dark:to-blue-800/50 rounded-full text-sm whitespace-nowrap hover:scale-105 transition-transform shadow-sm">
+                        class="px-4 py-2 bg-gradient-to-r from-blue-100 to-blue-200 dark:from-blue-900/50 dark:to-blue-800/50 rounded-full text-sm whitespace-nowrap hover:scale-105 active:scale-95 transition-transform shadow-sm hover:shadow-md">
                     🌈 Gökyüzü neden mavi?
                 </button>
                 <button @click="sendQuickQuestion('Dinozorlar neden yok oldu?')"
-                        class="px-4 py-2 bg-gradient-to-r from-green-100 to-green-200 dark:from-green-900/50 dark:to-green-800/50 rounded-full text-sm whitespace-nowrap hover:scale-105 transition-transform shadow-sm">
+                        class="px-4 py-2 bg-gradient-to-r from-green-100 to-green-200 dark:from-green-900/50 dark:to-green-800/50 rounded-full text-sm whitespace-nowrap hover:scale-105 active:scale-95 transition-transform shadow-sm hover:shadow-md">
                     🦕 Dinozorlar neden yok oldu?
                 </button>
                 <button @click="sendQuickQuestion('Yıldızlar neden parlar?')"
-                        class="px-4 py-2 bg-gradient-to-r from-yellow-100 to-yellow-200 dark:from-yellow-900/50 dark:to-yellow-800/50 rounded-full text-sm whitespace-nowrap hover:scale-105 transition-transform shadow-sm">
+                        class="px-4 py-2 bg-gradient-to-r from-yellow-100 to-yellow-200 dark:from-yellow-900/50 dark:to-yellow-800/50 rounded-full text-sm whitespace-nowrap hover:scale-105 active:scale-95 transition-transform shadow-sm hover:shadow-md">
                     ⭐ Yıldızlar neden parlar?
                 </button>
                 <button @click="sendQuickQuestion('Kelebekler nasıl uçar?')"
-                        class="px-4 py-2 bg-gradient-to-r from-pink-100 to-pink-200 dark:from-pink-900/50 dark:to-pink-800/50 rounded-full text-sm whitespace-nowrap hover:scale-105 transition-transform shadow-sm">
+                        class="px-4 py-2 bg-gradient-to-r from-pink-100 to-pink-200 dark:from-pink-900/50 dark:to-pink-800/50 rounded-full text-sm whitespace-nowrap hover:scale-105 active:scale-95 transition-transform shadow-sm hover:shadow-md">
                     🦋 Kelebekler nasıl uçar?
                 </button>
-                <button @click="sendQuickQuestion('Karıncalar ne yer?')"
-                        class="px-4 py-2 bg-gradient-to-r from-orange-100 to-orange-200 dark:from-orange-900/50 dark:to-orange-800/50 rounded-full text-sm whitespace-nowrap hover:scale-105 transition-transform shadow-sm">
-                    🐜 Karıncalar ne yer?
+                <button @click="sendQuickQuestion('Karıncalar ne kadar güçlü?')"
+                        class="px-4 py-2 bg-gradient-to-r from-orange-100 to-orange-200 dark:from-orange-900/50 dark:to-orange-800/50 rounded-full text-sm whitespace-nowrap hover:scale-105 active:scale-95 transition-transform shadow-sm hover:shadow-md">
+                    🐜 Karıncalar ne kadar güçlü?
                 </button>
                 <button @click="sendQuickQuestion('Ay neden şekil değiştirir?')"
-                        class="px-4 py-2 bg-gradient-to-r from-purple-100 to-purple-200 dark:from-purple-900/50 dark:to-purple-800/50 rounded-full text-sm whitespace-nowrap hover:scale-105 transition-transform shadow-sm">
+                        class="px-4 py-2 bg-gradient-to-r from-purple-100 to-purple-200 dark:from-purple-900/50 dark:to-purple-800/50 rounded-full text-sm whitespace-nowrap hover:scale-105 active:scale-95 transition-transform shadow-sm hover:shadow-md">
                     🌙 Ay neden şekil değiştirir?
                 </button>
+                <button @click="sendQuickQuestion('Renkler nasıl karışır?')"
+                        class="px-4 py-2 bg-gradient-to-r from-red-100 to-red-200 dark:from-red-900/50 dark:to-red-800/50 rounded-full text-sm whitespace-nowrap hover:scale-105 active:scale-95 transition-transform shadow-sm hover:shadow-md">
+                    🎨 Renkler nasıl karışır?
+                </button>
+                <button @click="sendQuickQuestion('Kalp nasıl çalışır?')"
+                        class="px-4 py-2 bg-gradient-to-r from-red-100 to-pink-200 dark:from-red-900/50 dark:to-pink-800/50 rounded-full text-sm whitespace-nowrap hover:scale-105 active:scale-95 transition-transform shadow-sm hover:shadow-md">
+                    ❤️ Kalp nasıl çalışır?
+                </button>
             </div>
-        </div>
-
-        <!-- Mesaj Gönderme -->
+        </div>        <!-- Mesaj Gönderme -->
         <div class="p-4 border-t dark:border-gray-700 bg-white dark:bg-gray-800">
             <form @submit.prevent="sendMessage()" class="flex gap-3">
                 <input type="text"

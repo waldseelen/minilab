@@ -141,11 +141,13 @@ def history_view(request):
     user = request.user
 
     # Kullanıcının child profile'ını bul (varsa)
+    child_ids = []
     try:
         from apps.accounts.models import ChildProfile
         child_profiles = ChildProfile.objects.filter(parent=user)
         child_ids = list(child_profiles.values_list('id', flat=True))
-    except:
+    except (ChildProfile.DoesNotExist, Exception) as e:
+        # Çocuk profili bulunamadı veya veritabanı hatası
         child_ids = []
 
     # Son aktiviteler (child profile varsa)

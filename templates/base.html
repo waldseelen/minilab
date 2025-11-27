@@ -184,7 +184,7 @@
                 {% endif %}
 
                 <!-- Ses Açık/Kapalı -->
-                <button @click="soundEnabled = !soundEnabled" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center hover:scale-110 transition-transform">
+                <button @click="soundEnabled = !soundEnabled; if(!soundEnabled && 'speechSynthesis' in window) { speechSynthesis.cancel(); }" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center hover:scale-110 transition-transform">
                     <span x-show="soundEnabled">🔊</span>
                     <span x-show="!soundEnabled">🔇</span>
                 </button>
@@ -260,6 +260,14 @@
                 darkMode: false,
                 starDust: {{ star_dust|default:0 }},
 
+                // Ses aç/kapat
+                toggleSound() {
+                    this.soundEnabled = !this.soundEnabled;
+                    if (!this.soundEnabled && 'speechSynthesis' in window) {
+                        speechSynthesis.cancel();
+                    }
+                },
+
                 // Ses çal
                 playSound(type) {
                     if (!this.soundEnabled) return;
@@ -279,18 +287,162 @@
 
                 // TTS (Text-to-Speech)
                 speak(text) {
-                    if (!this.soundEnabled) return;
+                    if (!this.soundEnabled) {
+                        // Ses kapalıysa mevcut konuşmayı durdur
+                        if ('speechSynthesis' in window) {
+                            speechSynthesis.cancel();
+                        }
+                        return;
+                    }
                     if ('speechSynthesis' in window) {
+                        // Önceki konuşmayı durdur
+                        speechSynthesis.cancel();
                         const utterance = new SpeechSynthesisUtterance(text);
                         utterance.lang = 'tr-TR';
                         utterance.rate = 0.9;
                         utterance.pitch = 1.1;
                         speechSynthesis.speak(utterance);
                     }
+                },
+
+                // TTS durdur
+                stopSpeaking() {
+                    if ('speechSynthesis' in window) {
+                        speechSynthesis.cancel();
+                    }
                 }
             });
         });
     </script>
+
+    <!-- Ekran Süresi ve Aktivite Takibi (Phase 7) -->
+    {% if user.is_authenticated %}
+    <script>
+        (function() {
+            // Ekran süresi uyarı modal'ı
+            const warningModal = document.createElement('div');
+            warningModal.id = 'screen-time-warning';
+            warningModal.className = 'fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm hidden';
+            warningModal.innerHTML = `
+                <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 max-w-md mx-4 text-center shadow-2xl animate-bounce">
+                    <div class="text-6xl mb-4">⏰</div>
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2" id="warning-title">Dikkat!</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6" id="warning-message"></p>
+                    <button onclick="document.getElementById('screen-time-warning').classList.add('hidden')"
+                            class="px-6 py-3 bg-minilab-purple text-white rounded-full font-semibold hover:bg-purple-600 transition-colors">
+                        Anladım!
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(warningModal);
+
+            // Son uyarı zamanı (tekrarlı uyarıları önlemek için)
+            let lastWarningTime = 0;
+
+            // Ekran süresi kontrolü (her 60 saniyede bir)
+            async function checkScreenTime() {
+                try {
+                    const response = await fetch('/ebeveyn/api/ekran-suresi-kontrol/', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+
+                    if (!response.ok) return;
+
+                    const data = await response.json();
+
+                    if (!data.allowed) {
+                        // Engelleme sayfasına yönlendir
+                        window.location.href = window.location.href; // Middleware engelleyecek
+                    } else if (data.warning) {
+                        // Uyarı göster (her 5 dakikada bir)
+                        const now = Date.now();
+                        if (now - lastWarningTime > 5 * 60 * 1000) {
+                            lastWarningTime = now;
+                            showWarning(data.warning);
+                        }
+                    }
+                } catch (error) {
+                    console.log('Ekran süresi kontrolü atlandı');
+                }
+            }
+
+            // Uyarı göster
+            function showWarning(message) {
+                document.getElementById('warning-message').textContent = message;
+                document.getElementById('screen-time-warning').classList.remove('hidden');
+
+                // Ses efekti
+                if (Alpine.store('app').soundEnabled) {
+                    const audio = new Audio('/static/sounds/notification.mp3');
+                    audio.volume = 0.5;
+                    audio.play().catch(() => {});
+                }
+            }
+
+            // Aktivite kaydı (her 60 saniyede bir)
+            async function logActivity() {
+                try {
+                    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
+                                     getCookie('csrftoken');
+
+                    await fetch('/ebeveyn/api/aktivite-kaydet/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken,
+                        },
+                        body: JSON.stringify({
+                            activity_type: 'app_usage',
+                            duration_seconds: 60,
+                            extra_data: {
+                                page: window.location.pathname
+                            }
+                        })
+                    });
+                } catch (error) {
+                    console.log('Aktivite kaydı atlandı');
+                }
+            }
+
+            // CSRF token al
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            // Sayfa yüklendiğinde başlat
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+
+            function init() {
+                // İlk kontrol
+                checkScreenTime();
+
+                // Her 60 saniyede bir kontrol ve kayıt
+                setInterval(() => {
+                    checkScreenTime();
+                    logActivity();
+                }, 60000);
+            }
+        })();
+    </script>
+    {% endif %}
 
     {% block extra_js %}{% endblock %}
 </body>

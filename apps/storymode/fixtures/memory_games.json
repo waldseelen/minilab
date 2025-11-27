@@ -1,0 +1,329 @@
+[
+    {
+        "model": "storymode.memorymatchgame",
+        "pk": 1,
+        "fields": {
+            "title": "Hayvan Eşleştirme",
+            "game_type": "emoji_word",
+            "description": "Hayvan emojilerini isimleriyle eşleştir!",
+            "grid_size": "2x3",
+            "time_limit": 90,
+            "points": 15,
+            "difficulty": 1,
+            "is_active": true,
+            "order": 1
+        }
+    },
+    {
+        "model": "storymode.matchcard",
+        "pk": 1,
+        "fields": {
+            "game": 1,
+            "content_a": "🐱",
+            "content_a_type": "emoji",
+            "content_b": "Kedi",
+            "content_b_type": "text",
+            "order": 1
+        }
+    },
+    {
+        "model": "storymode.matchcard",
+        "pk": 2,
+        "fields": {
+            "game": 1,
+            "content_a": "🐕",
+            "content_a_type": "emoji",
+            "content_b": "Köpek",
+            "content_b_type": "text",
+            "order": 2
+        }
+    },
+    {
+        "model": "storymode.matchcard",
+        "pk": 3,
+        "fields": {
+            "game": 1,
+            "content_a": "🐘",
+            "content_a_type": "emoji",
+            "content_b": "Fil",
+            "content_b_type": "text",
+            "order": 3
+        }
+    },
+    {
+        "model": "storymode.memorymatchgame",
+        "pk": 2,
+        "fields": {
+            "title": "Renkler ve Meyveler",
+            "game_type": "emoji_word",
+            "description": "Meyveleri renkleriyle eşleştir!",
+            "grid_size": "2x3",
+            "time_limit": 90,
+            "points": 15,
+            "difficulty": 1,
+            "is_active": true,
+            "order": 2
+        }
+    },
+    {
+        "model": "storymode.matchcard",
+        "pk": 4,
+        "fields": {
+            "game": 2,
+            "content_a": "🍎",
+            "content_a_type": "emoji",
+            "content_b": "Kırmızı",
+            "content_b_type": "text",
+            "order": 1
+        }
+    },
+    {
+        "model": "storymode.matchcard",
+        "pk": 5,
+        "fields": {
+            "game": 2,
+            "content_a": "🍊",
+            "content_a_type": "emoji",
+            "content_b": "Turuncu",
+            "content_b_type": "text",
+            "order": 2
+        }
+    },
+    {
+        "model": "storymode.matchcard",
+        "pk": 6,
+        "fields": {
+            "game": 2,
+            "content_a": "🍌",
+            "content_a_type": "emoji",
+            "content_b": "Sarı",
+            "content_b_type": "text",
+            "order": 3
+        }
+    },
+    {
+        "model": "storymode.memorymatchgame",
+        "pk": 3,
+        "fields": {
+            "title": "Uzay Macerası Eşleştirme",
+            "game_type": "emoji_word",
+            "description": "Uzay cisimlerini isimleriyle eşleştir!",
+            "grid_size": "3x4",
+            "time_limit": 120,
+            "points": 20,
+            "difficulty": 2,
+            "is_active": true,
+            "order": 3
+        }
+    },
+    {
+        "model": "storymode.matchcard",
+        "pk": 7,
+        "fields": {
+            "game": 3,
+            "content_a": "☀️",
+            "content_a_type": "emoji",
+            "content_b": "Güneş",
+            "content_b_type": "text",
+            "order": 1
+        }
+    },
+    {
+        "model": "storymode.matchcard",
+        "pk": 8,
+        "fields": {
+            "game": 3,
+            "content_a": "🌙",
+            "content_a_type": "emoji",
+            "content_b": "Ay",
+            "content_b_type": "text",
+            "order": 2
+        }
+    },
+    {
+        "model": "storymode.matchcard",
+        "pk": 9,
+        "fields": {
+            "game": 3,
+            "content_a": "⭐",
+            "content_a_type": "emoji",
+            "content_b": "Yıldız",
+            "content_b_type": "text",
+            "order": 3
+        }
+    },
+    {
+        "model": "storymode.matchcard",
+        "pk": 10,
+        "fields": {
+            "game": 3,
+            "content_a": "🚀",
+            "content_a_type": "emoji",
+            "content_b": "Roket",
+            "content_b_type": "text",
+            "order": 4
+        }
+    },
+    {
+        "model": "storymode.matchcard",
+        "pk": 11,
+        "fields": {
+            "game": 3,
+            "content_a": "🌍",
+            "content_a_type": "emoji",
+            "content_b": "Dünya",
+            "content_b_type": "text",
+            "order": 5
+        }
+    },
+    {
+        "model": "storymode.matchcard",
+        "pk": 12,
+        "fields": {
+            "game": 3,
+            "content_a": "🪐",
+            "content_a_type": "emoji",
+            "content_b": "Satürn",
+            "content_b_type": "text",
+            "order": 6
+        }
+    },
+    {
+        "model": "storymode.memorymatchgame",
+        "pk": 4,
+        "fields": {
+            "title": "Sayılar ve Şekiller",
+            "game_type": "emoji_word",
+            "description": "Sayıları doğru şekillerle eşleştir!",
+            "grid_size": "2x3",
+            "time_limit": 90,
+            "points": 15,
+            "difficulty": 1,
+            "is_active": true,
+            "order": 4
+        }
+    },
+    {
+        "model": "storymode.matchcard",
+        "pk": 13,
+        "fields": {
+            "game": 4,
+            "content_a": "🔺",
+            "content_a_type": "emoji",
+            "content_b": "3 köşe",
+            "content_b_type": "text",
+            "order": 1
+        }
+    },
+    {
+        "model": "storymode.matchcard",
+        "pk": 14,
+        "fields": {
+            "game": 4,
+            "content_a": "⬜",
+            "content_a_type": "emoji",
+            "content_b": "4 köşe",
+            "content_b_type": "text",
+            "order": 2
+        }
+    },
+    {
+        "model": "storymode.matchcard",
+        "pk": 15,
+        "fields": {
+            "game": 4,
+            "content_a": "⭕",
+            "content_a_type": "emoji",
+            "content_b": "0 köşe",
+            "content_b_type": "text",
+            "order": 3
+        }
+    },
+    {
+        "model": "storymode.memorymatchgame",
+        "pk": 5,
+        "fields": {
+            "title": "Doğa Sesleri",
+            "game_type": "emoji_word",
+            "description": "Hayvanları çıkardıkları seslerle eşleştir!",
+            "grid_size": "3x4",
+            "time_limit": 120,
+            "points": 20,
+            "difficulty": 2,
+            "is_active": true,
+            "order": 5
+        }
+    },
+    {
+        "model": "storymode.matchcard",
+        "pk": 16,
+        "fields": {
+            "game": 5,
+            "content_a": "🐱",
+            "content_a_type": "emoji",
+            "content_b": "Miyav",
+            "content_b_type": "text",
+            "order": 1
+        }
+    },
+    {
+        "model": "storymode.matchcard",
+        "pk": 17,
+        "fields": {
+            "game": 5,
+            "content_a": "🐕",
+            "content_a_type": "emoji",
+            "content_b": "Hav hav",
+            "content_b_type": "text",
+            "order": 2
+        }
+    },
+    {
+        "model": "storymode.matchcard",
+        "pk": 18,
+        "fields": {
+            "game": 5,
+            "content_a": "🐄",
+            "content_a_type": "emoji",
+            "content_b": "Möö",
+            "content_b_type": "text",
+            "order": 3
+        }
+    },
+    {
+        "model": "storymode.matchcard",
+        "pk": 19,
+        "fields": {
+            "game": 5,
+            "content_a": "🐓",
+            "content_a_type": "emoji",
+            "content_b": "Ü-ürü-üüü",
+            "content_b_type": "text",
+            "order": 4
+        }
+    },
+    {
+        "model": "storymode.matchcard",
+        "pk": 20,
+        "fields": {
+            "game": 5,
+            "content_a": "🐑",
+            "content_a_type": "emoji",
+            "content_b": "Meee",
+            "content_b_type": "text",
+            "order": 5
+        }
+    },
+    {
+        "model": "storymode.matchcard",
+        "pk": 21,
+        "fields": {
+            "game": 5,
+            "content_a": "🐸",
+            "content_a_type": "emoji",
+            "content_b": "Vrak vrak",
+            "content_b_type": "text",
+            "order": 6
+        }
+    }
+]

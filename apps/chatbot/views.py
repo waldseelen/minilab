@@ -34,15 +34,41 @@ def filter_unsafe_content(message):
 def get_safe_redirect_response():
     """
     Uygunsuz konularda güvenli yönlendirme yanıtları.
+    Sakinleştirici, motive edici ve ebeveyn dostu.
     """
     import random
     responses = [
-        "Hmm, bunun yerine hayvanlar hakkında konuşsak nasıl olur? 🦁 En sevdiğin hayvan ne?",
-        "Biliyor musun, uzayda çok ilginç şeyler var! 🚀 Gezegenler hakkında konuşalım mı?",
-        "Sana bir bilmece sorayım mı? 🤔 Gökkuşağında kaç renk var?",
-        "Dinozorları seviyor musun? 🦕 Sana onlar hakkında ilginç şeyler anlatabilirim!",
-        "Hadi bir deney yapalım! 🔬 Su ve renkleri karıştırmayı denedin mi hiç?",
-        "Böcekler çok ilginç canlılar! 🐛 Karıncaların ne kadar güçlü olduğunu biliyor musun?",
+        # Hayvanlar
+        "Hmm, bunun yerine hayvanlar hakkında konuşsak nasıl olur? 🦁 En sevdiğin hayvan ne? Annene de sorabilirsin!",
+        "Vay canına! 🐾 Biliyor musun kediler günde 16 saat uyur! Sen hangi hayvanı merak ediyorsun?",
+
+        # Uzay
+        "Biliyor musun, uzayda çok ilginç şeyler var! 🚀 Gezegenler hakkında konuşalım mı? Babana da anlat sonra!",
+        "Gökyüzüne baktın mı hiç? ⭐ Yıldızlar hakkında sana güzel şeyler anlatayım!",
+
+        # Oyunlar ve Bilmeceler
+        "Sana bir bilmece sorayım mı? 🤔 Gökkuşağında kaç renk var? Birlikte sayalım!",
+        "Hadi bir oyun oynayalım! 🎮 Sana renkleri öğreteyim, çok eğlenceli!",
+
+        # Dinozorlar
+        "Dinozorları seviyor musun? 🦕 Sana onlar hakkında inanılmaz şeyler anlatabilirim! Çok meraklı bir çocuksun!",
+        "Eskiden dinozorlar varmış! 🦖 T-Rex'in dişleri muz kadar büyükmüş! İlginç değil mi?",
+
+        # Deneyler
+        "Hadi bir deney yapalım! 🔬 Su ve renkleri karıştırmayı denedin mi hiç? Büyüklerin de yardım edebilir!",
+        "Bilim deneyleri çok eğlenceli! 🧪 Sana güvenli bir deney göstereyim mi?",
+
+        # Doğa
+        "Böcekler çok ilginç canlılar! 🐛 Karıncaların ne kadar güçlü olduğunu biliyor musun? Kendi ağırlıklarının 50 katını taşıyabilirler!",
+        "Bahçede hiç çiçek gördün mü? 🌸 Çiçeklerin renkleri nereden geliyor biliyor musun? Sana anlatayım!",
+
+        # Mevsimler ve Hava
+        "Dışarıda hava nasıl? 🌤️ Bulutları sever misin? Bulutların nasıl oluştuğunu anlatayım!",
+        "Kış mı yaz mı daha çok seviyorsun? ⛄☀️ Her mevsim çok özel! Hangisini konuşalım?",
+
+        # Aile ile aktiviteler
+        "Annenle birlikte mutfakta deney yapabilirsin! 🍪 Kurabiye yaparken kimyayı öğrenebilirsin!",
+        "Babanla birlikte gökyüzünü izleyin! 🌙 Ay'ı görebilir misiniz? Çok güzel!",
     ]
     return random.choice(responses)
 
@@ -62,7 +88,8 @@ def get_context_from_history(user):
                 role = "Çocuk" if msg.is_user else "MiniBot"
                 context += f"{role}: {msg.message[:100]}\n"
             return context
-    except:
+    except (ChatMessage.DoesNotExist, Exception) as e:
+        # Mesaj geçmişi alınamadı
         pass
     return ""
 
@@ -78,7 +105,7 @@ def chat_view(request):
             user=request.user
         ).order_by('-created_at')[:20]
         messages_list = list(reversed(list(recent_messages)))
-    except:
+    except (ChatMessage.DoesNotExist, Exception) as e:
         messages_list = []
 
     context = {
@@ -92,17 +119,43 @@ def chat_view(request):
 def get_greeting_message(user):
     """
     Kullanıcıya özel karşılama mesajı.
+    Duygu dostu, motive edici ve samimi.
     """
     import random
+    from datetime import datetime
 
     # Kullanıcı adını al (varsa)
     name = getattr(user, 'first_name', '') or 'küçük kaşif'
 
+    # Günün saatine göre selam
+    hour = datetime.now().hour
+    if 6 <= hour < 12:
+        time_greeting = "Günaydın"
+    elif 12 <= hour < 18:
+        time_greeting = "İyi günler"
+    elif 18 <= hour < 22:
+        time_greeting = "İyi akşamlar"
+    else:
+        time_greeting = "Merhaba"
+
     greetings = [
-        f"Merhaba {name}! 🤖 Ben MiniBot! Bugün ne öğrenmek istersin?",
-        f"Selam {name}! 🌟 Birlikte bilim yapmaya hazır mısın?",
-        f"Hoş geldin {name}! 🚀 Sana ne anlatayım bugün?",
-        f"Merhaba küçük bilim insanı! 🔬 Ben MiniBot, seninle tanıştığıma çok sevindim!",
+        # Klasik selamlar
+        f"{time_greeting} {name}! 🤖 Ben MiniBot! Bugün ne keşfetmek istersin? Çok meraklı bir çocuksun!",
+        f"Selam {name}! 🌟 Birlikte bilim yapmaya hazır mısın? Sen harika bir bilim insanısın!",
+        f"Hoş geldin {name}! 🚀 Sana bugün çok güzel şeyler anlatacağım! Ne öğrenmek istersin?",
+
+        # Motive edici
+        f"Vay be {name}, yine geldin! 🎉 Sen gerçek bir meraklı kedisin! Bugün ne soracaksın bakalım?",
+        f"Merhaba cesur astronot {name}! 👨‍🚀 Uzaydan mı yoksa hayvanlardan mı konuşalım bugün?",
+        f"Sevgili {name}! 💫 Biliyor musun, soru sormak çok akıllıca bir şey! Sen de çok zekisin!",
+
+        # Aile katılımı teşvik
+        f"Merhaba {name}! 🏡 Bugün anneni veya babanı da aramıza katabilirsin! Birlikte öğrenmek daha eğlenceli!",
+        f"Hoşgeldin {name}! 🤗 Ailenle birlikte bilim yapmayı sever misin? Sana birlikte yapabileceğiniz deneyler gösterebilirim!",
+
+        # Neşeli ve samimi
+        f"Yaaaay! {name} geldi! 🎊 Ben seni çok seviyorum! Bugün hangi konuyu merak ediyorsun?",
+        f"Selaaaam {name}! 😊 Ne güzel ki buradasın! Birlikte harika şeyler öğreneceğiz!",
     ]
     return random.choice(greetings)
 
@@ -252,47 +305,63 @@ def clean_bot_response(response):
 def get_smart_fallback_response(message):
     """
     Gemini yokken akıllı fallback yanıtlar.
-    Konu tespiti ile.
+    Konu tespiti ile. Duygu dostu, motive edici ve ebeveyn katılımını teşvik eden.
     """
     import random
     message_lower = message.lower()
 
-    # Konu bazlı yanıtlar
+    # Konu bazlı yanıtlar - Geliştirilmiş
     topic_responses = {
         # Hayvanlar
-        ('hayvan', 'kedi', 'köpek', 'aslan', 'fil', 'kuş'): [
-            "Hayvanları ben de çok seviyorum! 🐾 Onlar çok özel canlılar. Senin evcil hayvanın var mı?",
-            "Vay, hayvanlara meraklısın! 🦁 Biliyor musun, aslanlar günde 20 saat uyuyabiliyor! İlginç değil mi?",
+        ('hayvan', 'kedi', 'köpek', 'aslan', 'fil', 'kuş', 'kelebek', 'karınca'): [
+            "Hayvanları ben de çok seviyorum! 🐾 Onlar çok özel canlılar. Senin evcil hayvanın var mı? Annenle birlikte bir hayvan bakabilirsin!",
+            "Vay, hayvanlara meraklısın! 🦁 Biliyor musun, aslanlar günde 20 saat uyuyabiliyor! Sen de öyle uyuyor musun? 😴",
+            "Kelebekler çok güzel! 🦋 Onlar tırtılken kanatları yoktu! Babanla birlikte bahçede kelebek arayabilirsiniz!",
+            "Karıncalar süper güçlü! 🐜 Kendi ağırlıklarının 50 katını taşıyabilirler! Sen gerçek bir hayvan uzmanısın! 💪",
         ],
         # Uzay
-        ('uzay', 'yıldız', 'gezegen', 'ay', 'güneş', 'roket'): [
-            "Uzay çok büyük bir yer! 🚀 Milyonlarca yıldız var orada. En çok hangi gezegeni merak ediyorsun?",
-            "Ay'ı görmek çok güzel, değil mi? 🌙 Biliyor musun, Ay'da hiç rüzgar yok! Bayrak bile sallanmaz!",
+        ('uzay', 'yıldız', 'gezegen', 'ay', 'güneş', 'roket', 'astronot'): [
+            "Uzay çok büyük bir yer! 🚀 Milyonlarca yıldız var orada. Akşam ailenle birlikte gökyüzüne bakın, çok güzel!",
+            "Ay'ı görmek çok güzel, değil mi? 🌙 Biliyor musun, Ay'da hiç rüzgar yok! Bayrak bile sallanmaz! İlginç değil mi?",
+            "Astronotlar çok cesur! 👨‍🚀 Sen de bir gün astronot olmak ister misin? Hayal etmek çok güzel!",
+            "Güneş çok sıcak! ☀️ Ama biz onu seviyoruz çünkü ışık veriyor! Babana 'Güneş neden sıcak?' diye sor bakalım!",
         ],
         # Dinozorlar
-        ('dinozor', 'dino', 't-rex'): [
+        ('dinozor', 'dino', 't-rex', 'trex'): [
             "Dinozorlar çok çok eskiden yaşamış! 🦕 T-Rex'in dişleri muz kadar büyükmüş! Hangi dinozoru en çok seviyorsun?",
-            "Dinozorlar süper ilginç! 🦖 Bazıları evimiz kadar büyükmüş! Onlar hakkında daha çok şey öğrenmek ister misin?",
+            "Dinozorlar süper ilginç! 🦖 Bazıları evimiz kadar büyükmüş! Annenle birlikte dinozor kitabı okuyabilirsiniz!",
+            "Vay canına, dinozor meraklısı! 🦴 Biliyor musun bazı dinozorlar uçabiliyormuş! Sen de meraklı bir kaşifsin!",
         ],
-        # Renkler
-        ('renk', 'mavi', 'kırmızı', 'sarı', 'yeşil', 'gökkuşağı'): [
-            "Renkler çok eğlenceli! 🌈 Biliyor musun, gökkuşağında 7 renk var! Sen kaçını sayabilirsin?",
-            "Renkleri karıştırmak çok eğlenceli! 🎨 Mavi ve sarı karışırsa ne olur? Yeşil! 💚",
+        # Renkler ve Sanat
+        ('renk', 'mavi', 'kırmızı', 'sarı', 'yeşil', 'gökkuşağı', 'boya'): [
+            "Renkler çok eğlenceli! 🌈 Biliyor musun, gökkuşağında 7 renk var! Sen kaçını sayabilirsin? Birlikte sayalım!",
+            "Renkleri karıştırmak çok eğlenceli! 🎨 Mavi ve sarı karışırsa ne olur? Yeşil! 💚 Büyüklerinle birlikte deneyin!",
+            "Boyama yapmayı sever misin? 🖍️ Renkler çok güzel! Annenle birlikte resim yapabilirsin!",
         ],
-        # Su
-        ('su', 'yağmur', 'deniz', 'okyanus', 'balık'): [
-            "Su çok önemli! 💧 Bütün canlılar suya ihtiyaç duyar. Sen günde kaç bardak su içiyorsun?",
-            "Okyanuslar çok büyük! 🌊 İçinde milyonlarca balık yaşıyor. En sevdiğin balık hangisi?",
+        # Su ve Doğa
+        ('su', 'yağmur', 'deniz', 'okyanus', 'balık', 'nehir'): [
+            "Su çok önemli! 💧 Bütün canlılar suya ihtiyaç duyar. Sen günde kaç bardak su içiyorsun? Sağlıklı kalmak için su içmeliyiz!",
+            "Okyanuslar çok büyük! 🌊 İçinde milyonlarca balık yaşıyor. Babanla birlikte denize gittiniz mi?",
+            "Yağmur çok güzel! ☔ Bulutlar ağlıyor gibi, değil mi? Ama aslında su damlacıkları yağıyor! İlginç!",
         ],
-        # Vücut
-        ('vücut', 'kalp', 'beyin', 'göz', 'kulak', 'el'): [
+        # Vücut ve Sağlık
+        ('vücut', 'kalp', 'beyin', 'göz', 'kulak', 'el', 'diş'): [
             "Vücudumuz harika bir makine! 💪 Biliyor musun, kalbimiz hiç durmadan çalışır! Elini göğsüne koy, hissedebilir misin?",
-            "Beynimiz süper güçlü bir bilgisayar gibi! 🧠 Her şeyi o kontrol eder. Şimdi ne düşünüyorsun?",
+            "Beynimiz süper güçlü bir bilgisayar gibi! 🧠 Her şeyi o kontrol eder. Sen çok zeki bir çocuksun!",
+            "Dişlerimizi fırçalamak çok önemli! 🦷 Her gün fırçalıyor musun? Aferin sana! Mikroplardan korur!",
+            "Gözlerimiz çok özel! 👀 Her şeyi görürüz! Annenle birlikte renkli şeylere bakın!",
         ],
-        # Yemek
-        ('yemek', 'meyve', 'sebze', 'yiyecek', 'elma', 'portakal'): [
-            "Sağlıklı yemekler bizi güçlü yapar! 🍎 Meyveler çok lezzetli. En sevdiğin meyve ne?",
+        # Yemek ve Beslenme
+        ('yemek', 'meyve', 'sebze', 'yiyecek', 'elma', 'portakal', 'havuç'): [
+            "Sağlıklı yemekler bizi güçlü yapar! 🍎 Meyveler çok lezzetli. En sevdiğin meyve ne? Annenle birlikte yiyebilirsin!",
             "Sebzeler süper güç verir! 🥕 Havuç yersen gözlerin çok iyi görür! Sen hangi sebzeleri seviyorsun?",
+            "Yemek yemek çok önemli! 🍽️ Büyümek için iyi yemek yemeliyiz! Ailenle birlikte yemek çok güzel, değil mi?",
+        ],
+        # Mevsimler
+        ('mevsim', 'yaz', 'kış', 'sonbahar', 'ilkbahar', 'kar', 'çiçek'): [
+            "Mevsimler çok güzel! 🌸 En sevdiğin mevsim hangisi? Her mevsim farklı ve özel!",
+            "Kar çok eğlenceli! ⛄ Kışın kartopu oynamayı sever misin? Ailenle birlikte kardan adam yapabilirsiniz!",
+            "İlkbaharda çiçekler açar! 🌺 Babanla birlikte bahçeye bakın, kaç çiçek sayabilirsiniz?",
         ],
     }
 
@@ -301,26 +370,49 @@ def get_smart_fallback_response(message):
         if any(keyword in message_lower for keyword in keywords):
             return random.choice(responses)
 
+    # Duygusal durumlar
+    if any(word in message_lower for word in ['üzgün', 'ağla', 'korktu', 'korku', 'üzül']):
+        comfort_responses = [
+            "Üzülme canım! 🤗 Her şey düzelecek! Sen çok cesur bir çocuksun! Anneni veya babanı yanına çağırır mısın?",
+            "Merak etme küçük kaşif! 💙 Ben buradayım! Sana güzel bir şey anlatayım mı? Seni mutlu edecek!",
+        ]
+        return random.choice(comfort_responses)
+
+    # Başarı ifadeleri
+    if any(word in message_lower for word in ['yaptı', 'başar', 'bitti', 'tamamla']):
+        success_responses = [
+            "BRAVO! 🎉 Sen harikasın! Başardın! Bunu annene anlat, çok sevinecek!",
+            "Aferin sana! 🌟 Sen gerçek bir şampiyon! Çok gurur duyuyorum!",
+        ]
+        return random.choice(success_responses)
+
     # Soru mu kontrol et
-    if '?' in message or any(q in message_lower for q in ['neden', 'nasıl', 'ne', 'kim', 'nerede', 'ne zaman']):
+    if '?' in message or any(q in message_lower for q in ['neden', 'nasıl', 'ne', 'kim', 'nerede', 'ne zaman', 'niye']):
         curious_responses = [
-            "Hmm, çok güzel bir soru! 🤔 Ben de düşünüyorum... Beraber araştıralım mı?",
-            "Vay canına, meraklı bir kaşifsin! 🌟 Bu soruyu sormak çok akıllıca!",
-            "İlginç bir soru! 🔬 Bilim insanları da böyle sorular sorar. Sen de bir bilim insanı mısın?",
+            "Hmm, çok güzel bir soru! 🤔 Meraklı çocuklar en akıllı çocuklardır! Beraber düşünelim!",
+            "Vay canına, harika bir soru! 🌟 Bu soruyu sormak çok zekice! Sen gerçek bir bilim insanısın!",
+            "İlginç bir soru! 🔬 Bilim insanları da böyle sorular sorar. Büyüklerinden de sor bakalım ne diyecekler!",
+            "Ne kadar meraklısın! 💡 Merak eden öğrenir! Sen çok özel bir çocuksun!",
         ]
         return random.choice(curious_responses)
 
     # Selamlama
-    if any(word in message_lower for word in ['merhaba', 'selam', 'hey', 'sa', 'günaydın']):
-        return "Merhaba küçük kaşif! 🤖 Ben MiniBot! Bugün ne öğrenmek istersin? Hayvanlar, uzay, dinozorlar... Hangisi olsun? 🚀"
+    if any(word in message_lower for word in ['merhaba', 'selam', 'hey', 'sa', 'günaydın', 'iyi akşam']):
+        return "Merhaba küçük kaşif! 🤖 Ben MiniBot! Bugün ne öğrenmek istersin? Hayvanlar, uzay, dinozorlar... Hangisi olsun? Annen ve baban da katılabilir! 🚀"
 
-    # Genel fallback
+    # Teşekkür
+    if any(word in message_lower for word in ['teşekkür', 'sağol', 'eyv']):
+        return "Rica ederim canım! 💙 Sen çok tatlısın! Ne zaman istersen konuşabiliriz! 🤗"
+
+    # Genel fallback - Daha motive edici
     general_responses = [
-        "Vay canına, ne güzel bir konu! 🌟 Bana biraz daha anlatır mısın?",
-        "Hmm, çok ilginç! 🤔 Bu konuda daha çok şey öğrenmek ister misin?",
-        "Harika! 🎉 Sen gerçek bir bilim insanısın! Başka ne merak ediyorsun?",
-        "Bu çok güzel! 💫 Birlikte daha çok şey keşfedelim mi?",
-        "Merak etmek çok güzel bir şey! 🔬 Sormaya devam et küçük kaşif!",
+        "Vay canına, ne güzel bir konu! 🌟 Bana biraz daha anlatır mısın? Seni dinlemek çok güzel!",
+        "Hmm, çok ilginç! 🤔 Bu konuda daha çok şey öğrenmek ister misin? Birlikte araştıralım!",
+        "Harika! 🎉 Sen gerçek bir bilim insanısın! Başka ne merak ediyorsun? Her sorun çok önemli!",
+        "Bu çok güzel! 💫 Birlikte daha çok şey keşfedelim mi? Annenle birlikte deney yapabilirsin!",
+        "Merak etmek çok güzel bir şey! 🔬 Sormaya devam et küçük kaşif! Sen çok akıllısın!",
+        "Ne kadar zekisin! 🧠 Bunu konuşmak çok eğlenceli! Babanla da paylaş bu konuyu!",
+        "Vay be! 👏 Sen her şeyi öğrenmek istiyorsun! Bu çok güzel! Devam et!",
     ]
     return random.choice(general_responses)
 

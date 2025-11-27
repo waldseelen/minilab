@@ -3,6 +3,7 @@ MiniLab Django Settings - Production Configuration
 Canlı ortam (production) için ayarlar.
 """
 import os
+from pathlib import Path
 from .base import *
 
 # Debug kapalı
@@ -20,6 +21,11 @@ DATABASES = {
         'PASSWORD': os.getenv('DB_PASSWORD', ''),
         'HOST': os.getenv('DB_HOST', 'localhost'),
         'PORT': os.getenv('DB_PORT', '5432'),
+        # Connection pooling için ek ayarlar
+        'CONN_MAX_AGE': 600,  # 10 dakika bağlantı havuzu
+        'OPTIONS': {
+            'connect_timeout': 10,
+        },
     }
 }
 
@@ -29,15 +35,26 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
 
 # HTTPS Zorunluluğu
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'True').lower() == 'true'
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_HSTS_SECONDS = 31536000  # 1 yıl
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
-# Static ve Media dosyaları - WhiteNoise
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Ek güvenlik başlıkları
+SECURE_REFERRER_POLICY = 'same-origin'
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
+
+# Static ve Media dosyaları - WhiteNoise (Django 4.2+ STORAGES kullanımı)
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
 
 # Email Backend (Production)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -59,6 +76,10 @@ CACHES = {
 }
 
 # Logging - Production
+# Log klasörünün var olduğundan emin ol
+LOG_DIR = BASE_DIR / 'logs'
+LOG_DIR.mkdir(exist_ok=True)
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -67,17 +88,33 @@ LOGGING = {
             'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
             'style': '{',
         },
+        'simple': {
+            'format': '{levelname} {asctime} {message}',
+            'style': '{',
+        },
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
     },
     'handlers': {
         'file': {
             'level': 'WARNING',
-            'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs' / 'django.log',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOG_DIR / 'django.log',
+            'maxBytes': 10 * 1024 * 1024,  # 10 MB
+            'backupCount': 5,
             'formatter': 'verbose',
         },
         'console': {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'filters': ['require_debug_false'],
         },
     },
     'root': {
@@ -86,15 +123,18 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['file'],
+            'handlers': ['file', 'mail_admins'],
             'level': 'WARNING',
             'propagate': True,
+        },
+        'django.security': {
+            'handlers': ['file', 'mail_admins'],
+            'level': 'WARNING',
+            'propagate': False,
         },
     },
 }
 
-# CSRF Trusted Origins (kendi domain'ini ekle)
-CSRF_TRUSTED_ORIGINS = [
-    'https://minilab.com',
-    'https://www.minilab.com',
-]
+# CSRF Trusted Origins (ortam değişkeninden okunur)
+# .env dosyasında CSRF_TRUSTED_ORIGINS=https://minilab.com,https://www.minilab.com şeklinde tanımlayın
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://minilab.com,https://www.minilab.com').split(',')

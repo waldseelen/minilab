@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ child.nickname }}'in Haftalık MiniLab Özeti</title>
+    <!--[if mso]>
+    <style type="text/css">
+        body, table, td {font-family: Arial, sans-serif !important;}
+    </style>
+    <![endif]-->
+</head>
+<body style="margin: 0; padding: 0; background-color: #f3f4f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f3f4f6;">
+        <tr>
+            <td style="padding: 40px 20px;">
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto; max-width: 600px;">
+
+                    <!-- Header -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px 16px 0 0; padding: 30px; text-align: center;">
+                            <h1 style="color: white; margin: 0 0 10px 0; font-size: 28px;">🔬 MiniLab</h1>
+                            <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 16px;">Haftalık Bilim Özeti</p>
+                        </td>
+                    </tr>
+
+                    <!-- Child Info -->
+                    <tr>
+                        <td style="background-color: white; padding: 30px; text-align: center; border-bottom: 1px solid #e5e7eb;">
+                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #a78bfa 0%, #ec4899 100%); border-radius: 50%; margin: 0 auto 15px; line-height: 80px; font-size: 40px;">
+                                🧒
+                            </div>
+                            <h2 style="margin: 0 0 5px 0; color: #1f2937; font-size: 24px;">{{ child.nickname }}</h2>
+                            <p style="margin: 0; color: #6b7280; font-size: 14px;">{{ week_start }} - {{ week_end }}</p>
+                        </td>
+                    </tr>
+
+                    <!-- Stats Grid -->
+                    <tr>
+                        <td style="background-color: white; padding: 30px;">
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                <tr>
+                                    <td width="50%" style="padding: 10px; text-align: center;">
+                                        <div style="background-color: #f0fdf4; border-radius: 12px; padding: 20px;">
+                                            <div style="font-size: 36px; font-weight: bold; color: #16a34a;">{{ total_experiments }}</div>
+                                            <div style="font-size: 14px; color: #6b7280; margin-top: 5px;">Deney Tamamlandı</div>
+                                        </div>
+                                    </td>
+                                    <td width="50%" style="padding: 10px; text-align: center;">
+                                        <div style="background-color: #fef3c7; border-radius: 12px; padding: 20px;">
+                                            <div style="font-size: 36px; font-weight: bold; color: #d97706;">{{ earned_badges.count }}</div>
+                                            <div style="font-size: 14px; color: #6b7280; margin-top: 5px;">Rozet Kazanıldı</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Category Breakdown -->
+                    {% if category_counts %}
+                    <tr>
+                        <td style="background-color: white; padding: 0 30px 30px;">
+                            <h3 style="color: #1f2937; margin: 0 0 15px 0; font-size: 18px;">📊 Kategori Dağılımı</h3>
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                {% for cat_name, count in category_counts.items %}
+                                <tr>
+                                    <td style="padding: 10px 15px; background-color: #f9fafb; border-radius: 8px; margin-bottom: 8px;">
+                                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                            <tr>
+                                                <td style="color: #374151; font-size: 14px;">{{ cat_name }}</td>
+                                                <td style="text-align: right; color: #7c3aed; font-weight: bold; font-size: 14px;">{{ count }} deney</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr><td style="height: 8px;"></td></tr>
+                                {% endfor %}
+                            </table>
+                        </td>
+                    </tr>
+                    {% endif %}
+
+                    <!-- Badges Section -->
+                    {% if earned_badges %}
+                    <tr>
+                        <td style="background-color: white; padding: 0 30px 30px;">
+                            <h3 style="color: #1f2937; margin: 0 0 15px 0; font-size: 18px;">🏆 Bu Hafta Kazanılan Rozetler</h3>
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                <tr>
+                                    {% for earned in earned_badges %}
+                                    <td width="25%" style="padding: 5px; text-align: center; vertical-align: top;">
+                                        <div style="background: linear-gradient(135deg, #fef3c7 0%, #fcd34d 100%); border-radius: 12px; padding: 15px;">
+                                            <div style="font-size: 28px;">{{ earned.badge.icon }}</div>
+                                            <div style="font-size: 11px; color: #92400e; margin-top: 5px; font-weight: 600;">{{ earned.badge.name }}</div>
+                                        </div>
+                                    </td>
+                                    {% if forloop.counter|divisibleby:4 %}
+                                </tr>
+                                <tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    {% endif %}
+
+                    <!-- Motivational Message -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #34d399 0%, #10b981 100%); padding: 30px; text-align: center;">
+                            <div style="font-size: 40px; margin-bottom: 10px;">🌟</div>
+                            <h3 style="color: white; margin: 0 0 10px 0; font-size: 20px;">Harika Bir Hafta!</h3>
+                            <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 14px; line-height: 1.6;">
+                                {% if total_experiments >= 5 %}
+                                {{ child.nickname }} bu hafta gerçek bir bilim kahramanı oldu!
+                                Her deney yeni bir keşif demek. Böyle devam!
+                                {% elif total_experiments >= 1 %}
+                                {{ child.nickname }} bilim dünyasını keşfetmeye devam ediyor!
+                                Her adım öğrenme yolculuğunda önemli.
+                                {% else %}
+                                Yeni bir hafta, yeni keşifler bekliyor!
+                                {{ child.nickname }}'i MiniLab'daki heyecan verici deneylere davet edin!
+                                {% endif %}
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- CTA Button -->
+                    <tr>
+                        <td style="background-color: white; padding: 30px; text-align: center;">
+                            <a href="#" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; padding: 15px 40px; border-radius: 30px; font-weight: 600; font-size: 16px;">
+                                Detaylı Raporu Görüntüle
+                            </a>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #1f2937; border-radius: 0 0 16px 16px; padding: 30px; text-align: center;">
+                            <p style="color: #9ca3af; margin: 0 0 10px 0; font-size: 14px;">
+                                🔬 MiniLab - Küçük Bilim İnsanları İçin
+                            </p>
+                            <p style="color: #6b7280; margin: 0; font-size: 12px;">
+                                Bu e-posta, {{ child.nickname }}'in haftalık aktivite özetini içermektedir.<br>
+                                E-posta tercihlerinizi ebeveyn panelinizden değiştirebilirsiniz.
+                            </p>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

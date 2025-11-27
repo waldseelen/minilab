@@ -1,0 +1,258 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Hafıza Oyunu - MiniLab{% endblock %}
+
+{% block extra_css %}
+<style>
+    .game-container {
+        width: 100%;
+        height: calc(100vh - 200px);
+        min-height: 500px;
+        max-height: 700px;
+    }
+
+    /* Oyun yükleniyor animasyonu */
+    .loading-game {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        gap: 20px;
+    }
+
+    .loading-game .emoji {
+        font-size: 80px;
+        animation: bounce 1s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+
+    /* Oyun seçim kartları */
+    .game-card {
+        transition: all 0.3s ease;
+    }
+
+    .game-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen py-8" x-data="memoryGamePage()">
+    <div class="max-w-6xl mx-auto px-4">
+
+        <!-- Başlık -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center gap-4 bg-gradient-to-r from-minilab-purple to-minilab-pink text-white px-8 py-4 rounded-full shadow-2xl">
+                <span class="text-5xl animate-wiggle">🧠</span>
+                <div class="text-left">
+                    <h1 class="font-display text-3xl">Hafıza Oyunu</h1>
+                    <p class="text-white/80">Eşleşen kartları bul!</p>
+                </div>
+                <button @click="speakIntro()" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full ml-4 transition-all hover:scale-105">
+                    🔊 Dinle
+                </button>
+            </div>
+        </div>
+
+        <!-- Oyun Seçimi veya Oyun Alanı -->
+        <template x-if="!selectedGame">
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for game in games %}
+                <div class="game-card card-cute cursor-pointer group"
+                     @click="selectGame({{ game.id }}, '{{ game.grid_size }}', {{ game.time_limit }}, {{ game.points }})">
+                    <div class="text-center">
+                        <div class="text-6xl mb-4 group-hover:animate-wiggle">
+                            {% if game.game_type == 'emoji_word' %}🎴{% elif game.game_type == 'image_match' %}🖼️{% else %}🎯{% endif %}
+                        </div>
+                        <h3 class="font-display text-xl text-minilab-purple mb-2">{{ game.title }}</h3>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">{{ game.description }}</p>
+
+                        <div class="flex justify-center gap-4 text-sm">
+                            <span class="bg-minilab-blue-50 dark:bg-gray-700 px-3 py-1 rounded-full">
+                                📊 {{ game.grid_size }}
+                            </span>
+                            <span class="bg-minilab-yellow/20 px-3 py-1 rounded-full">
+                                ⏱️ {{ game.time_limit }}sn
+                            </span>
+                            <span class="bg-minilab-green/20 px-3 py-1 rounded-full">
+                                ⭐ {{ game.points }}
+                            </span>
+                        </div>
+
+                        <!-- Zorluk -->
+                        <div class="mt-4 flex justify-center">
+                            {% for i in "123" %}
+                                {% if forloop.counter <= game.difficulty %}
+                                <span class="text-minilab-yellow">⭐</span>
+                                {% else %}
+                                <span class="text-gray-300">⭐</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <!-- Demo oyunlar -->
+                <div class="game-card card-cute cursor-pointer group" @click="selectGame(0, '2x3', 90, 15)">
+                    <div class="text-center">
+                        <div class="text-6xl mb-4 group-hover:animate-wiggle">🐾</div>
+                        <h3 class="font-display text-xl text-minilab-purple mb-2">Hayvan Eşleştirme</h3>
+                        <p class="text-gray-600 text-sm mb-4">Sevimli hayvanları eşleştir!</p>
+                        <div class="flex justify-center gap-4 text-sm">
+                            <span class="bg-minilab-blue-50 px-3 py-1 rounded-full">📊 2x3</span>
+                            <span class="bg-minilab-yellow/20 px-3 py-1 rounded-full">⏱️ 90sn</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-card card-cute cursor-pointer group" @click="selectGame(0, '3x4', 120, 20)">
+                    <div class="text-center">
+                        <div class="text-6xl mb-4 group-hover:animate-wiggle">🚀</div>
+                        <h3 class="font-display text-xl text-minilab-blue-500 mb-2">Uzay Macerası</h3>
+                        <p class="text-gray-600 text-sm mb-4">Uzay cisimlerini eşleştir!</p>
+                        <div class="flex justify-center gap-4 text-sm">
+                            <span class="bg-minilab-blue-50 px-3 py-1 rounded-full">📊 3x4</span>
+                            <span class="bg-minilab-yellow/20 px-3 py-1 rounded-full">⏱️ 120sn</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-card card-cute cursor-pointer group" @click="selectGame(0, '4x4', 180, 30)">
+                    <div class="text-center">
+                        <div class="text-6xl mb-4 group-hover:animate-wiggle">🌈</div>
+                        <h3 class="font-display text-xl text-minilab-pink mb-2">Renkler ve Şekiller</h3>
+                        <p class="text-gray-600 text-sm mb-4">Zor seviye! Hazır mısın?</p>
+                        <div class="flex justify-center gap-4 text-sm">
+                            <span class="bg-minilab-blue-50 px-3 py-1 rounded-full">📊 4x4</span>
+                            <span class="bg-minilab-yellow/20 px-3 py-1 rounded-full">⏱️ 180sn</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </template>
+
+        <!-- Oyun Alanı -->
+        <template x-if="selectedGame">
+            <div>
+                <!-- Geri butonu -->
+                <button @click="goBack()" class="mb-4 flex items-center gap-2 text-gray-600 hover:text-minilab-purple transition-colors">
+                    ← Oyun Seçimine Dön
+                </button>
+
+                <!-- Oyun Container -->
+                <div class="card-cute p-4">
+                    <div id="memory-game-container" class="game-container">
+                        <div class="loading-game">
+                            <span class="emoji">🧠</span>
+                            <p class="text-xl text-gray-600">Oyun yükleniyor...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- İpucu -->
+        <div class="mt-8 text-center">
+            <div class="inline-flex items-center gap-3 bg-minilab-yellow/20 px-6 py-3 rounded-full">
+                <span class="text-2xl">💡</span>
+                <p class="text-gray-600 dark:text-gray-400">
+                    <strong>İpucu:</strong> Kartların yerlerini iyi hatırla, daha az hamlede bitir!
+                </p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="{% static 'js/pixi/memory_match_game.js' %}"></script>
+<script>
+function memoryGamePage() {
+    return {
+        selectedGame: null,
+        gameInstance: null,
+
+        speakIntro() {
+            Alpine.store('app').speak('Hafıza oyununa hoş geldin! Eşleşen kartları bulmaya çalış. Kartlara tıklayarak çevir ve aynı olanları eşleştir.');
+        },
+
+        selectGame(id, gridSize, timeLimit, points) {
+            this.selectedGame = { id, gridSize, timeLimit, points };
+
+            // Oyunu başlat
+            this.$nextTick(() => {
+                this.initGame();
+            });
+        },
+
+        initGame() {
+            const container = document.getElementById('memory-game-container');
+            if (!container) return;
+
+            // Demo kart verileri
+            const demoCards = this.getDemoCards();
+
+            this.gameInstance = new MemoryMatchGame('memory-game-container', {
+                gridSize: this.selectedGame.gridSize,
+                timeLimit: this.selectedGame.timeLimit,
+                cards: demoCards,
+                onComplete: (result) => {
+                    console.log('Oyun tamamlandı:', result);
+                    // Puan kaydetme API çağrısı yapılabilir
+                },
+                onMatch: (card1, card2) => {
+                    console.log('Eşleşme:', card1, card2);
+                },
+            });
+        },
+
+        getDemoCards() {
+            const cardSets = {
+                '2x3': [
+                    { content_a: '🐱', content_a_type: 'emoji', content_b: 'Kedi', content_b_type: 'text' },
+                    { content_a: '🐕', content_a_type: 'emoji', content_b: 'Köpek', content_b_type: 'text' },
+                    { content_a: '🐘', content_a_type: 'emoji', content_b: 'Fil', content_b_type: 'text' },
+                ],
+                '3x4': [
+                    { content_a: '☀️', content_a_type: 'emoji', content_b: 'Güneş', content_b_type: 'text' },
+                    { content_a: '🌙', content_a_type: 'emoji', content_b: 'Ay', content_b_type: 'text' },
+                    { content_a: '⭐', content_a_type: 'emoji', content_b: 'Yıldız', content_b_type: 'text' },
+                    { content_a: '🚀', content_a_type: 'emoji', content_b: 'Roket', content_b_type: 'text' },
+                    { content_a: '🌍', content_a_type: 'emoji', content_b: 'Dünya', content_b_type: 'text' },
+                    { content_a: '🪐', content_a_type: 'emoji', content_b: 'Satürn', content_b_type: 'text' },
+                ],
+                '4x4': [
+                    { content_a: '🔴', content_a_type: 'emoji', content_b: 'Kırmızı', content_b_type: 'text' },
+                    { content_a: '🔵', content_a_type: 'emoji', content_b: 'Mavi', content_b_type: 'text' },
+                    { content_a: '🟢', content_a_type: 'emoji', content_b: 'Yeşil', content_b_type: 'text' },
+                    { content_a: '🟡', content_a_type: 'emoji', content_b: 'Sarı', content_b_type: 'text' },
+                    { content_a: '🔺', content_a_type: 'emoji', content_b: 'Üçgen', content_b_type: 'text' },
+                    { content_a: '⬜', content_a_type: 'emoji', content_b: 'Kare', content_b_type: 'text' },
+                    { content_a: '⭕', content_a_type: 'emoji', content_b: 'Daire', content_b_type: 'text' },
+                    { content_a: '💎', content_a_type: 'emoji', content_b: 'Elmas', content_b_type: 'text' },
+                ],
+            };
+
+            return cardSets[this.selectedGame.gridSize] || cardSets['2x3'];
+        },
+
+        goBack() {
+            if (this.gameInstance) {
+                this.gameInstance.destroy();
+                this.gameInstance = null;
+            }
+            this.selectedGame = null;
+        }
+    }
+}
+</script>
+{% endblock %}

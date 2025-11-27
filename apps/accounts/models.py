@@ -74,6 +74,11 @@ class User(AbstractUser):
     def is_child(self):
         return self.user_type == 'child'
 
+    @property
+    def child_profile(self):
+        """Ebeveynin ilk çocuk profilini döndür (varsa)."""
+        return self.children.first()
+
 
 class ChildProfile(models.Model):
     """
@@ -141,6 +146,18 @@ class ChildProfile(models.Model):
         verbose_name='Yıldız Tozu (Puan)'
     )
 
+    total_points = models.PositiveIntegerField(
+        default=0,
+        verbose_name='Toplam Puan',
+        help_text='Tüm aktivitelerden kazanılan toplam puan'
+    )
+
+    level = models.PositiveIntegerField(
+        default=1,
+        verbose_name='Seviye',
+        help_text='Çocuğun mevcut seviyesi'
+    )
+
     total_experiments = models.PositiveIntegerField(
         default=0,
         verbose_name='Toplam Deney'
@@ -189,6 +206,15 @@ class ChildProfile(models.Model):
 
     def __str__(self):
         return f"{self.nickname} ({self.age} yaş)"
+
+    @property
+    def user(self):
+        """
+        Geriye uyumluluk için parent'ı döndür.
+        Not: ChildProfile ayrı bir model olduğu için doğrudan User değil,
+        ancak bazı view'larda child.user çağrıldığı için bu property eklendi.
+        """
+        return self.parent
 
     def add_star_dust(self, amount):
         """Yıldız tozu ekle."""

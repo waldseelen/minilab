@@ -43,8 +43,10 @@ def child_dashboard(request):
     badge_count = 0
     child_profile = None
 
-    if hasattr(request.user, 'child_profile'):
-        child_profile = request.user.child_profile
+    from apps.accounts.models import ChildProfile
+    # Ebeveynin ilk çocuk profilini al
+    child_profile = ChildProfile.objects.filter(parent=request.user).first()
+    if child_profile:
         star_dust = child_profile.star_dust or 0
         badge_count = child_profile.earned_badges.count()
 

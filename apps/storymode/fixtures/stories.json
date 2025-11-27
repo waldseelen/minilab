@@ -1,0 +1,423 @@
+[
+    {
+        "model": "storymode.story",
+        "pk": 1,
+        "fields": {
+            "title": "Uzay Macerası",
+            "slug": "uzay-macerasi",
+            "description": "Küçük astronot Ela ile birlikte güneş sistemini keşfet! Gezegenler, yıldızlar ve uzayın sırlarını öğren.",
+            "estimated_time": 8,
+            "points": 25,
+            "order": 1,
+            "is_active": true
+        }
+    },
+    {
+        "model": "storymode.storypage",
+        "pk": 1,
+        "fields": {
+            "story": 1,
+            "title": "Uzaya Yolculuk Başlıyor!",
+            "content": "Küçük Ela uzayı çok merak ediyordu. Bir gece yıldızlara bakarken, parlak bir ışık gördü. 'Bu nedir?' diye düşündü. Işık yaklaştıkça, bunun küçük bir uzay gemisi olduğunu anladı!",
+            "animation": "sparkle",
+            "science_fact": "Yıldızlar aslında bizim Güneşimiz gibi dev ateş toplarıdır. Çok uzakta oldukları için küçük görünürler.",
+            "is_start": true,
+            "is_ending": false,
+            "order": 1
+        }
+    },
+    {
+        "model": "storymode.storychoice",
+        "pk": 1,
+        "fields": {
+            "page": 1,
+            "text": "Uzay gemisine bineyim!",
+            "icon": "🚀",
+            "next_page": 2,
+            "is_correct": true,
+            "feedback": "Harika bir karar! Macera başlasın!",
+            "order": 1
+        }
+    },
+    {
+        "model": "storymode.storychoice",
+        "pk": 2,
+        "fields": {
+            "page": 1,
+            "text": "Önce anne-babama sorayım",
+            "icon": "👨‍👩‍👧",
+            "next_page": 3,
+            "is_correct": true,
+            "feedback": "Çok akıllıca! Büyüklere danışmak önemli.",
+            "order": 2
+        }
+    },
+    {
+        "model": "storymode.storypage",
+        "pk": 2,
+        "fields": {
+            "story": 1,
+            "title": "Güneş'e Doğru",
+            "content": "Ela uzay gemisine bindi. İlk durak Güneş'ti ama çok yaklaşamazlardı çünkü Güneş çok sıcaktı! 'Güneş neden bu kadar parlak?' diye sordu Ela. Robot arkadaşı Zipp cevap verdi: 'Güneş dev bir yıldız ve içinde sürekli enerji üretiliyor!'",
+            "animation": "fade",
+            "science_fact": "Güneş, Dünya'dan 150 milyon kilometre uzaktadır. Işığı bize ulaşması 8 dakika sürer!",
+            "is_start": false,
+            "is_ending": false,
+            "order": 2
+        }
+    },
+    {
+        "model": "storymode.storychoice",
+        "pk": 3,
+        "fields": {
+            "page": 2,
+            "text": "Gezegenleri görmek istiyorum!",
+            "icon": "🪐",
+            "next_page": 4,
+            "is_correct": true,
+            "feedback": "Süper! Gezegenlere gidiyoruz!",
+            "order": 1
+        }
+    },
+    {
+        "model": "storymode.storypage",
+        "pk": 3,
+        "fields": {
+            "story": 1,
+            "title": "Anne-Baba İzni",
+            "content": "Ela koşarak eve gitti. 'Anne, baba! Bir uzay gemisi var, gidebilir miyim?' Anne gülümsedi: 'Tabii ki tatlım, ama dikkatli ol ve öğrendiklerini bize anlat!' Baba da ekledi: 'Uzay kaskını takmayı unutma!'",
+            "animation": "bounce",
+            "science_fact": "Astronotlar uzayda özel kıyafetler giyer. Bu kıyafetler onları soğuktan ve sıcaktan korur.",
+            "is_start": false,
+            "is_ending": false,
+            "order": 3
+        }
+    },
+    {
+        "model": "storymode.storychoice",
+        "pk": 4,
+        "fields": {
+            "page": 3,
+            "text": "Şimdi maceraya hazırım!",
+            "icon": "🌟",
+            "next_page": 2,
+            "is_correct": true,
+            "feedback": "Harika! Uzay seni bekliyor!",
+            "order": 1
+        }
+    },
+    {
+        "model": "storymode.storypage",
+        "pk": 4,
+        "fields": {
+            "story": 1,
+            "title": "Gezegenler Geçidi",
+            "content": "Uzay gemisi gezegenlerin yanından geçti. Merkür küçük ve sıcaktı. Venüs bulutlarla kaplıydı. Dünya'ya baktığında Ela: 'İşte bizim evimiz! Ne kadar güzel mavi görünüyor!' dedi. Mars kırmızıydı, Jüpiter devasa, Satürn halkalıydı!",
+            "animation": "slide",
+            "science_fact": "Dünya'ya 'Mavi Gezegen' denir çünkü yüzeyinin çoğu okyanuslarla kaplıdır. Su, yaşam için çok önemlidir!",
+            "is_start": false,
+            "is_ending": false,
+            "order": 4
+        }
+    },
+    {
+        "model": "storymode.storychoice",
+        "pk": 5,
+        "fields": {
+            "page": 4,
+            "text": "Ay'a inelim!",
+            "icon": "🌙",
+            "next_page": 5,
+            "is_correct": true,
+            "feedback": "Ay'a iniş hazırlıkları başlasın!",
+            "order": 1
+        }
+    },
+    {
+        "model": "storymode.storychoice",
+        "pk": 6,
+        "fields": {
+            "page": 4,
+            "text": "Satürn'ün halkalarını görmek istiyorum!",
+            "icon": "🪐",
+            "next_page": 6,
+            "is_correct": true,
+            "feedback": "Satürn gerçekten muhteşem!",
+            "order": 2
+        }
+    },
+    {
+        "model": "storymode.storypage",
+        "pk": 5,
+        "fields": {
+            "story": 1,
+            "title": "Ay'da Yürüyüş",
+            "content": "Ela Ay'a indi ve zıplamaya başladı! 'Neden bu kadar hafif hissediyorum?' diye sordu. Zipp açıkladı: 'Ay'da yerçekimi Dünya'dan daha az. Bu yüzden yüksek zıplayabilirsin!' Ela krateri inceledi ve Dünya'ya baktı. 'Dünya buradan çok güzel görünüyor!'",
+            "animation": "bounce",
+            "science_fact": "Ay'da rüzgar olmadığı için, 1969'da Neil Armstrong'un bıraktığı ayak izleri hâlâ orada duruyor!",
+            "is_start": false,
+            "is_ending": true,
+            "ending_type": "good",
+            "order": 5
+        }
+    },
+    {
+        "model": "storymode.storypage",
+        "pk": 6,
+        "fields": {
+            "story": 1,
+            "title": "Satürn'ün Halkaları",
+            "content": "Satürn'e yaklaştıklarında Ela şaşkınlıkla baktı: 'Bu halkalar neden yapılmış?' Zipp cevap verdi: 'Halkalar buz ve kaya parçalarından oluşuyor. Milyonlarca küçük parça birlikte dönerek bu güzel görüntüyü oluşturuyor!' Ela: 'Doğa gerçekten muhteşem!'",
+            "animation": "sparkle",
+            "science_fact": "Satürn'ün halkaları o kadar incedir ki, eğer yandan baksaydın onları göremezdin! Ama genişlikleri Dünya'dan Ay'a olan mesafeden daha fazladır.",
+            "is_start": false,
+            "is_ending": true,
+            "ending_type": "good",
+            "order": 6
+        }
+    },
+    {
+        "model": "storymode.story",
+        "pk": 2,
+        "fields": {
+            "title": "Minik Tohum",
+            "slug": "minik-tohum",
+            "description": "Küçük bir tohumun topraktan kocaman bir ağaca dönüşme hikayesi. Bitkilerin büyüme mucizesini keşfet!",
+            "estimated_time": 6,
+            "points": 20,
+            "order": 2,
+            "is_active": true
+        }
+    },
+    {
+        "model": "storymode.storypage",
+        "pk": 7,
+        "fields": {
+            "story": 2,
+            "title": "Küçük Tohumun Hayali",
+            "content": "Bir zamanlar küçük bir tohum vardı. Toprak altında yaşıyordu ve bir hayali vardı: Büyük bir ağaç olmak! Ama nasıl büyüyeceğini bilmiyordu. 'Acaba ne yapmalıyım?' diye düşündü.",
+            "animation": "fade",
+            "science_fact": "Tohumların içinde küçük bir bitki embriyosu ve besin deposu bulunur. Doğru koşullarda filizlenmeye başlarlar.",
+            "is_start": true,
+            "is_ending": false,
+            "order": 1
+        }
+    },
+    {
+        "model": "storymode.storychoice",
+        "pk": 7,
+        "fields": {
+            "page": 7,
+            "text": "Güneşi arayalım!",
+            "icon": "☀️",
+            "next_page": 8,
+            "is_correct": true,
+            "feedback": "Güneş ışığı bitkiler için çok önemli!",
+            "order": 1
+        }
+    },
+    {
+        "model": "storymode.storychoice",
+        "pk": 8,
+        "fields": {
+            "page": 7,
+            "text": "Su damlasını bekleyelim!",
+            "icon": "💧",
+            "next_page": 9,
+            "is_correct": true,
+            "feedback": "Su da bitkiler için çok gerekli!",
+            "order": 2
+        }
+    },
+    {
+        "model": "storymode.storypage",
+        "pk": 8,
+        "fields": {
+            "story": 2,
+            "title": "Güneşin Sıcaklığı",
+            "content": "Tohum yukarıya doğru uzanmaya başladı. Toprak sıcacıktı çünkü güneş toprağı ısıtıyordu. 'Biraz daha yukarı!' diye düşündü tohum. Sonunda küçük bir filiz topraktan dışarı çıktı!",
+            "animation": "bounce",
+            "science_fact": "Bitkiler fotosentez yaparak güneş ışığını enerjiye çevirir. Bu enerji ile büyürler ve oksijen üretirler.",
+            "is_start": false,
+            "is_ending": false,
+            "order": 2
+        }
+    },
+    {
+        "model": "storymode.storychoice",
+        "pk": 9,
+        "fields": {
+            "page": 8,
+            "text": "Yaprakları açalım!",
+            "icon": "🌿",
+            "next_page": 10,
+            "is_correct": true,
+            "feedback": "Yapraklar güneş ışığını toplar!",
+            "order": 1
+        }
+    },
+    {
+        "model": "storymode.storypage",
+        "pk": 9,
+        "fields": {
+            "story": 2,
+            "title": "Su Damlasının Yolculuğu",
+            "content": "Bir gün yağmur yağdı. Su damlaları toprağa düştü. Tohum suyu emerek şişmeye başladı. 'Ohh, ne kadar güzel!' dedi tohum. Kabuğu çatladı ve küçük bir kök dışarı çıktı.",
+            "animation": "fade",
+            "science_fact": "Kökler topraktan su ve mineralleri emer. Su, bitkinin her yerine taşınır ve büyümesini sağlar.",
+            "is_start": false,
+            "is_ending": false,
+            "order": 3
+        }
+    },
+    {
+        "model": "storymode.storychoice",
+        "pk": 10,
+        "fields": {
+            "page": 9,
+            "text": "Kökleri derinlere salalım!",
+            "icon": "🌱",
+            "next_page": 10,
+            "is_correct": true,
+            "feedback": "Güçlü kökler, güçlü ağaç demek!",
+            "order": 1
+        }
+    },
+    {
+        "model": "storymode.storypage",
+        "pk": 10,
+        "fields": {
+            "story": 2,
+            "title": "Büyük Ağaç",
+            "content": "Yıllar geçti. Minik tohum artık kocaman bir ağaçtı! Dalları gökyüzüne uzanıyor, yaprakları rüzgarda sallanıyordu. Kuşlar dallarına yuva yaptı, çocuklar gölgesinde oynadı. Ağaç mutluydu çünkü hayalini gerçekleştirmişti!",
+            "animation": "sparkle",
+            "science_fact": "Bir ağaç yılda yaklaşık 22 kilogram karbondioksit emer ve yerine oksijen verir. Ağaçlar gezegenimizin akciğerleridir!",
+            "is_start": false,
+            "is_ending": true,
+            "ending_type": "good",
+            "order": 4
+        }
+    },
+    {
+        "model": "storymode.story",
+        "pk": 3,
+        "fields": {
+            "title": "Renklerin Sırrı",
+            "slug": "renklerin-sirri",
+            "description": "Renkler nasıl oluşur? Gökkuşağının sırrı nedir? Küçük ressam Bora ile renklerin dünyasını keşfet!",
+            "estimated_time": 7,
+            "points": 20,
+            "order": 3,
+            "is_active": true
+        }
+    },
+    {
+        "model": "storymode.storypage",
+        "pk": 11,
+        "fields": {
+            "story": 3,
+            "title": "Meraklı Ressam",
+            "content": "Küçük Bora resim yapmayı çok seviyordu. Bir gün pencereden dışarı baktığında muhteşem bir gökkuşağı gördü! 'Bu kadar çok renk nereden geliyor?' diye merak etti.",
+            "animation": "fade",
+            "science_fact": "Gökkuşağı, güneş ışığının yağmur damlalarından geçerken kırılmasıyla oluşur. Işık aslında birçok renkten oluşur!",
+            "is_start": true,
+            "is_ending": false,
+            "order": 1
+        }
+    },
+    {
+        "model": "storymode.storychoice",
+        "pk": 11,
+        "fields": {
+            "page": 11,
+            "text": "Işığın sırrını öğrenelim!",
+            "icon": "🌈",
+            "next_page": 12,
+            "is_correct": true,
+            "feedback": "Işık gerçekten büyülü!",
+            "order": 1
+        }
+    },
+    {
+        "model": "storymode.storychoice",
+        "pk": 12,
+        "fields": {
+            "page": 11,
+            "text": "Boyalarla deneme yapalım!",
+            "icon": "🎨",
+            "next_page": 13,
+            "is_correct": true,
+            "feedback": "Boyalarla öğrenmek eğlenceli!",
+            "order": 2
+        }
+    },
+    {
+        "model": "storymode.storypage",
+        "pk": 12,
+        "fields": {
+            "story": 3,
+            "title": "Işığın Sırrı",
+            "content": "Bora bir prizma buldu ve güneş ışığını içinden geçirdi. Ne görsün! Beyaz ışık, gökkuşağının tüm renklerine ayrıldı: Kırmızı, turuncu, sarı, yeşil, mavi, lacivert ve mor! 'Vay canına! Güneş ışığının içinde tüm renkler varmış!'",
+            "animation": "sparkle",
+            "science_fact": "Beyaz ışık aslında tüm renklerin karışımıdır. Prizma ışığı farklı dalga boylarına ayırarak renkleri gösterir.",
+            "is_start": false,
+            "is_ending": false,
+            "order": 2
+        }
+    },
+    {
+        "model": "storymode.storychoice",
+        "pk": 13,
+        "fields": {
+            "page": 12,
+            "text": "Renkleri karıştıralım!",
+            "icon": "🖌️",
+            "next_page": 14,
+            "is_correct": true,
+            "feedback": "Renk karıştırmak çok eğlenceli!",
+            "order": 1
+        }
+    },
+    {
+        "model": "storymode.storypage",
+        "pk": 13,
+        "fields": {
+            "story": 3,
+            "title": "Boya Deneyleri",
+            "content": "Bora boyalarıyla deney yapmaya başladı. Kırmızı ve sarıyı karıştırdı: Turuncu! Mavi ve sarıyı karıştırdı: Yeşil! Kırmızı ve maviyi karıştırdı: Mor! 'Her rengi kendim yapabiliyorum!'",
+            "animation": "bounce",
+            "science_fact": "Kırmızı, mavi ve sarı 'ana renkler'dir. Bu üç rengi karıştırarak diğer tüm renkleri elde edebilirsin!",
+            "is_start": false,
+            "is_ending": false,
+            "order": 3
+        }
+    },
+    {
+        "model": "storymode.storychoice",
+        "pk": 14,
+        "fields": {
+            "page": 13,
+            "text": "Kendi gökkuşağımı çizeyim!",
+            "icon": "🌈",
+            "next_page": 14,
+            "is_correct": true,
+            "feedback": "Harika bir fikir!",
+            "order": 1
+        }
+    },
+    {
+        "model": "storymode.storypage",
+        "pk": 14,
+        "fields": {
+            "story": 3,
+            "title": "Bora'nın Gökkuşağı",
+            "content": "Bora öğrendiklerini kullanarak muhteşem bir gökkuşağı resmi yaptı. Tüm renkleri doğru sırayla yerleştirdi. Ailesine resmi gösterdi ve renklerin sırrını anlattı. Herkes çok etkilendi! 'Bilim ve sanat birlikte ne güzel!'",
+            "animation": "sparkle",
+            "science_fact": "Gökkuşağının renklerini hatırlamak için: Kırmızı, Turuncu, Sarı, Yeşil, Mavi, Lacivert, Mor - Her kelimenin ilk harfi bir rengi temsil eder!",
+            "is_start": false,
+            "is_ending": true,
+            "ending_type": "good",
+            "order": 4
+        }
+    }
+]

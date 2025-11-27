@@ -20,6 +20,9 @@ urlpatterns = [
     # Raporlar
     path('cocuk/<int:child_id>/raporlar/', views.reports, name='reports'),
 
+    # Haftalık özet
+    path('cocuk/<int:child_id>/haftalik-ozet/', views.weekly_summary_view, name='weekly_summary'),
+
     # Ayarlar
     path('ayarlar/', views.settings_view, name='settings'),
 
@@ -27,6 +30,9 @@ urlpatterns = [
     path('cocuk-ekle/', views.add_child, name='add_child'),
     path('cocuk-kaldir/<int:link_id>/', views.remove_child, name='remove_child'),
 
-    # API
+    # API Endpoints
     path('api/cocuk/<int:child_id>/istatistikler/', views.api_child_stats, name='api_child_stats'),
+    path('api/ekran-suresi-kontrol/', views.api_screen_time_check, name='api_screen_time_check'),
+    path('api/aktivite-kaydet/', views.api_log_activity, name='api_log_activity'),
+    path('api/test-email/', views.api_send_test_email, name='api_send_test_email'),
 ]

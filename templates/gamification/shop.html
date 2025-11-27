@@ -24,6 +24,23 @@
 
     .item-legendary {
         background: linear-gradient(135deg, #fefce8 0%, #fde047 50%, #fefce8 100%);
+        animation: legendary-glow 2s ease-in-out infinite;
+    }
+
+    @keyframes legendary-glow {
+        0%, 100% { box-shadow: 0 0 20px rgba(250, 204, 21, 0.3); }
+        50% { box-shadow: 0 0 40px rgba(250, 204, 21, 0.6); }
+    }
+
+    /* Satın alma başarı animasyonu */
+    @keyframes purchase-success {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+    }
+
+    .purchase-success {
+        animation: purchase-success 0.5s ease-out;
     }
 </style>
 {% endblock %}
@@ -51,7 +68,7 @@
         <div class="flex flex-wrap items-center justify-between gap-4">
             <div>
                 <p class="text-white/80">Yıldız Tozu Bakiyen</p>
-                <p class="font-display text-4xl">⭐ <span x-text="starDust">{{ star_dust|default:150 }}</span></p>
+                <p class="font-display text-4xl">⭐ <span x-text="starDust">{{ star_dust }}</span></p>
             </div>
             <div class="flex gap-3">
                 <a href="{% url 'gamification:customize_avatar' %}" class="bg-white/20 hover:bg-white/30 px-6 py-3 rounded-full font-bold transition-all hover:scale-105">
@@ -69,27 +86,27 @@
         <button @click="filterCategory('all')"
                 :class="activeCategory === 'all' ? 'bg-minilab-purple text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-minilab-purple/20'"
                 class="px-6 py-2 rounded-full font-bold whitespace-nowrap transition-colors">
-            🌟 Tümü
+            🌟 Tümü (<span x-text="items.length"></span>)
         </button>
         <button @click="filterCategory('body')"
                 :class="activeCategory === 'body' ? 'bg-minilab-purple text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-minilab-purple/20'"
                 class="px-6 py-2 rounded-full font-bold whitespace-nowrap transition-colors">
-            👕 Kıyafetler
+            👕 Kıyafetler (<span x-text="items.filter(i => i.category === 'body').length"></span>)
         </button>
         <button @click="filterCategory('accessory')"
                 :class="activeCategory === 'accessory' ? 'bg-minilab-purple text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-minilab-purple/20'"
                 class="px-6 py-2 rounded-full font-bold whitespace-nowrap transition-colors">
-            🎒 Aksesuarlar
+            🎒 Aksesuarlar (<span x-text="items.filter(i => i.category === 'accessory').length"></span>)
         </button>
         <button @click="filterCategory('background')"
                 :class="activeCategory === 'background' ? 'bg-minilab-purple text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-minilab-purple/20'"
                 class="px-6 py-2 rounded-full font-bold whitespace-nowrap transition-colors">
-            🌈 Arka Planlar
+            🌈 Arka Planlar (<span x-text="items.filter(i => i.category === 'background').length"></span>)
         </button>
         <button @click="filterCategory('pet')"
                 :class="activeCategory === 'pet' ? 'bg-minilab-purple text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-minilab-purple/20'"
                 class="px-6 py-2 rounded-full font-bold whitespace-nowrap transition-colors">
-            🐾 Evcil Hayvanlar
+            🐾 Evcil Hayvanlar (<span x-text="items.filter(i => i.category === 'pet').length"></span>)
         </button>
     </div>
 
@@ -101,48 +118,66 @@
                      'item-rare': item.rarity === 'rare',
                      'item-epic': item.rarity === 'epic',
                      'item-legendary': item.rarity === 'legendary',
-                     'opacity-60': item.owned
+                     'opacity-60 grayscale': item.owned,
+                     'purchase-success': justPurchased === item.id
                  }"
                  @click="!item.owned && openPurchaseModal(item)">
 
                 <!-- Nadir Badge -->
                 <div x-show="item.rarity === 'legendary'"
-                     class="absolute -top-2 -right-2 bg-minilab-yellow text-white text-xs px-2 py-1 rounded-full font-bold animate-bounce">
+                     class="absolute -top-2 -right-2 bg-minilab-yellow text-white text-xs px-2 py-1 rounded-full font-bold animate-bounce z-10">
                     ✨ Efsanevi
                 </div>
                 <div x-show="item.rarity === 'epic'"
-                     class="absolute -top-2 -right-2 bg-minilab-pink text-white text-xs px-2 py-1 rounded-full font-bold">
+                     class="absolute -top-2 -right-2 bg-minilab-pink text-white text-xs px-2 py-1 rounded-full font-bold z-10">
                     💎 Epik
                 </div>
                 <div x-show="item.rarity === 'rare'"
-                     class="absolute -top-2 -right-2 bg-minilab-purple text-white text-xs px-2 py-1 rounded-full font-bold">
+                     class="absolute -top-2 -right-2 bg-minilab-purple text-white text-xs px-2 py-1 rounded-full font-bold z-10">
                     ⭐ Nadir
+                </div>
+
+                <!-- Ücretsiz Badge -->
+                <div x-show="item.is_free && !item.owned"
+                     class="absolute top-2 left-2 bg-minilab-green text-white text-xs px-2 py-1 rounded-full font-bold z-10">
+                    🎁 Ücretsiz
                 </div>
 
                 <!-- Sahip olunuyor badge -->
                 <div x-show="item.owned"
-                     class="absolute top-2 left-2 bg-minilab-green text-white text-xs px-2 py-1 rounded-full font-bold">
+                     class="absolute top-2 left-2 bg-minilab-green text-white text-xs px-2 py-1 rounded-full font-bold z-10">
                     ✓ Sahip
                 </div>
 
                 <div class="text-6xl mb-4 group-hover:animate-bounce" x-text="item.icon"></div>
                 <h3 class="font-bold text-lg mb-2" x-text="item.name"></h3>
 
-                <div class="flex items-center justify-center gap-1 mb-4">
+                <div class="flex items-center justify-center gap-1 mb-4" x-show="!item.is_free">
                     <span class="text-minilab-yellow">⭐</span>
                     <span class="font-bold" x-text="item.price"></span>
+                </div>
+                <div class="mb-4" x-show="item.is_free">
+                    <span class="text-minilab-green font-bold">Ücretsiz!</span>
                 </div>
 
                 <button x-show="!item.owned"
                         class="bg-gradient-to-r from-minilab-purple to-minilab-pink text-white w-full py-2 rounded-full font-bold hover:shadow-lg transition-all"
-                        :class="{ 'opacity-50 cursor-not-allowed': starDust < item.price }">
-                    <span x-show="starDust >= item.price">Satın Al</span>
-                    <span x-show="starDust < item.price">Yetersiz ⭐</span>
+                        :class="{ 'opacity-50 cursor-not-allowed': !item.is_free && starDust < item.price }">
+                    <span x-show="item.is_free || starDust >= item.price">Satın Al</span>
+                    <span x-show="!item.is_free && starDust < item.price">Yetersiz ⭐</span>
                 </button>
                 <button x-show="item.owned"
                         class="bg-minilab-green/20 text-minilab-green w-full py-2 rounded-full font-bold cursor-default">
                     ✓ Alındı
                 </button>
+            </div>
+        </template>
+
+        <!-- Boş Durum -->
+        <template x-if="filteredItems.length === 0">
+            <div class="col-span-full text-center py-12">
+                <span class="text-6xl block mb-4">🏪</span>
+                <p class="text-gray-500 dark:text-gray-400">Bu kategoride henüz ürün yok.</p>
             </div>
         </template>
     </div>
@@ -156,7 +191,8 @@
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
          class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-         @click.self="showModal = false">
+         @click.self="showModal = false"
+         @keydown.escape.window="showModal = false">
 
         <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 max-w-md w-full shadow-2xl"
              x-transition:enter="transition ease-out duration-300"
@@ -164,11 +200,11 @@
              x-transition:enter-end="opacity-100 scale-100">
 
             <div class="text-center">
-                <div class="text-8xl mb-4" x-text="selectedItem?.icon">🎁</div>
+                <div class="text-8xl mb-4 animate-bounce" x-text="selectedItem?.icon">🎁</div>
                 <h3 class="font-display text-2xl text-minilab-purple mb-2" x-text="selectedItem?.name">Ürün</h3>
                 <p class="text-gray-500 mb-6">Bu ürünü satın almak istiyor musun?</p>
 
-                <div class="bg-minilab-yellow/20 rounded-2xl p-4 mb-6">
+                <div class="bg-minilab-yellow/20 rounded-2xl p-4 mb-6" x-show="!selectedItem?.is_free">
                     <div class="flex items-center justify-center gap-2">
                         <span class="text-3xl">⭐</span>
                         <span class="font-display text-3xl text-minilab-orange-500" x-text="selectedItem?.price">0</span>
@@ -179,14 +215,32 @@
                     </p>
                 </div>
 
+                <div class="bg-minilab-green/20 rounded-2xl p-4 mb-6" x-show="selectedItem?.is_free">
+                    <p class="text-lg text-minilab-green font-bold">🎁 Bu ürün ücretsiz!</p>
+                </div>
+
+                <!-- Hata Mesajı -->
+                <div x-show="purchaseError"
+                     class="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl p-4 mb-4">
+                    <span x-text="purchaseError"></span>
+                </div>
+
                 <div class="flex gap-3">
                     <button @click="showModal = false"
                             class="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 py-3 rounded-full font-bold hover:bg-gray-200 transition-colors">
                         İptal
                     </button>
                     <button @click="purchaseItem()"
-                            class="flex-1 bg-gradient-to-r from-minilab-purple to-minilab-pink text-white py-3 rounded-full font-bold hover:shadow-lg transition-all">
-                        🛒 Satın Al
+                            :disabled="isProcessing"
+                            class="flex-1 bg-gradient-to-r from-minilab-purple to-minilab-pink text-white py-3 rounded-full font-bold hover:shadow-lg transition-all disabled:opacity-50">
+                        <span x-show="!isProcessing">🛒 Satın Al</span>
+                        <span x-show="isProcessing" class="flex items-center justify-center gap-2">
+                            <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            İşleniyor...
+                        </span>
                     </button>
                 </div>
             </div>
@@ -206,27 +260,18 @@
 <script>
 function shopPage() {
     return {
-        starDust: {{ star_dust|default:150 }},
+        starDust: {{ star_dust }},
         activeCategory: 'all',
         showModal: false,
         selectedItem: null,
         purchaseSuccess: false,
+        purchaseError: '',
         successMessage: '',
+        isProcessing: false,
+        justPurchased: null,
 
-        items: [
-            { id: 1, name: 'Bilim Şapkası', icon: '🎩', price: 50, category: 'accessory', rarity: 'common', owned: false },
-            { id: 2, name: 'Laboratuvar Önlüğü', icon: '🥼', price: 75, category: 'body', rarity: 'common', owned: false },
-            { id: 3, name: 'Teleskop', icon: '🔭', price: 100, category: 'accessory', rarity: 'rare', owned: false },
-            { id: 4, name: 'Galaksi Arka Plan', icon: '🌌', price: 150, category: 'background', rarity: 'epic', owned: false },
-            { id: 5, name: 'Akıllı Gözlük', icon: '👓', price: 60, category: 'accessory', rarity: 'common', owned: false },
-            { id: 6, name: 'Roket Çantası', icon: '🚀', price: 120, category: 'accessory', rarity: 'rare', owned: false },
-            { id: 7, name: 'Süper Kahraman Pelerini', icon: '🦸', price: 200, category: 'body', rarity: 'legendary', owned: false },
-            { id: 8, name: 'Gökkuşağı Efekti', icon: '🌈', price: 80, category: 'background', rarity: 'common', owned: false },
-            { id: 9, name: 'Robot Köpek', icon: '🤖', price: 180, category: 'pet', rarity: 'epic', owned: false },
-            { id: 10, name: 'Uzay Kaskı', icon: '👨‍🚀', price: 90, category: 'accessory', rarity: 'rare', owned: false },
-            { id: 11, name: 'Deney Tüpü', icon: '🧪', price: 40, category: 'accessory', rarity: 'common', owned: false },
-            { id: 12, name: 'Altın Robot', icon: '🤖', price: 300, category: 'pet', rarity: 'legendary', owned: false },
-        ],
+        // Veritabanından gelen ürünler
+        items: {{ items_json|safe }},
 
         get filteredItems() {
             if (this.activeCategory === 'all') return this.items;
@@ -238,34 +283,70 @@ function shopPage() {
         },
 
         openPurchaseModal(item) {
-            if (this.starDust < item.price) {
+            if (!item.is_free && this.starDust < item.price) {
                 Alpine.store('app').speak('Yeterli yıldız tozun yok. Daha fazla deney yaparak yıldız tozu kazanabilirsin!');
                 return;
             }
             this.selectedItem = item;
+            this.purchaseError = '';
             this.showModal = true;
         },
 
-        purchaseItem() {
-            if (!this.selectedItem || this.starDust < this.selectedItem.price) return;
+        async purchaseItem() {
+            if (!this.selectedItem) return;
+            if (!this.selectedItem.is_free && this.starDust < this.selectedItem.price) return;
 
-            // Satın alma işlemi
-            this.starDust -= this.selectedItem.price;
-            this.selectedItem.owned = true;
+            this.isProcessing = true;
+            this.purchaseError = '';
 
-            // Başarı mesajı
-            this.successMessage = `${this.selectedItem.name} satın alındı! 🎉`;
-            this.purchaseSuccess = true;
+            try {
+                const response = await fetch(`{% url 'gamification:purchase_item' 0 %}`.replace('0', this.selectedItem.id), {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json',
+                    },
+                });
 
-            // Sesli geri bildirim
-            Alpine.store('app').speak(`Tebrikler! ${this.selectedItem.name} artık senin!`);
+                const data = await response.json();
 
-            // Modal ve mesajı kapat
-            this.showModal = false;
-            setTimeout(() => this.purchaseSuccess = false, 3000);
+                if (data.success) {
+                    // Bakiyeyi güncelle
+                    this.starDust = data.new_balance;
 
-            // TODO: Sunucuya kaydet
-            // fetch(`/oyun/satin-al/${this.selectedItem.id}/`, { method: 'POST' });
+                    // Ürünü sahip olunan olarak işaretle
+                    const item = this.items.find(i => i.id === this.selectedItem.id);
+                    if (item) item.owned = true;
+
+                    // Başarı animasyonu
+                    this.justPurchased = this.selectedItem.id;
+                    setTimeout(() => this.justPurchased = null, 500);
+
+                    // Başarı mesajı
+                    this.successMessage = data.message;
+                    this.purchaseSuccess = true;
+
+                    // Sesli geri bildirim
+                    Alpine.store('app').speak(`Tebrikler! ${this.selectedItem.name} artık senin!`);
+                    Alpine.store('app').playSound('success');
+
+                    // Modal'ı kapat
+                    this.showModal = false;
+                    setTimeout(() => this.purchaseSuccess = false, 3000);
+                } else {
+                    this.purchaseError = data.error || 'Bir hata oluştu';
+                    if (data.already_owned) {
+                        // Yerel durumu güncelle
+                        const item = this.items.find(i => i.id === this.selectedItem.id);
+                        if (item) item.owned = true;
+                    }
+                }
+            } catch (error) {
+                console.error('Satın alma hatası:', error);
+                this.purchaseError = 'Bağlantı hatası. Lütfen tekrar dene.';
+            } finally {
+                this.isProcessing = false;
+            }
         }
     }
 }

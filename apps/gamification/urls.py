@@ -20,6 +20,15 @@ urlpatterns = [
     # Avatar özelleştirme
     path('avatar/', views.customize_avatar, name='customize_avatar'),
 
+    # Avatar kaydet (AJAX)
+    path('avatar/kaydet/', views.save_avatar, name='save_avatar'),
+
+    # Öğe kuşan/çıkar (AJAX)
+    path('avatar/equip/', views.equip_item, name='equip_item'),
+
     # Sürpriz Yumurta
     path('surpriz/', views.surprise_egg, name='surprise_egg'),
+
+    # API - Rozet kontrolü
+    path('api/rozet-kontrol/', views.api_badges_check, name='api_badges_check'),
 ]

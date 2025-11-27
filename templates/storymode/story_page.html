@@ -26,6 +26,30 @@
         box-shadow: 0 10px 30px rgba(0,0,0,0.15);
     }
 
+    /* Doğru/Yanlış animasyonları */
+    @keyframes correct-pulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+        50% { box-shadow: 0 0 0 20px rgba(34, 197, 94, 0); }
+    }
+
+    @keyframes wrong-shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-10px); }
+        75% { transform: translateX(10px); }
+    }
+
+    .choice-correct {
+        animation: correct-pulse 0.5s ease-out;
+        background: linear-gradient(135deg, #dcfce7, #bbf7d0) !important;
+        border-color: #22c55e !important;
+    }
+
+    .choice-wrong {
+        animation: wrong-shake 0.3s ease-out;
+        background: linear-gradient(135deg, #fee2e2, #fecaca) !important;
+        border-color: #ef4444 !important;
+    }
+
     /* Kitap kenarı efekti */
     .book-edge {
         position: relative;
@@ -40,6 +64,16 @@
         width: 4px;
         background: linear-gradient(to bottom, #8B5CF6, #EC4899);
         border-radius: 4px 0 0 4px;
+    }
+
+    /* Geri bildirim animasyonu */
+    @keyframes feedback-appear {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .feedback-bubble {
+        animation: feedback-appear 0.3s ease-out;
     }
 </style>
 {% endblock %}
@@ -109,7 +143,8 @@
                 {% endif %}
 
                 <!-- Sayfa İçeriği -->
-                <div class="text-xl text-gray-700 dark:text-gray-200 leading-relaxed mb-6 text-center px-4">
+                <div class="text-xl text-gray-700 dark:text-gray-200 leading-relaxed mb-6 text-center px-4"
+                     id="page-content">
                     <p>{{ page.content }}</p>
                 </div>
 
@@ -131,26 +166,37 @@
             <!-- Seçenekler veya Navigasyon -->
             <div class="mt-8">
 
-                {% if page.choices.exists %}
+                {% if choices %}
                 <!-- Seçenekler Varsa -->
                 <div class="text-center mb-4">
                     <h3 class="font-display text-xl text-minilab-purple">Ne yapmalısın?</h3>
                 </div>
 
+                <!-- Geri Bildirim Alanı -->
+                <div x-show="feedback"
+                     x-transition
+                     class="feedback-bubble mb-4 p-4 rounded-2xl text-center"
+                     :class="feedbackCorrect ? 'bg-minilab-green/20 text-minilab-green' : 'bg-red-100 text-red-600'">
+                    <span class="text-2xl mr-2" x-text="feedbackCorrect ? '✅' : '🤔'"></span>
+                    <span x-text="feedback"></span>
+                </div>
+
                 <div class="space-y-4">
-                    {% for choice in page.choices.all %}
-                    <a href="{% if choice.next_page %}{% url 'storymode:story_page' story.slug choice.next_page.order %}{% else %}{% url 'storymode:story_page' story.slug page.order|add:'1' %}{% endif %}"
-                       class="choice-btn block bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border-2 border-transparent hover:border-minilab-purple">
+                    {% for choice in choices %}
+                    <button @click="makeChoice({{ choice.id }}, '{{ choice.feedback|escapejs }}', {{ choice.is_correct|yesno:'true,false' }}, '{% if choice.next_page %}{% url 'storymode:story_page' story.slug choice.next_page.order %}{% else %}{% url 'storymode:story_page' story.slug page.order|add:'1' %}{% endif %}')"
+                            :class="{'choice-correct': selectedChoice === {{ choice.id }} && feedbackCorrect, 'choice-wrong': selectedChoice === {{ choice.id }} && !feedbackCorrect && feedback}"
+                            :disabled="isProcessing"
+                            class="choice-btn block w-full bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border-2 border-transparent hover:border-minilab-purple text-left disabled:opacity-50">
                         <div class="flex items-center gap-4">
                             {% if choice.icon %}
                             <span class="text-4xl">{{ choice.icon }}</span>
                             {% else %}
                             <span class="text-4xl">🎯</span>
                             {% endif %}
-                            <span class="text-lg font-bold text-gray-700 dark:text-gray-200">{{ choice.text }}</span>
+                            <span class="text-lg font-bold text-gray-700 dark:text-gray-200 flex-1">{{ choice.text }}</span>
                             <span class="ml-auto text-minilab-purple">→</span>
                         </div>
-                    </a>
+                    </button>
                     {% endfor %}
                 </div>
 
@@ -160,9 +206,12 @@
                     <div class="card-cute bg-gradient-to-r from-minilab-green to-minilab-blue-400 text-white py-8">
                         <div class="text-6xl mb-4">🎉</div>
                         <h3 class="font-display text-2xl mb-2">Hikaye Bitti!</h3>
-                        <p class="text-white/80 mb-6">Harika bir macera oldu! Tebrikler! 🌟</p>
+                        <p class="text-white/80 mb-2">Harika bir macera oldu! Tebrikler! 🌟</p>
+                        {% if story.points %}
+                        <p class="text-2xl font-bold mb-6">+{{ story.points }} ⭐ Puan Kazandın!</p>
+                        {% endif %}
                         <div class="flex justify-center gap-4">
-                            <a href="{% url 'storymode:story_detail' story.slug %}"
+                            <a href="{% url 'storymode:reset_story' story.slug %}"
                                class="bg-white/20 hover:bg-white/30 px-6 py-3 rounded-full font-bold transition-all">
                                 🔄 Tekrar Oku
                             </a>
@@ -177,8 +226,8 @@
                 {% else %}
                 <!-- Normal Navigasyon -->
                 <div class="flex justify-between items-center">
-                    {% if page.order > 1 %}
-                    <a href="{% url 'storymode:story_page' story.slug page.order|add:'-1' %}"
+                    {% if prev_page %}
+                    <a href="{% url 'storymode:story_page' story.slug prev_page.order %}"
                        class="flex items-center gap-2 bg-white dark:bg-gray-800 px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-105">
                         <span>←</span>
                         <span>Önceki</span>
@@ -187,8 +236,8 @@
                     <div></div>
                     {% endif %}
 
-                    {% if page.order < story.pages.count %}
-                    <a href="{% url 'storymode:story_page' story.slug page.order|add:'1' %}"
+                    {% if next_page %}
+                    <a href="{% url 'storymode:story_page' story.slug next_page.order %}"
                        class="flex items-center gap-2 bg-gradient-to-r from-minilab-purple to-minilab-pink text-white px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-105">
                         <span>Sonraki</span>
                         <span>→</span>
@@ -213,6 +262,10 @@
 function storyPageReader() {
     return {
         isReading: false,
+        isProcessing: false,
+        feedback: '',
+        feedbackCorrect: false,
+        selectedChoice: null,
 
         readContent() {
             if ('speechSynthesis' in window) {
@@ -222,7 +275,7 @@ function storyPageReader() {
                     return;
                 }
 
-                const content = `{{ page.content|escapejs }}`;
+                const content = document.getElementById('page-content').innerText;
                 const utterance = new SpeechSynthesisUtterance(content);
                 utterance.lang = 'tr-TR';
                 utterance.rate = 0.85;
@@ -233,6 +286,45 @@ function storyPageReader() {
 
                 speechSynthesis.speak(utterance);
             }
+        },
+
+        async makeChoice(choiceId, feedbackText, isCorrect, nextUrl) {
+            if (this.isProcessing) return;
+
+            this.isProcessing = true;
+            this.selectedChoice = choiceId;
+
+            // Geri bildirimi göster
+            this.feedback = feedbackText || (isCorrect ? 'Harika seçim!' : 'Hmm, farklı bir şey deneyelim!');
+            this.feedbackCorrect = isCorrect;
+
+            // Sesli geri bildirim
+            if (typeof Alpine !== 'undefined' && Alpine.store('app')) {
+                if (isCorrect) {
+                    Alpine.store('app').playSound('success');
+                } else {
+                    Alpine.store('app').playSound('click');
+                }
+            }
+
+            // AJAX ile seçimi kaydet
+            try {
+                await fetch("{% url 'storymode:make_choice' story.slug %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ choice_id: choiceId })
+                });
+            } catch (error) {
+                console.error('Seçim kaydedilemedi:', error);
+            }
+
+            // Kısa bir beklemeden sonra yönlendir
+            setTimeout(() => {
+                window.location.href = nextUrl;
+            }, isCorrect ? 1000 : 1500);
         }
     }
 }

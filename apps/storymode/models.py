@@ -288,3 +288,16 @@ class StoryProgress(models.Model):
 
     def __str__(self):
         return f"{self.child.nickname} - {self.story.title}"
+
+
+# V2 modellerini buradan export et - Django migration sistemi için gerekli
+from .models_v2 import (
+    LearningCard,
+    MemoryMatchGame,
+    MatchCard,
+    WordPuzzle,
+    InteractiveBook,
+    BookPage,
+    InteractiveHotspot,
+    StoryGameProgress,
+)

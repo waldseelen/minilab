@@ -1,0 +1,302 @@
+[
+    {
+        "model": "storymode.learningcard",
+        "pk": 1,
+        "fields": {
+            "title": "Güneş",
+            "category": "space",
+            "front_text": "Gökyüzündeki en parlak yıldız hangisi?",
+            "back_text": "Güneş! Dünyamızı ısıtan ve aydınlatan dev bir yıldızdır. Güneş olmadan bitkiler büyüyemez ve hayat olamaz.",
+            "emoji": "☀️",
+            "fun_fact": "Güneş o kadar büyük ki içine 1 milyon tane Dünya sığabilir!",
+            "difficulty": 1,
+            "is_active": true,
+            "order": 1
+        }
+    },
+    {
+        "model": "storymode.learningcard",
+        "pk": 2,
+        "fields": {
+            "title": "Ay",
+            "category": "space",
+            "front_text": "Geceleri gökyüzünde parlayan yuvarlak cisim nedir?",
+            "back_text": "Ay! Dünyamızın tek doğal uydusudur. Ay, Güneş'in ışığını yansıtarak geceleri parlar.",
+            "emoji": "🌙",
+            "fun_fact": "Ay'da hiç rüzgar olmadığı için astronotların ayak izleri hâlâ orada duruyor!",
+            "difficulty": 1,
+            "is_active": true,
+            "order": 2
+        }
+    },
+    {
+        "model": "storymode.learningcard",
+        "pk": 3,
+        "fields": {
+            "title": "Kelebek",
+            "category": "animals",
+            "front_text": "Tırtıldan çıkan, renkli kanatları olan böcek hangisi?",
+            "back_text": "Kelebek! Tırtıl önce koza yapar, sonra muhteşem bir kelebeğe dönüşür. Buna 'başkalaşım' denir.",
+            "emoji": "🦋",
+            "fun_fact": "Kelebekler kanatlarıyla değil, ayaklarıyla tat alır!",
+            "difficulty": 1,
+            "is_active": true,
+            "order": 3
+        }
+    },
+    {
+        "model": "storymode.learningcard",
+        "pk": 4,
+        "fields": {
+            "title": "Arı",
+            "category": "animals",
+            "front_text": "Bal yapan, vızıldayan küçük böcek hangisi?",
+            "back_text": "Arı! Arılar çiçeklerden nektar toplar ve bal yapar. Ayrıca bitkilerin çoğalmasına yardım ederler.",
+            "emoji": "🐝",
+            "fun_fact": "Bir arı, hayatı boyunca sadece bir çay kaşığı kadar bal üretebilir!",
+            "difficulty": 1,
+            "is_active": true,
+            "order": 4
+        }
+    },
+    {
+        "model": "storymode.learningcard",
+        "pk": 5,
+        "fields": {
+            "title": "Ağaç",
+            "category": "plants",
+            "front_text": "Gövdesi, dalları ve yaprakları olan büyük bitki nedir?",
+            "back_text": "Ağaç! Ağaçlar havayı temizler, bize oksijen verir ve birçok hayvana ev olur.",
+            "emoji": "🌳",
+            "fun_fact": "Bir ağaç günde yaklaşık 4 kişinin nefes almasına yetecek kadar oksijen üretir!",
+            "difficulty": 1,
+            "is_active": true,
+            "order": 5
+        }
+    },
+    {
+        "model": "storymode.learningcard",
+        "pk": 6,
+        "fields": {
+            "title": "Tohum",
+            "category": "plants",
+            "front_text": "Bitkilerin içinden çıktığı küçük şey nedir?",
+            "back_text": "Tohum! Her bitki bir tohumdan büyür. Tohum, toprak, su ve güneş ışığı ile filizlenir.",
+            "emoji": "🌱",
+            "fun_fact": "Dünyadaki en büyük tohum Coco de Mer palmiyesine aittir ve 25 kg ağırlığında olabilir!",
+            "difficulty": 1,
+            "is_active": true,
+            "order": 6
+        }
+    },
+    {
+        "model": "storymode.learningcard",
+        "pk": 7,
+        "fields": {
+            "title": "Yağmur",
+            "category": "weather",
+            "front_text": "Bulutlardan düşen su damlacıkları nedir?",
+            "back_text": "Yağmur! Güneş suyu buharlaştırır, buhar bulut olur, bulutlar soğuyunca yağmur yağar.",
+            "emoji": "🌧️",
+            "fun_fact": "Bir yağmur damlası saatte 20-35 km hızla düşer!",
+            "difficulty": 1,
+            "is_active": true,
+            "order": 7
+        }
+    },
+    {
+        "model": "storymode.learningcard",
+        "pk": 8,
+        "fields": {
+            "title": "Gökkuşağı",
+            "category": "weather",
+            "front_text": "Yağmurdan sonra gökyüzünde beliren renkli yay nedir?",
+            "back_text": "Gökkuşağı! Güneş ışığı yağmur damlalarından geçerken 7 renge ayrılır ve gökkuşağı oluşur.",
+            "emoji": "🌈",
+            "fun_fact": "Gökkuşağının renkleri: Kırmızı, Turuncu, Sarı, Yeşil, Mavi, Lacivert ve Mor!",
+            "difficulty": 1,
+            "is_active": true,
+            "order": 8
+        }
+    },
+    {
+        "model": "storymode.learningcard",
+        "pk": 9,
+        "fields": {
+            "title": "Kalp",
+            "category": "body",
+            "front_text": "Vücudumuzda kanı pompalayan organ hangisi?",
+            "back_text": "Kalp! Kalp günde yaklaşık 100.000 kez atar ve kanı vücudun her yerine pompalar.",
+            "emoji": "❤️",
+            "fun_fact": "Kalbinin büyüklüğü senin yumruğun kadar!",
+            "difficulty": 2,
+            "is_active": true,
+            "order": 9
+        }
+    },
+    {
+        "model": "storymode.learningcard",
+        "pk": 10,
+        "fields": {
+            "title": "Göz",
+            "category": "body",
+            "front_text": "Hangi organımızla görürüz?",
+            "back_text": "Göz! Gözlerimiz ışığı algılar ve beynimize gönderir. Beyin bu sinyalleri resme çevirir.",
+            "emoji": "👁️",
+            "fun_fact": "Gözlerin saniyede 3 kez kırpılır ve bu hayatın boyunca milyonlarca kez olur!",
+            "difficulty": 1,
+            "is_active": true,
+            "order": 10
+        }
+    },
+    {
+        "model": "storymode.learningcard",
+        "pk": 11,
+        "fields": {
+            "title": "Kırmızı",
+            "category": "colors",
+            "front_text": "Elma ve domates hangi renktedir?",
+            "back_text": "Kırmızı! Kırmızı sıcak bir renktir. Doğada elmalar, domatesler ve güller kırmızı olabilir.",
+            "emoji": "🔴",
+            "fun_fact": "Kırmızı renk boğaları kızdırmaz! Boğalar aslında renk körüdür, onları hareket eden şeyler kızdırır.",
+            "difficulty": 1,
+            "is_active": true,
+            "order": 11
+        }
+    },
+    {
+        "model": "storymode.learningcard",
+        "pk": 12,
+        "fields": {
+            "title": "Mavi",
+            "category": "colors",
+            "front_text": "Gökyüzü ve deniz hangi renktedir?",
+            "back_text": "Mavi! Mavi sakin bir renktir. Gökyüzü ve deniz mavi görünür çünkü güneş ışığını yansıtırlar.",
+            "emoji": "🔵",
+            "fun_fact": "Mavi, dünyadaki insanların en sevdiği renktir!",
+            "difficulty": 1,
+            "is_active": true,
+            "order": 12
+        }
+    },
+    {
+        "model": "storymode.learningcard",
+        "pk": 13,
+        "fields": {
+            "title": "Üçgen",
+            "category": "shapes",
+            "front_text": "3 kenarı ve 3 köşesi olan şekil hangisi?",
+            "back_text": "Üçgen! Piramitler ve dağların tepeleri üçgen şeklindedir.",
+            "emoji": "🔺",
+            "fun_fact": "Üçgen, doğadaki en güçlü şekillerden biridir. Bu yüzden köprüler üçgen desteklerle yapılır!",
+            "difficulty": 1,
+            "is_active": true,
+            "order": 13
+        }
+    },
+    {
+        "model": "storymode.learningcard",
+        "pk": 14,
+        "fields": {
+            "title": "Daire",
+            "category": "shapes",
+            "front_text": "Köşesi olmayan, yuvarlak şekil hangisi?",
+            "back_text": "Daire! Top, pizza ve tekerlekler daire şeklindedir.",
+            "emoji": "⭕",
+            "fun_fact": "Daire, çevresi içine en çok alan sığdıran şekildir!",
+            "difficulty": 1,
+            "is_active": true,
+            "order": 14
+        }
+    },
+    {
+        "model": "storymode.learningcard",
+        "pk": 15,
+        "fields": {
+            "title": "Dinozor",
+            "category": "science",
+            "front_text": "Milyonlarca yıl önce yaşamış dev sürüngenler kimler?",
+            "back_text": "Dinozorlar! 65 milyon yıl önce yok oldular. Fosilleri sayesinde onları tanıyoruz.",
+            "emoji": "🦕",
+            "fun_fact": "Bazı dinozorlar bir tavuk kadar küçüktü, bazıları ise 4 katlı bir bina kadar büyüktü!",
+            "difficulty": 2,
+            "is_active": true,
+            "order": 15
+        }
+    },
+    {
+        "model": "storymode.learningcard",
+        "pk": 16,
+        "fields": {
+            "title": "Mıknatıs",
+            "category": "science",
+            "front_text": "Demir ve çeliği çeken özel taş nedir?",
+            "back_text": "Mıknatıs! Mıknatıslar metal nesneleri çekebilir. Kuzey ve güney kutupları vardır.",
+            "emoji": "🧲",
+            "fun_fact": "Dünya'nın kendisi de dev bir mıknatıs gibidir! Bu yüzden pusulalar hep kuzeyi gösterir.",
+            "difficulty": 2,
+            "is_active": true,
+            "order": 16
+        }
+    },
+    {
+        "model": "storymode.learningcard",
+        "pk": 17,
+        "fields": {
+            "title": "Su Döngüsü",
+            "category": "nature",
+            "front_text": "Suyun buharlaşıp tekrar yağmur olmasına ne denir?",
+            "back_text": "Su döngüsü! Su buharlaşır, bulut olur, yağmur yağar ve nehirlere akar. Bu döngü hiç durmaz.",
+            "emoji": "💧",
+            "fun_fact": "Şu an içtiğin su, dinozorların da içtiği suyla aynı! Su sürekli döngüde.",
+            "difficulty": 2,
+            "is_active": true,
+            "order": 17
+        }
+    },
+    {
+        "model": "storymode.learningcard",
+        "pk": 18,
+        "fields": {
+            "title": "Fotosentez",
+            "category": "nature",
+            "front_text": "Bitkilerin güneş ışığıyla besin yapmasına ne denir?",
+            "back_text": "Fotosentez! Bitkiler güneş ışığı, su ve karbondioksit kullanarak besin yapar ve oksijen üretir.",
+            "emoji": "🌿",
+            "fun_fact": "Yapraklar yeşildir çünkü klorofil pigmenti yeşil ışığı yansıtır!",
+            "difficulty": 2,
+            "is_active": true,
+            "order": 18
+        }
+    },
+    {
+        "model": "storymode.learningcard",
+        "pk": 19,
+        "fields": {
+            "title": "Yunus",
+            "category": "animals",
+            "front_text": "Denizde yaşayan, zıplayan akıllı memeli hangisi?",
+            "back_text": "Yunus! Yunuslar balık değil, memelidir. Nefes almak için su yüzeyine çıkarlar.",
+            "emoji": "🐬",
+            "fun_fact": "Yunuslar uyurken beyinlerinin sadece yarısı uyur, diğer yarısı uyanık kalır!",
+            "difficulty": 1,
+            "is_active": true,
+            "order": 19
+        }
+    },
+    {
+        "model": "storymode.learningcard",
+        "pk": 20,
+        "fields": {
+            "title": "Penguen",
+            "category": "animals",
+            "front_text": "Uçamayan ama çok iyi yüzen, smokinli kuş hangisi?",
+            "back_text": "Penguen! Penguenler Antarktika'da yaşar. Kanatlarını yüzmek için kullanırlar.",
+            "emoji": "🐧",
+            "fun_fact": "Baba penguenler yumurtayı ayaklarının üstünde tutarak aylarca bekler!",
+            "difficulty": 1,
+            "is_active": true,
+            "order": 20
+        }
+    }
+]

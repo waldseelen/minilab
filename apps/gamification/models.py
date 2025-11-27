@@ -118,6 +118,82 @@ class Badge(models.Model):
     def __str__(self):
         return self.name
 
+    def check_requirement(self, child):
+        """
+        Çocuğun bu rozeti kazanma koşulunu karşılayıp karşılamadığını kontrol et.
+        """
+        from apps.experiments.models import ExperimentProgress
+
+        req_type = self.requirement_type
+        req_value = self.requirement_value
+
+        if req_type == 'experiments_completed':
+            # Toplam tamamlanan deney sayısı
+            count = ExperimentProgress.objects.filter(
+                child=child,
+                status='completed'
+            ).count()
+            return count >= req_value
+
+        elif req_type == 'streak_days':
+            # Ardışık giriş günü
+            return child.current_streak >= req_value
+
+        elif req_type == 'category_master':
+            # Belirli kategorideki tüm deneyleri tamamla
+            if self.requirement_category:
+                from apps.experiments.models import Experiment
+                total = Experiment.objects.filter(
+                    category=self.requirement_category,
+                    is_active=True
+                ).count()
+                completed = ExperimentProgress.objects.filter(
+                    child=child,
+                    status='completed',
+                    experiment__category=self.requirement_category
+                ).count()
+                return completed >= total and total > 0
+            return False
+
+        elif req_type == 'total_points':
+            # Toplam puan
+            return child.total_points >= req_value
+
+        elif req_type == 'badges_earned':
+            # Kazanılan rozet sayısı
+            return EarnedBadge.objects.filter(child=child).count() >= req_value
+
+        elif req_type == 'star_dust':
+            # Toplam yıldız tozu (harcanan dahil)
+            return child.star_dust >= req_value
+
+        elif req_type == 'stories_completed':
+            # Tamamlanan hikaye sayısı
+            from apps.storymode.models import StoryProgress
+            count = StoryProgress.objects.filter(
+                child=child,
+                is_completed=True
+            ).count()
+            return count >= req_value
+
+        elif req_type == 'first_experiment':
+            # İlk deney tamamlandı
+            return ExperimentProgress.objects.filter(
+                child=child,
+                status='completed'
+            ).exists()
+
+        elif req_type == 'chat_messages':
+            # MiniBot ile sohbet
+            from apps.chatbot.models import ChatMessage
+            count = ChatMessage.objects.filter(
+                user=child.user,
+                is_user=True
+            ).count()
+            return count >= req_value
+
+        return False
+
 
 class EarnedBadge(models.Model):
     """
@@ -168,6 +244,13 @@ class AvatarItem(models.Model):
         ('pet', 'Evcil Hayvan'),
     ]
 
+    RARITY_CHOICES = [
+        ('common', 'Yaygın'),
+        ('rare', 'Nadir'),
+        ('epic', 'Epik'),
+        ('legendary', 'Efsanevi'),
+    ]
+
     name = models.CharField(
         max_length=100,
         verbose_name='Öğe Adı'
@@ -179,8 +262,18 @@ class AvatarItem(models.Model):
         verbose_name='Öğe Tipi'
     )
 
+    # Emoji ikon (template'lerde kullanılır)
+    icon = models.CharField(
+        max_length=10,
+        default='🎁',
+        verbose_name='Öğe İkonu (Emoji)',
+        help_text='Örn: 🎩, 👓, 🌈, 🐕'
+    )
+
     image = models.ImageField(
         upload_to='avatar_items/',
+        blank=True,
+        null=True,
         verbose_name='Görsel'
     )
 
@@ -189,6 +282,14 @@ class AvatarItem(models.Model):
         blank=True,
         null=True,
         verbose_name='Önizleme Görseli'
+    )
+
+    # Nadirlik
+    rarity = models.CharField(
+        max_length=20,
+        choices=RARITY_CHOICES,
+        default='common',
+        verbose_name='Nadirlik'
     )
 
     # Satın alma
@@ -227,7 +328,7 @@ class AvatarItem(models.Model):
         ordering = ['item_type', 'order', 'name']
 
     def __str__(self):
-        return f"{self.name} ({self.get_item_type_display()})"
+        return f"{self.icon} {self.name} ({self.get_item_type_display()})"
 
 
 class OwnedAvatarItem(models.Model):

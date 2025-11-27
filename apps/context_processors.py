@@ -11,8 +11,11 @@ def star_dust_processor(request):
     star_dust = 0
 
     if request.user.is_authenticated:
-        if hasattr(request.user, 'child_profile') and request.user.child_profile:
-            star_dust = request.user.child_profile.star_dust or 0
+        from apps.accounts.models import ChildProfile
+        # Ebeveynin ilk çocuk profilini al
+        child_profile = ChildProfile.objects.filter(parent=request.user).first()
+        if child_profile:
+            star_dust = child_profile.star_dust or 0
 
     return {
         'star_dust': star_dust,

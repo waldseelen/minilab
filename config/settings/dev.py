@@ -38,8 +38,15 @@ CACHES = {
     }
 }
 
-# Static files - WhiteNoise ile serve et
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Static files - WhiteNoise ile serve et (Django 4.2+ STORAGES kullanımı)
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
 
 # Logging - Development
 LOGGING = {

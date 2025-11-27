@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Erişim Kısıtlandı - MiniLab{% endblock %}
+
+{% block extra_head %}
+<style>
+    .blocked-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    .blocked-card {
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .blocked-icon {
+        width: 150px;
+        height: 150px;
+        margin: 0 auto 2rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 5rem;
+    }
+
+    .bedtime-icon {
+        background: linear-gradient(135deg, #312e81 0%, #4c1d95 100%);
+    }
+
+    .time-limit-icon {
+        background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+    }
+
+    .stars {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: 0;
+    }
+
+    .star {
+        position: absolute;
+        width: 3px;
+        height: 3px;
+        background: white;
+        border-radius: 50%;
+        animation: twinkle 2s infinite ease-in-out;
+    }
+
+    @keyframes twinkle {
+        0%, 100% { opacity: 0.3; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.5); }
+    }
+
+    .moon {
+        position: fixed;
+        top: 50px;
+        right: 100px;
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #fef3c7 0%, #fde047 100%);
+        border-radius: 50%;
+        box-shadow: 0 0 50px rgba(253, 224, 71, 0.5);
+        animation: moonGlow 4s infinite ease-in-out;
+    }
+
+    @keyframes moonGlow {
+        0%, 100% { box-shadow: 0 0 50px rgba(253, 224, 71, 0.3); }
+        50% { box-shadow: 0 0 80px rgba(253, 224, 71, 0.6); }
+    }
+
+    .cloud {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50px;
+    }
+
+    .sleeping-animation {
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .zzz {
+        position: absolute;
+        font-size: 1.5rem;
+        animation: zzzFloat 2s infinite;
+        opacity: 0;
+    }
+
+    .zzz-1 { animation-delay: 0s; top: -30px; right: 0; }
+    .zzz-2 { animation-delay: 0.5s; top: -50px; right: -20px; }
+    .zzz-3 { animation-delay: 1s; top: -70px; right: -40px; }
+
+    @keyframes zzzFloat {
+        0% { opacity: 0; transform: translateY(0) scale(0.5); }
+        50% { opacity: 1; }
+        100% { opacity: 0; transform: translateY(-20px) scale(1); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="blocked-container {% if reason == 'bedtime' %}bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900{% else %}bg-gradient-to-br from-orange-100 via-amber-50 to-yellow-100{% endif %}">
+
+    {% if reason == 'bedtime' %}
+    <!-- Night sky decoration -->
+    <div class="stars">
+        {% for i in "xxxxxxxxxxxxxxxx" %}
+        <div class="star" style="left: {{ forloop.counter0|add:5 }}0%; top: {{ forloop.counter0|add:3 }}0%; animation-delay: {{ forloop.counter0 }}00ms;"></div>
+        {% endfor %}
+    </div>
+    <div class="moon"></div>
+    {% endif %}
+
+    <div class="blocked-card relative z-10">
+        <!-- Icon -->
+        <div class="blocked-icon {% if reason == 'bedtime' %}bedtime-icon{% else %}time-limit-icon{% endif %} sleeping-animation">
+            {% if reason == 'bedtime' %}
+            <span class="relative">
+                😴
+                <span class="zzz zzz-1">💤</span>
+                <span class="zzz zzz-2">💤</span>
+                <span class="zzz zzz-3">💤</span>
+            </span>
+            {% else %}
+            ⏰
+            {% endif %}
+        </div>
+
+        <!-- Message -->
+        <div class="{% if reason == 'bedtime' %}bg-white/10 backdrop-blur-lg{% else %}bg-white shadow-xl{% endif %} rounded-3xl p-8">
+            <h1 class="text-2xl font-bold mb-4 {% if reason == 'bedtime' %}text-white{% else %}text-gray-800{% endif %}">
+                {% if reason == 'bedtime' %}
+                Yatma Zamanı! 🌙
+                {% else %}
+                Günlük Süre Doldu! 🎮
+                {% endif %}
+            </h1>
+
+            <p class="text-lg mb-6 {% if reason == 'bedtime' %}text-purple-200{% else %}text-gray-600{% endif %}">
+                {{ message }}
+            </p>
+
+            <!-- Child's avatar -->
+            <div class="flex items-center justify-center gap-3 mb-6 p-4 {% if reason == 'bedtime' %}bg-white/5{% else %}bg-gray-50{% endif %} rounded-2xl">
+                <div class="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-2xl">
+                    {% if child.avatar_emoji %}
+                        {{ child.avatar_emoji }}
+                    {% else %}
+                        🧒
+                    {% endif %}
+                </div>
+                <span class="font-semibold {% if reason == 'bedtime' %}text-white{% else %}text-gray-700{% endif %}">
+                    {{ child.nickname }}
+                </span>
+            </div>
+
+            <!-- Fun facts or tips -->
+            <div class="{% if reason == 'bedtime' %}bg-purple-800/50{% else %}bg-amber-50{% endif %} rounded-xl p-4 mb-6">
+                {% if reason == 'bedtime' %}
+                <p class="text-purple-200 text-sm">
+                    💡 <strong>Biliyor muydun?</strong><br>
+                    İyi bir uyku, beyninizin gün boyunca öğrendiği şeyleri hatırlamasına yardımcı olur!
+                    Bilim insanları gibi düşünmek için iyi uyumak şart! 🧠✨
+                </p>
+                {% else %}
+                <p class="text-amber-700 text-sm">
+                    🌟 <strong>Harika iş çıkardın!</strong><br>
+                    Bugün MiniLab'da çok şey öğrendin. Şimdi biraz dışarıda oynama,
+                    kitap okuma veya aile ile vakit geçirme zamanı!
+                </p>
+                {% endif %}
+            </div>
+
+            <!-- Action buttons -->
+            <div class="flex flex-col gap-3">
+                <a href="{% url 'accounts:logout' %}"
+                   class="w-full py-3 px-6 {% if reason == 'bedtime' %}bg-purple-600 hover:bg-purple-700{% else %}bg-amber-500 hover:bg-amber-600{% endif %} text-white rounded-xl font-semibold transition-colors">
+                    Çıkış Yap
+                </a>
+
+                {% if reason != 'bedtime' %}
+                <a href="/"
+                   class="w-full py-3 px-6 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-xl font-semibold transition-colors">
+                    Ana Sayfaya Dön
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Parent note -->
+        <p class="mt-6 text-sm {% if reason == 'bedtime' %}text-purple-300{% else %}text-gray-500{% endif %}">
+            🔒 Bu kısıtlama ebeveyn ayarlarından düzenlenebilir.
+        </p>
+    </div>
+</div>
+{% endblock %}

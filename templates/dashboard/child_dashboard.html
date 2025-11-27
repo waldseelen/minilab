@@ -87,7 +87,7 @@
         Hızlı Erişim
     </h2>
 
-    <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
         <!-- Hikaye Modu -->
         <a href="{% url 'storymode:story_list' %}"
            @mouseenter="Alpine.store('app').speak('Hikaye Modu - Bilim masallarını keşfet')"
@@ -112,6 +112,70 @@
                 <div>
                     <h3 class="font-display text-xl font-bold mb-1">Rozetlerim</h3>
                     <p class="text-white/80 text-sm">Başarılarını gör</p>
+                </div>
+            </div>
+        </a>
+
+        <!-- Avatar Mağazası -->
+        <a href="{% url 'gamification:shop' %}"
+           @mouseenter="Alpine.store('app').speak('Avatar Mağazası - Yeni şeyler satın al')"
+           class="group relative bg-gradient-to-br from-cyan-500 to-blue-600 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2 overflow-hidden">
+            <div class="absolute -top-4 -right-4 w-24 h-24 bg-white/20 rounded-full blur-xl"></div>
+            <div class="relative flex flex-col items-center gap-4 text-center text-white">
+                <div class="text-6xl group-hover:animate-wiggle">🛒</div>
+                <div>
+                    <h3 class="font-display text-xl font-bold mb-1">Mağaza</h3>
+                    <p class="text-white/80 text-sm">Avatar öğeleri</p>
+                </div>
+            </div>
+        </a>
+
+        <!-- Avatarım -->
+        <a href="{% url 'gamification:customize_avatar' %}"
+           @mouseenter="Alpine.store('app').speak('Avatarım - Avatarını özelleştir')"
+           class="group relative bg-gradient-to-br from-rose-500 to-pink-600 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2 overflow-hidden">
+            <div class="absolute -top-4 -right-4 w-24 h-24 bg-white/20 rounded-full blur-xl"></div>
+            <div class="relative flex flex-col items-center gap-4 text-center text-white">
+                <div class="text-6xl group-hover:animate-wiggle">👤</div>
+                <div>
+                    <h3 class="font-display text-xl font-bold mb-1">Avatarım</h3>
+                    <p class="text-white/80 text-sm">Kendini özelleştir</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Oyunlar ve Aktiviteler -->
+    <h2 class="font-display text-3xl text-minilab-green mb-8 flex items-center gap-3">
+        <span class="text-4xl">🎮</span>
+        Oyunlar ve Aktiviteler
+    </h2>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+        <!-- Hafıza Oyunu -->
+        <a href="{% url 'storymode:memory_game' %}"
+           @mouseenter="Alpine.store('app').speak('Hafıza Oyunu - Kartları eşleştir')"
+           class="group relative bg-gradient-to-br from-violet-500 to-purple-600 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2 overflow-hidden">
+            <div class="absolute -top-4 -right-4 w-24 h-24 bg-white/20 rounded-full blur-xl"></div>
+            <div class="relative flex flex-col items-center gap-4 text-center text-white">
+                <div class="text-6xl group-hover:animate-wiggle">🧩</div>
+                <div>
+                    <h3 class="font-display text-xl font-bold mb-1">Hafıza Oyunu</h3>
+                    <p class="text-white/80 text-sm">Kartları eşleştir</p>
+                </div>
+            </div>
+        </a>
+
+        <!-- Öğrenme Kartları -->
+        <a href="{% url 'storymode:learning_cards' %}"
+           @mouseenter="Alpine.store('app').speak('Öğrenme Kartları - Bilgi kartlarını keşfet')"
+           class="group relative bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2 overflow-hidden">
+            <div class="absolute -top-4 -right-4 w-24 h-24 bg-white/20 rounded-full blur-xl"></div>
+            <div class="relative flex flex-col items-center gap-4 text-center text-white">
+                <div class="text-6xl group-hover:animate-wiggle">🃏</div>
+                <div>
+                    <h3 class="font-display text-xl font-bold mb-1">Öğrenme Kartları</h3>
+                    <p class="text-white/80 text-sm">Bilgi kartları</p>
                 </div>
             </div>
         </a>

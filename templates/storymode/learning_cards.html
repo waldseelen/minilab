@@ -1,0 +1,317 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Öğrenme Kartları - MiniLab{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cards-container {
+        width: 100%;
+        height: calc(100vh - 200px);
+        min-height: 450px;
+        max-height: 600px;
+    }
+
+    /* Kategori kartları */
+    .category-card {
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .category-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .category-card:hover::before {
+        left: 100%;
+    }
+
+    .category-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    /* Kategori renkleri */
+    .cat-animals { --cat-color: #F59E0B; --cat-bg: #FEF3C7; }
+    .cat-plants { --cat-color: #10B981; --cat-bg: #D1FAE5; }
+    .cat-space { --cat-color: #6366F1; --cat-bg: #E0E7FF; }
+    .cat-body { --cat-color: #EF4444; --cat-bg: #FEE2E2; }
+    .cat-weather { --cat-color: #06B6D4; --cat-bg: #CFFAFE; }
+    .cat-colors { --cat-color: #EC4899; --cat-bg: #FCE7F3; }
+    .cat-shapes { --cat-color: #8B5CF6; --cat-bg: #EDE9FE; }
+    .cat-numbers { --cat-color: #3B82F6; --cat-bg: #DBEAFE; }
+    .cat-science { --cat-color: #14B8A6; --cat-bg: #CCFBF1; }
+    .cat-nature { --cat-color: #22C55E; --cat-bg: #DCFCE7; }
+
+    .category-card {
+        background: var(--cat-bg);
+        border: 3px solid var(--cat-color);
+    }
+
+    .category-card .icon {
+        color: var(--cat-color);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen py-8" x-data="learningCardsPage()">
+    <div class="max-w-6xl mx-auto px-4">
+
+        <!-- Başlık -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center gap-4 bg-gradient-to-r from-minilab-green to-minilab-blue-400 text-white px-8 py-4 rounded-full shadow-2xl">
+                <span class="text-5xl animate-wiggle">📚</span>
+                <div class="text-left">
+                    <h1 class="font-display text-3xl">Öğrenme Kartları</h1>
+                    <p class="text-white/80">Keşfet, öğren ve eğlen!</p>
+                </div>
+                <button @click="speakIntro()" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full ml-4 transition-all hover:scale-105">
+                    🔊 Dinle
+                </button>
+            </div>
+        </div>
+
+        <!-- Kategori Seçimi veya Kartlar -->
+        <template x-if="!selectedCategory">
+            <div>
+                <h2 class="text-2xl font-display text-center text-gray-700 dark:text-gray-200 mb-6">
+                    📂 Bir Kategori Seç
+                </h2>
+
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    <!-- Kategoriler -->
+                    <div class="category-card cat-animals card-cute cursor-pointer" @click="selectCategory('animals', '🐾 Hayvanlar')">
+                        <div class="text-center py-4">
+                            <div class="text-5xl mb-2">🐾</div>
+                            <h3 class="font-display text-lg">Hayvanlar</h3>
+                            <p class="text-sm text-gray-600 mt-1">{{ cards_by_category.animals|default:5 }} kart</p>
+                        </div>
+                    </div>
+
+                    <div class="category-card cat-plants card-cute cursor-pointer" @click="selectCategory('plants', '🌱 Bitkiler')">
+                        <div class="text-center py-4">
+                            <div class="text-5xl mb-2">🌱</div>
+                            <h3 class="font-display text-lg">Bitkiler</h3>
+                            <p class="text-sm text-gray-600 mt-1">{{ cards_by_category.plants|default:4 }} kart</p>
+                        </div>
+                    </div>
+
+                    <div class="category-card cat-space card-cute cursor-pointer" @click="selectCategory('space', '🚀 Uzay')">
+                        <div class="text-center py-4">
+                            <div class="text-5xl mb-2">🚀</div>
+                            <h3 class="font-display text-lg">Uzay</h3>
+                            <p class="text-sm text-gray-600 mt-1">{{ cards_by_category.space|default:4 }} kart</p>
+                        </div>
+                    </div>
+
+                    <div class="category-card cat-body card-cute cursor-pointer" @click="selectCategory('body', '🫀 Vücut')">
+                        <div class="text-center py-4">
+                            <div class="text-5xl mb-2">🫀</div>
+                            <h3 class="font-display text-lg">Vücut</h3>
+                            <p class="text-sm text-gray-600 mt-1">{{ cards_by_category.body|default:3 }} kart</p>
+                        </div>
+                    </div>
+
+                    <div class="category-card cat-weather card-cute cursor-pointer" @click="selectCategory('weather', '🌤️ Hava')">
+                        <div class="text-center py-4">
+                            <div class="text-5xl mb-2">🌤️</div>
+                            <h3 class="font-display text-lg">Hava</h3>
+                            <p class="text-sm text-gray-600 mt-1">{{ cards_by_category.weather|default:3 }} kart</p>
+                        </div>
+                    </div>
+
+                    <div class="category-card cat-colors card-cute cursor-pointer" @click="selectCategory('colors', '🎨 Renkler')">
+                        <div class="text-center py-4">
+                            <div class="text-5xl mb-2">🎨</div>
+                            <h3 class="font-display text-lg">Renkler</h3>
+                            <p class="text-sm text-gray-600 mt-1">{{ cards_by_category.colors|default:4 }} kart</p>
+                        </div>
+                    </div>
+
+                    <div class="category-card cat-shapes card-cute cursor-pointer" @click="selectCategory('shapes', '🔷 Şekiller')">
+                        <div class="text-center py-4">
+                            <div class="text-5xl mb-2">🔷</div>
+                            <h3 class="font-display text-lg">Şekiller</h3>
+                            <p class="text-sm text-gray-600 mt-1">{{ cards_by_category.shapes|default:4 }} kart</p>
+                        </div>
+                    </div>
+
+                    <div class="category-card cat-science card-cute cursor-pointer" @click="selectCategory('science', '🔬 Bilim')">
+                        <div class="text-center py-4">
+                            <div class="text-5xl mb-2">🔬</div>
+                            <h3 class="font-display text-lg">Bilim</h3>
+                            <p class="text-sm text-gray-600 mt-1">{{ cards_by_category.science|default:3 }} kart</p>
+                        </div>
+                    </div>
+
+                    <div class="category-card cat-nature card-cute cursor-pointer" @click="selectCategory('nature', '🌿 Doğa')">
+                        <div class="text-center py-4">
+                            <div class="text-5xl mb-2">🌿</div>
+                            <h3 class="font-display text-lg">Doğa</h3>
+                            <p class="text-sm text-gray-600 mt-1">{{ cards_by_category.nature|default:3 }} kart</p>
+                        </div>
+                    </div>
+
+                    <!-- Tüm Kartlar -->
+                    <div class="category-card bg-gradient-to-br from-minilab-purple to-minilab-pink text-white card-cute cursor-pointer"
+                         @click="selectCategory('all', '📚 Tüm Kartlar')"
+                         style="border: 3px solid #8B5CF6;">
+                        <div class="text-center py-4">
+                            <div class="text-5xl mb-2">🌟</div>
+                            <h3 class="font-display text-lg">Hepsini Gör</h3>
+                            <p class="text-sm text-white/80 mt-1">{{ total_cards|default:20 }} kart</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- Kartlar -->
+        <template x-if="selectedCategory">
+            <div>
+                <!-- Geri butonu -->
+                <div class="flex items-center justify-between mb-4">
+                    <button @click="goBack()" class="flex items-center gap-2 text-gray-600 hover:text-minilab-purple transition-colors">
+                        ← Kategorilere Dön
+                    </button>
+                    <h2 class="font-display text-2xl text-minilab-purple" x-text="categoryName"></h2>
+                    <div></div>
+                </div>
+
+                <!-- Kart Container -->
+                <div class="card-cute p-4">
+                    <div id="learning-cards-container" class="cards-container">
+                        <div class="flex flex-col items-center justify-center h-full gap-4">
+                            <span class="text-6xl animate-bounce">📚</span>
+                            <p class="text-xl text-gray-600">Kartlar yükleniyor...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- İpucu -->
+        <div class="mt-8 text-center">
+            <div class="inline-flex items-center gap-3 bg-minilab-yellow/20 px-6 py-3 rounded-full">
+                <span class="text-2xl">💡</span>
+                <p class="text-gray-600 dark:text-gray-400">
+                    <strong>İpucu:</strong> Kartlara dokunarak çevir ve cevabı gör! 💡 butonuyla eğlenceli bilgiler öğren!
+                </p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="{% static 'js/pixi/learning_cards.js' %}"></script>
+<script>
+function learningCardsPage() {
+    return {
+        selectedCategory: null,
+        categoryName: '',
+        cardsInstance: null,
+
+        speakIntro() {
+            Alpine.store('app').speak('Öğrenme kartlarına hoş geldin! Bir kategori seç ve kartlara tıklayarak yeni şeyler öğren. Kartı çevirmek için üzerine dokun!');
+        },
+
+        selectCategory(category, name) {
+            this.selectedCategory = category;
+            this.categoryName = name;
+
+            this.$nextTick(() => {
+                this.initCards();
+            });
+        },
+
+        initCards() {
+            const container = document.getElementById('learning-cards-container');
+            if (!container) return;
+
+            const cards = this.getCardsForCategory(this.selectedCategory);
+
+            this.cardsInstance = new LearningCards('learning-cards-container', {
+                cards: cards,
+                category: this.selectedCategory,
+                autoRead: true,
+                onCardComplete: (card) => {
+                    console.log('Kart öğrenildi:', card);
+                },
+                onAllComplete: (result) => {
+                    console.log('Tamamlandı:', result);
+                }
+            });
+        },
+
+        getCardsForCategory(category) {
+            // Demo kart verileri
+            const allCards = {
+                animals: [
+                    { title: 'Kelebek', emoji: '🦋', category: 'animals', front_text: 'Tırtıldan çıkan, renkli kanatları olan böcek hangisi?', back_text: 'Kelebek! Tırtıl önce koza yapar, sonra muhteşem bir kelebeğe dönüşür.', fun_fact: 'Kelebekler kanatlarıyla değil, ayaklarıyla tat alır!' },
+                    { title: 'Arı', emoji: '🐝', category: 'animals', front_text: 'Bal yapan, vızıldayan küçük böcek hangisi?', back_text: 'Arı! Arılar çiçeklerden nektar toplar ve bal yapar.', fun_fact: 'Bir arı, hayatı boyunca sadece bir çay kaşığı kadar bal üretebilir!' },
+                    { title: 'Yunus', emoji: '🐬', category: 'animals', front_text: 'Denizde yaşayan, zıplayan akıllı memeli hangisi?', back_text: 'Yunus! Yunuslar balık değil, memelidir.', fun_fact: 'Yunuslar uyurken beyinlerinin sadece yarısı uyur!' },
+                    { title: 'Penguen', emoji: '🐧', category: 'animals', front_text: 'Uçamayan ama çok iyi yüzen kuş hangisi?', back_text: 'Penguen! Penguenler Antarktika\'da yaşar.', fun_fact: 'Baba penguenler yumurtayı ayaklarının üstünde aylarca bekler!' },
+                ],
+                space: [
+                    { title: 'Güneş', emoji: '☀️', category: 'space', front_text: 'Gökyüzündeki en parlak yıldız hangisi?', back_text: 'Güneş! Dünyamızı ısıtan ve aydınlatan dev bir yıldızdır.', fun_fact: 'Güneş o kadar büyük ki içine 1 milyon tane Dünya sığabilir!' },
+                    { title: 'Ay', emoji: '🌙', category: 'space', front_text: 'Geceleri gökyüzünde parlayan yuvarlak cisim nedir?', back_text: 'Ay! Dünyamızın tek doğal uydusudur.', fun_fact: 'Ay\'da astronotların ayak izleri hâlâ orada duruyor!' },
+                ],
+                weather: [
+                    { title: 'Yağmur', emoji: '🌧️', category: 'weather', front_text: 'Bulutlardan düşen su damlacıkları nedir?', back_text: 'Yağmur! Buhar bulut olur, soğuyunca yağmur yağar.', fun_fact: 'Bir yağmur damlası saatte 20-35 km hızla düşer!' },
+                    { title: 'Gökkuşağı', emoji: '🌈', category: 'weather', front_text: 'Yağmurdan sonra beliren renkli yay nedir?', back_text: 'Gökkuşağı! Güneş ışığı 7 renge ayrılır.', fun_fact: 'Gökkuşağı renkleri: Kırmızı, Turuncu, Sarı, Yeşil, Mavi, Lacivert, Mor!' },
+                ],
+                colors: [
+                    { title: 'Kırmızı', emoji: '🔴', category: 'colors', front_text: 'Elma ve domates hangi renktedir?', back_text: 'Kırmızı! Kırmızı sıcak bir renktir.', fun_fact: 'Kırmızı renk boğaları kızdırmaz! Boğalar renk körüdür.' },
+                    { title: 'Mavi', emoji: '🔵', category: 'colors', front_text: 'Gökyüzü ve deniz hangi renktedir?', back_text: 'Mavi! Mavi sakin bir renktir.', fun_fact: 'Mavi, dünyadaki insanların en sevdiği renktir!' },
+                ],
+                shapes: [
+                    { title: 'Üçgen', emoji: '🔺', category: 'shapes', front_text: '3 kenarı ve 3 köşesi olan şekil hangisi?', back_text: 'Üçgen! Piramitler üçgen şeklindedir.', fun_fact: 'Üçgen doğadaki en güçlü şekillerden biridir!' },
+                    { title: 'Daire', emoji: '⭕', category: 'shapes', front_text: 'Köşesi olmayan yuvarlak şekil hangisi?', back_text: 'Daire! Top ve pizza daire şeklindedir.', fun_fact: 'Daire, en çok alan sığdıran şekildir!' },
+                ],
+                plants: [
+                    { title: 'Ağaç', emoji: '🌳', category: 'plants', front_text: 'Gövdesi, dalları ve yaprakları olan büyük bitki nedir?', back_text: 'Ağaç! Ağaçlar havayı temizler.', fun_fact: 'Bir ağaç günde 4 kişiye yetecek oksijen üretir!' },
+                    { title: 'Tohum', emoji: '🌱', category: 'plants', front_text: 'Bitkilerin içinden çıktığı küçük şey nedir?', back_text: 'Tohum! Her bitki bir tohumdan büyür.', fun_fact: 'En büyük tohum 25 kg ağırlığında olabilir!' },
+                ],
+                body: [
+                    { title: 'Kalp', emoji: '❤️', category: 'body', front_text: 'Vücudumuzda kanı pompalayan organ hangisi?', back_text: 'Kalp! Günde 100.000 kez atar.', fun_fact: 'Kalbinin büyüklüğü senin yumruğun kadar!' },
+                    { title: 'Göz', emoji: '👁️', category: 'body', front_text: 'Hangi organımızla görürüz?', back_text: 'Göz! Gözler ışığı algılar.', fun_fact: 'Gözlerin saniyede 3 kez kırpılır!' },
+                ],
+                science: [
+                    { title: 'Dinozor', emoji: '🦕', category: 'science', front_text: 'Milyonlarca yıl önce yaşamış dev sürüngenler kimler?', back_text: 'Dinozorlar! 65 milyon yıl önce yok oldular.', fun_fact: 'Bazı dinozorlar tavuk kadar küçüktü!' },
+                    { title: 'Mıknatıs', emoji: '🧲', category: 'science', front_text: 'Demir ve çeliği çeken özel taş nedir?', back_text: 'Mıknatıs! Metal nesneleri çeker.', fun_fact: 'Dünya\'nın kendisi de dev bir mıknatıs gibidir!' },
+                ],
+                nature: [
+                    { title: 'Su Döngüsü', emoji: '💧', category: 'nature', front_text: 'Suyun buharlaşıp tekrar yağmur olmasına ne denir?', back_text: 'Su döngüsü! Bu döngü hiç durmaz.', fun_fact: 'Şu an içtiğin su dinozorların da içtiği suyla aynı!' },
+                    { title: 'Fotosentez', emoji: '🌿', category: 'nature', front_text: 'Bitkilerin güneş ışığıyla besin yapmasına ne denir?', back_text: 'Fotosentez! Bitkiler oksijen üretir.', fun_fact: 'Yapraklar yeşil çünkü klorofil yeşil ışığı yansıtır!' },
+                ],
+            };
+
+            if (category === 'all') {
+                return Object.values(allCards).flat();
+            }
+
+            return allCards[category] || allCards.animals;
+        },
+
+        goBack() {
+            if (this.cardsInstance) {
+                this.cardsInstance.destroy();
+                this.cardsInstance = null;
+            }
+            this.selectedCategory = null;
+            this.categoryName = '';
+        }
+    }
+}
+</script>
+{% endblock %}

@@ -1,104 +1,414 @@
 {% extends 'base.html' %}
 
+{% block extra_css %}
+<style>
+    /* Avatar önizleme container */
+    .avatar-preview {
+        position: relative;
+        width: 280px;
+        height: 280px;
+        margin: 0 auto;
+    }
+
+    .avatar-layer {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    /* Seçim animasyonu */
+    @keyframes item-select {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+    }
+
+    .item-selected {
+        animation: item-select 0.3s ease;
+    }
+
+    /* Parıltı efekti */
+    @keyframes sparkle {
+        0%, 100% { opacity: 0; transform: scale(0.8) rotate(0deg); }
+        50% { opacity: 1; transform: scale(1) rotate(180deg); }
+    }
+
+    .sparkle {
+        animation: sparkle 2s ease-in-out infinite;
+    }
+
+    /* Avatar renk seçenekleri */
+    .color-option {
+        transition: all 0.2s ease;
+    }
+
+    .color-option:hover {
+        transform: scale(1.2);
+    }
+
+    .color-option.selected {
+        ring: 3px solid currentColor;
+        transform: scale(1.1);
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="max-w-4xl mx-auto px-4 py-8">
+<div class="max-w-6xl mx-auto px-4 py-8" x-data="avatarCustomizer()">
 
     <!-- Başlık -->
-    <div class="text-center mb-12">
-        <h1 class="font-display text-4xl text-minilab-purple mb-4">
-            🎨 Avatar Özelleştir
-        </h1>
-        <p class="text-xl text-gray-600 dark:text-gray-300">
-            Avatarını dilediğin gibi süsle!
-        </p>
+    <div class="text-center mb-8">
+        <div class="inline-flex items-center gap-4 bg-gradient-to-r from-minilab-blue-400 to-minilab-purple text-white px-8 py-4 rounded-full shadow-2xl">
+            <span class="text-5xl animate-wiggle">🎨</span>
+            <div class="text-left">
+                <h1 class="font-display text-3xl">Avatar Özelleştir</h1>
+                <p class="text-white/80">Avatarını dilediğin gibi süsle!</p>
+            </div>
+            <button @click="Alpine.store('app').speak('Avatarını özelleştir! Kıyafetler, aksesuarlar ve arka planlar arasından seç.')"
+                    class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full flex items-center gap-2 transition-all hover:scale-105 ml-4">
+                🔊 Dinle
+            </button>
+        </div>
+    </div>
+
+    <!-- Yıldız Tozu Bakiyesi -->
+    <div class="text-center mb-6">
+        <span class="inline-flex items-center gap-2 bg-minilab-yellow/20 px-6 py-2 rounded-full">
+            <span class="text-2xl">⭐</span>
+            <span class="font-bold text-minilab-orange-500">{{ star_dust }}</span>
+            <span class="text-gray-500">Yıldız Tozu</span>
+        </span>
     </div>
 
     <div class="grid md:grid-cols-2 gap-8">
 
         <!-- Avatar Önizleme -->
         <div class="card-cute text-center">
-            <h2 class="font-display text-xl text-minilab-blue-600 mb-6">Avatarın</h2>
+            <h2 class="font-display text-xl text-minilab-blue-600 mb-6">👤 Avatarın</h2>
 
-            <div class="relative w-64 h-64 mx-auto bg-gradient-to-br from-minilab-blue-100 to-minilab-purple/20 rounded-full flex items-center justify-center">
-                <!-- Arka Plan -->
-                <div class="absolute inset-0 rounded-full overflow-hidden">
-                    <div class="w-full h-full bg-gradient-to-br from-minilab-blue-200 to-minilab-purple/30"></div>
+            <!-- Avatar Preview Canvas -->
+            <div class="avatar-preview mx-auto relative">
+                <!-- Arka Plan Katmanı -->
+                <div class="avatar-layer rounded-full overflow-hidden"
+                     :class="selectedItems.background?.bgClass || 'bg-gradient-to-br from-minilab-blue-100 to-minilab-purple/20'">
                 </div>
 
-                <!-- Karakter -->
-                <div class="relative z-10 text-9xl">
-                    👶
+                <!-- Karakter Gövdesi -->
+                <div class="avatar-layer z-10">
+                    <span class="text-[120px]" x-text="selectedItems.body?.icon || '👶'">👶</span>
                 </div>
 
-                <!-- Şapka -->
-                <div class="absolute top-2 left-1/2 -translate-x-1/2 text-5xl z-20">
-                    🎩
+                <!-- Aksesuar (Şapka/Gözlük) -->
+                <div class="avatar-layer z-20" x-show="selectedItems.accessory">
+                    <span class="text-6xl absolute top-4" x-text="selectedItems.accessory?.icon"></span>
+                </div>
+
+                <!-- Evcil Hayvan -->
+                <div class="avatar-layer z-30" x-show="selectedItems.pet">
+                    <span class="text-5xl absolute bottom-4 right-4" x-text="selectedItems.pet?.icon"></span>
+                </div>
+
+                <!-- Parıltılar -->
+                <div class="absolute -top-2 -right-2 text-2xl sparkle" style="animation-delay: 0s;">✨</div>
+                <div class="absolute top-1/4 -left-2 text-xl sparkle" style="animation-delay: 0.5s;">⭐</div>
+                <div class="absolute -bottom-2 right-1/4 text-lg sparkle" style="animation-delay: 1s;">💫</div>
+            </div>
+
+            <!-- Avatar Renk Seçimi -->
+            <div class="mt-6">
+                <h4 class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-3">🎨 Arka Plan Rengi</h4>
+                <div class="flex justify-center gap-3 flex-wrap">
+                    <button @click="selectColor('blue')"
+                            :class="avatarColor === 'blue' ? 'ring-4 ring-blue-300 scale-110' : ''"
+                            class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-200 to-blue-400 color-option"></button>
+                    <button @click="selectColor('purple')"
+                            :class="avatarColor === 'purple' ? 'ring-4 ring-purple-300 scale-110' : ''"
+                            class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-200 to-purple-400 color-option"></button>
+                    <button @click="selectColor('pink')"
+                            :class="avatarColor === 'pink' ? 'ring-4 ring-pink-300 scale-110' : ''"
+                            class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-200 to-pink-400 color-option"></button>
+                    <button @click="selectColor('green')"
+                            :class="avatarColor === 'green' ? 'ring-4 ring-green-300 scale-110' : ''"
+                            class="w-10 h-10 rounded-full bg-gradient-to-br from-green-200 to-green-400 color-option"></button>
+                    <button @click="selectColor('yellow')"
+                            :class="avatarColor === 'yellow' ? 'ring-4 ring-yellow-300 scale-110' : ''"
+                            class="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-200 to-orange-300 color-option"></button>
                 </div>
             </div>
 
-            <div class="mt-6 flex gap-2 justify-center">
-                <button class="btn-primary">Kaydet</button>
-                <button class="btn-secondary">Sıfırla</button>
+            <!-- Aksiyon Butonları -->
+            <div class="mt-6 flex gap-3 justify-center">
+                <button @click="saveAvatar()"
+                        :disabled="isSaving"
+                        class="btn-primary flex items-center gap-2">
+                    <span x-show="!isSaving">💾 Kaydet</span>
+                    <span x-show="isSaving" class="flex items-center gap-2">
+                        <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                        </svg>
+                        Kaydediliyor...
+                    </span>
+                </button>
+                <button @click="resetAvatar()" class="btn-secondary">
+                    🔄 Sıfırla
+                </button>
+            </div>
+
+            <!-- Kaydetme Mesajı -->
+            <div x-show="saveMessage"
+                 x-transition
+                 class="mt-4 px-4 py-2 rounded-full text-sm font-bold"
+                 :class="saveSuccess ? 'bg-minilab-green/20 text-minilab-green' : 'bg-red-100 text-red-600'">
+                <span x-text="saveMessage"></span>
             </div>
         </div>
 
         <!-- Özelleştirme Seçenekleri -->
         <div class="space-y-6">
 
-            <!-- Şapkalar -->
+            <!-- Gövde/Kıyafet -->
             <div class="card-cute">
-                <h3 class="font-bold text-lg mb-4">🎩 Şapkalar</h3>
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                    👕 Kıyafetler
+                    <span class="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full"
+                          x-text="itemsByType.body?.length || 0"></span>
+                </h3>
                 <div class="flex gap-3 flex-wrap">
-                    <button class="w-14 h-14 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center text-2xl hover:scale-110 transition-transform ring-2 ring-minilab-purple">
-                        🎩
+                    <!-- Varsayılan -->
+                    <button @click="selectItem('body', {id: 0, icon: '👶', name: 'Varsayılan'})"
+                            :class="selectedItems.body?.id === 0 || !selectedItems.body ? 'ring-2 ring-minilab-purple bg-minilab-purple/10' : 'bg-gray-100 dark:bg-gray-700'"
+                            class="w-14 h-14 rounded-xl flex items-center justify-center text-2xl hover:scale-110 transition-transform">
+                        👶
                     </button>
-                    <button class="w-14 h-14 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center text-2xl hover:scale-110 transition-transform">
-                        👒
-                    </button>
-                    <button class="w-14 h-14 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center text-2xl hover:scale-110 transition-transform opacity-50">
-                        🎓
-                    </button>
-                    <button class="w-14 h-14 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center text-2xl hover:scale-110 transition-transform opacity-50">
-                        👑
-                    </button>
+                    <template x-for="item in itemsByType.body || []" :key="item.id">
+                        <button @click="selectItem('body', item)"
+                                :class="selectedItems.body?.id === item.id ? 'ring-2 ring-minilab-purple bg-minilab-purple/10' : 'bg-gray-100 dark:bg-gray-700'"
+                                :title="item.name"
+                                class="w-14 h-14 rounded-xl flex items-center justify-center text-2xl hover:scale-110 transition-transform">
+                            <span x-text="item.icon"></span>
+                        </button>
+                    </template>
                 </div>
             </div>
 
             <!-- Aksesuarlar -->
             <div class="card-cute">
-                <h3 class="font-bold text-lg mb-4">👓 Aksesuarlar</h3>
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                    🎒 Aksesuarlar
+                    <span class="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full"
+                          x-text="itemsByType.accessory?.length || 0"></span>
+                </h3>
                 <div class="flex gap-3 flex-wrap">
-                    <button class="w-14 h-14 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center text-2xl hover:scale-110 transition-transform">
-                        👓
+                    <!-- Hiçbiri -->
+                    <button @click="selectItem('accessory', null)"
+                            :class="!selectedItems.accessory ? 'ring-2 ring-minilab-purple bg-minilab-purple/10' : 'bg-gray-100 dark:bg-gray-700'"
+                            class="w-14 h-14 rounded-xl flex items-center justify-center text-lg hover:scale-110 transition-transform text-gray-400">
+                        ✕
                     </button>
-                    <button class="w-14 h-14 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center text-2xl hover:scale-110 transition-transform opacity-50">
-                        🕶️
-                    </button>
-                    <button class="w-14 h-14 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center text-2xl hover:scale-110 transition-transform opacity-50">
-                        🎀
-                    </button>
+                    <template x-for="item in itemsByType.accessory || []" :key="item.id">
+                        <button @click="selectItem('accessory', item)"
+                                :class="selectedItems.accessory?.id === item.id ? 'ring-2 ring-minilab-purple bg-minilab-purple/10' : 'bg-gray-100 dark:bg-gray-700'"
+                                :title="item.name"
+                                class="w-14 h-14 rounded-xl flex items-center justify-center text-2xl hover:scale-110 transition-transform">
+                            <span x-text="item.icon"></span>
+                        </button>
+                    </template>
                 </div>
+                <p x-show="!itemsByType.accessory?.length" class="text-gray-400 text-sm mt-2">
+                    🛒 Mağazadan aksesuar satın alabilirsin!
+                </p>
             </div>
 
             <!-- Arka Planlar -->
             <div class="card-cute">
-                <h3 class="font-bold text-lg mb-4">🌈 Arka Planlar</h3>
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                    🌈 Arka Planlar
+                    <span class="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full"
+                          x-text="itemsByType.background?.length || 0"></span>
+                </h3>
                 <div class="flex gap-3 flex-wrap">
-                    <button class="w-14 h-14 bg-gradient-to-br from-minilab-blue-200 to-minilab-purple/30 rounded-xl hover:scale-110 transition-transform ring-2 ring-minilab-purple"></button>
-                    <button class="w-14 h-14 bg-gradient-to-br from-minilab-yellow to-minilab-orange-300 rounded-xl hover:scale-110 transition-transform"></button>
-                    <button class="w-14 h-14 bg-gradient-to-br from-minilab-green to-minilab-blue-300 rounded-xl hover:scale-110 transition-transform opacity-50"></button>
-                    <button class="w-14 h-14 bg-gradient-to-br from-minilab-pink to-minilab-purple rounded-xl hover:scale-110 transition-transform opacity-50"></button>
+                    <!-- Varsayılan -->
+                    <button @click="selectItem('background', {id: 0, bgClass: 'bg-gradient-to-br from-minilab-blue-100 to-minilab-purple/20', name: 'Varsayılan'})"
+                            :class="!selectedItems.background || selectedItems.background?.id === 0 ? 'ring-2 ring-minilab-purple scale-110' : ''"
+                            class="w-14 h-14 bg-gradient-to-br from-minilab-blue-200 to-minilab-purple/30 rounded-xl hover:scale-110 transition-transform"></button>
+                    <template x-for="item in itemsByType.background || []" :key="item.id">
+                        <button @click="selectItem('background', item)"
+                                :class="selectedItems.background?.id === item.id ? 'ring-2 ring-minilab-purple scale-110' : ''"
+                                :title="item.name"
+                                class="w-14 h-14 rounded-xl hover:scale-110 transition-transform flex items-center justify-center text-2xl bg-gradient-to-br from-purple-200 to-pink-200">
+                            <span x-text="item.icon"></span>
+                        </button>
+                    </template>
                 </div>
             </div>
 
-            <p class="text-center text-gray-500 text-sm">
-                🔒 Kilitli öğeleri mağazadan satın alabilirsin!
-            </p>
-            <a href="{% url 'gamification:shop' %}" class="btn-secondary block text-center">
-                Mağazaya Git 🛒
-            </a>
+            <!-- Evcil Hayvanlar -->
+            <div class="card-cute">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                    🐾 Evcil Hayvanlar
+                    <span class="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full"
+                          x-text="itemsByType.pet?.length || 0"></span>
+                </h3>
+                <div class="flex gap-3 flex-wrap">
+                    <!-- Hiçbiri -->
+                    <button @click="selectItem('pet', null)"
+                            :class="!selectedItems.pet ? 'ring-2 ring-minilab-purple bg-minilab-purple/10' : 'bg-gray-100 dark:bg-gray-700'"
+                            class="w-14 h-14 rounded-xl flex items-center justify-center text-lg hover:scale-110 transition-transform text-gray-400">
+                        ✕
+                    </button>
+                    <template x-for="item in itemsByType.pet || []" :key="item.id">
+                        <button @click="selectItem('pet', item)"
+                                :class="selectedItems.pet?.id === item.id ? 'ring-2 ring-minilab-purple bg-minilab-purple/10' : 'bg-gray-100 dark:bg-gray-700'"
+                                :title="item.name"
+                                class="w-14 h-14 rounded-xl flex items-center justify-center text-2xl hover:scale-110 transition-transform">
+                            <span x-text="item.icon"></span>
+                        </button>
+                    </template>
+                </div>
+                <p x-show="!itemsByType.pet?.length" class="text-gray-400 text-sm mt-2">
+                    🛒 Mağazadan evcil hayvan satın alabilirsin!
+                </p>
+            </div>
+
+            <!-- Mağaza Linki -->
+            <div class="text-center">
+                <a href="{% url 'gamification:shop' %}"
+                   class="inline-flex items-center gap-2 bg-gradient-to-r from-minilab-purple to-minilab-pink text-white px-6 py-3 rounded-full font-bold hover:shadow-lg hover:scale-105 transition-all">
+                    🛍️ Mağazaya Git
+                </a>
+                <p class="text-gray-500 text-sm mt-2">
+                    Daha fazla öğe için mağazayı ziyaret et!
+                </p>
+            </div>
         </div>
     </div>
 
 </div>
+
+<script>
+function avatarCustomizer() {
+    return {
+        // Veritabanından gelen veriler
+        itemsByType: {{ items_json|safe }},
+        equippedItems: {{ equipped_json|safe }},
+
+        // Seçili öğeler
+        selectedItems: {
+            body: null,
+            accessory: null,
+            background: null,
+            pet: null
+        },
+
+        avatarColor: '{{ avatar_color|default:"blue" }}',
+        isSaving: false,
+        saveMessage: '',
+        saveSuccess: false,
+
+        init() {
+            // Kuşanılmış öğeleri yükle
+            this.selectedItems = { ...this.equippedItems };
+
+            // Varsayılan body
+            if (!this.selectedItems.body) {
+                this.selectedItems.body = { id: 0, icon: '👶', name: 'Varsayılan' };
+            }
+        },
+
+        selectItem(type, item) {
+            this.selectedItems[type] = item;
+
+            // Sesli geri bildirim
+            if (item) {
+                Alpine.store('app').playSound('click');
+            }
+        },
+
+        selectColor(color) {
+            this.avatarColor = color;
+            Alpine.store('app').playSound('click');
+        },
+
+        async saveAvatar() {
+            this.isSaving = true;
+            this.saveMessage = '';
+
+            try {
+                // Avatar ayarlarını kaydet
+                const response = await fetch("{% url 'gamification:save_avatar' %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        avatar_body: this.selectedItems.body?.icon || '👶',
+                        avatar_color: this.avatarColor,
+                        avatar_accessory: this.selectedItems.accessory?.icon || '',
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Kuşanma durumlarını güncelle
+                    for (const [type, item] of Object.entries(this.selectedItems)) {
+                        if (item && item.id) {
+                            await this.equipItem(item.id, true);
+                        }
+                    }
+
+                    this.saveMessage = '✅ Avatar kaydedildi!';
+                    this.saveSuccess = true;
+                    Alpine.store('app').speak('Avatar kaydedildi!');
+                    Alpine.store('app').playSound('success');
+                } else {
+                    this.saveMessage = data.error || 'Bir hata oluştu';
+                    this.saveSuccess = false;
+                }
+            } catch (error) {
+                console.error('Kaydetme hatası:', error);
+                this.saveMessage = 'Bağlantı hatası';
+                this.saveSuccess = false;
+            } finally {
+                this.isSaving = false;
+                setTimeout(() => this.saveMessage = '', 3000);
+            }
+        },
+
+        async equipItem(itemId, equip) {
+            try {
+                await fetch("{% url 'gamification:equip_item' %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        item_id: itemId,
+                        equip: equip
+                    })
+                });
+            } catch (error) {
+                console.error('Kuşanma hatası:', error);
+            }
+        },
+
+        resetAvatar() {
+            this.selectedItems = {
+                body: { id: 0, icon: '👶', name: 'Varsayılan' },
+                accessory: null,
+                background: null,
+                pet: null
+            };
+            this.avatarColor = 'blue';
+            Alpine.store('app').speak('Avatar sıfırlandı');
+        }
+    }
+}
+</script>
 {% endblock %}
